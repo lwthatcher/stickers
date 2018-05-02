@@ -16,10 +16,6 @@ app.route('/api/data').get(async (req, res) => {
     res.send(await np.parse(ab));
 });
 
-app.route('/api/cats').get((req, res) => {
-    res.send({cats: [{ name: 'lilly' }, { name: 'lucy' }]});
-});
-
 app.listen(3000, () => {
     console.log('Node server listening on port: 3000');
 });
