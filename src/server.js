@@ -13,7 +13,10 @@ app.route('/api/data').get(async (req, res) => {
     let _path = path.join(__dirname, 'assets', 'a.npy');
     const b = fs.readFileSync(_path, null);
     const ab = bufferToArrayBuffer(b);
-    res.send(await np.parse(ab));
+    result = await np.parse(ab);
+    console.log('Data Requested:', result);
+    console.log(result.dataSync());
+    res.send(result);
 });
 
 app.listen(3000, () => {

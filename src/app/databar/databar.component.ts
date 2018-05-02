@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataloaderService } from '../dataloader.service';
+import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 
 @Component({
@@ -13,7 +14,7 @@ export class DatabarComponent implements OnInit {
   width = 960;
   height = 400;
   radius = 10;
-  data;
+  data: tf.Tensor;
 
   constructor(private dataloader: DataloaderService) { }
 
