@@ -23,7 +23,6 @@ function bufferToArrayBuffer(b) {
 app.route('/api/data').get(async (req, res) => {
     let _path = path.join(__dirname, 'assets', 'a.npy');
     const b = fs.readFileSync(_path, null);
-    const ab = bufferToArrayBuffer(b);
     res.write(b, 'binary');
     res.end(null, 'binary');
 });

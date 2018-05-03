@@ -33,15 +33,16 @@ export class DatabarComponent implements OnInit {
       .attr('r', this.radius)
       .attr('fill', 'red');
     console.log('data:', this.data);
+    console.log(this.data.dataSync());
   }
 
   initData(): void {
     this.dataloader.getData()
-        .subscribe(b => {console.log('B-Data', parse(b))});
+        .subscribe(b => this.data = parse(b));
   }
 
-  bufferToArrayBuffer(b) {
-    return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
-  }
+  // bufferToArrayBuffer(b) {
+  //   return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
+  // }
 
 }
