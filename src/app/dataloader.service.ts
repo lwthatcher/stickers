@@ -8,10 +8,12 @@ export class DataloaderService {
 
   constructor(private http: HttpClient) { }
 
-  getData(): Observable<tf.Tensor> {
-    const result = this.http.get<tf.Tensor>('/api/data');
-    console.log('getting data', result);
-    return result;
+
+
+  getData() {
+    const b = this.http.get('/api/data', {responseType: 'arraybuffer'});
+    console.log('array-buffer data', b);
+    return b;
   }
 
 }

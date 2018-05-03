@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataloaderService } from '../dataloader.service';
+import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 
@@ -14,7 +15,7 @@ export class DatabarComponent implements OnInit {
   width = 960;
   height = 400;
   radius = 10;
-  data: tf.Tensor;
+  data;
 
   constructor(private dataloader: DataloaderService) { }
 
@@ -32,12 +33,15 @@ export class DatabarComponent implements OnInit {
       .attr('r', this.radius)
       .attr('fill', 'red');
     console.log('data:', this.data);
-    console.log(this.data.dataSync());
   }
 
   initData(): void {
     this.dataloader.getData()
-        .subscribe(data => this.data = data);
+        .subscribe(b => {console.log('B-Data', parse(b))});
+  }
+
+  bufferToArrayBuffer(b) {
+    return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
   }
 
 }

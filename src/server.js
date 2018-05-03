@@ -1,9 +1,20 @@
 // Get dependencies
 const express = require('express');
+const bodyParser = require('body-parser');
 const np = require('tfjs-npy');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors')
+
 const app = express();
+
+var corsOptions = {
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+}
+
+app.use(cors(corsOptions))
+app.use(bodyParser.json());
+
 
 function bufferToArrayBuffer(b) {
     return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
@@ -13,10 +24,8 @@ app.route('/api/data').get(async (req, res) => {
     let _path = path.join(__dirname, 'assets', 'a.npy');
     const b = fs.readFileSync(_path, null);
     const ab = bufferToArrayBuffer(b);
-    result = await np.parse(ab);
-    console.log('Data Requested:', result);
-    console.log(result.dataSync());
-    res.send(result);
+    res.write(b, 'binary');
+    res.end(null, 'binary');
 });
 
 app.listen(3000, () => {
