@@ -15,7 +15,7 @@ export class DatabarComponent implements OnInit {
   width = 960;
   height = 400;
   radius = 10;
-  data;
+  data: tf.Tensor;
 
   constructor(private dataloader: DataloaderService) { }
 
@@ -33,16 +33,11 @@ export class DatabarComponent implements OnInit {
       .attr('r', this.radius)
       .attr('fill', 'red');
     console.log('data:', this.data);
-    console.log(this.data.dataSync());
   }
 
   initData(): void {
     this.dataloader.getData()
         .subscribe(b => this.data = parse(b));
   }
-
-  // bufferToArrayBuffer(b) {
-  //   return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
-  // }
 
 }
