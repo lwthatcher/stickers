@@ -38,11 +38,9 @@ export class DatabarComponent implements OnInit {
 
   initData(): void {
     this.dataloader.getData()
-        .subscribe(b => this.data = parse(b));
+        .then(t => {console.log('tensor', t); return t;})
+        .then(t => this.data = t)
+        .then(() => {console.log('loaded data', this.data)})
+    
   }
-
-  // bufferToArrayBuffer(b) {
-  //   return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
-  // }
-
 }
