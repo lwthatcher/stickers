@@ -17,7 +17,7 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
   styleUrls: ['./databar.component.css']
 })
 export class DatabarComponent implements OnInit {
-  // #region Variables
+  // #region [Variables]
   margin = {top: 20, right: 20, bottom: 30, left: 50}
   radius = 10;
   // element selectors
@@ -31,13 +31,17 @@ export class DatabarComponent implements OnInit {
   _data: Promise<(Float32Array | Int32Array | Uint8Array)[]>;
   // #endregion
 
-  // #region Accessors
+  // #region [Accessors]
+  get WIDTH() { return this.el.nativeElement.offsetWidth; }
+
+  get HEIGHT() { return +this.svg.attr("height"); }
+
   get width() { return this.el.nativeElement.offsetWidth - this.margin.left - this.margin.right; }
 
-  get height() { return +this.svg.attr("height") - - this.margin.top - this.margin.bottom; }
+  get height() { return +this.svg.attr("height") - this.margin.top - this.margin.bottom; }
   // #endregion
 
-  // #region Constructors
+  // #region [Constructors]
   constructor(private el: ElementRef, private dataloader: DataloaderService) { }
 
   ngOnInit() {
@@ -51,14 +55,22 @@ export class DatabarComponent implements OnInit {
     // color map
     this.colors = d3.scaleOrdinal(d3.schemeAccent);
     // draw data (when it loads)
-    this.draw(this._data);
+    this.draw();
+    // redraw if window resized
+    window.addEventListener('resize', (e) => {
+      console.debug('window resize', this.width, this.height, e);
+      this.clear();
+      this.draw();
+    })
     // log when finished
-    console.log('init databar', this);
+    console.info('init databar', this);
   }
   // #endregion
 
-  // #region Drawing Methods
-  draw(data) {
+  // #region [Drawing Methods]
+  draw() {
+    // retrieve data promise
+    const data = this._data;
     // set the x/y scales
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
     this.y = d3.scaleLinear().rangeRound([this.height, 0]);
@@ -74,8 +86,12 @@ export class DatabarComponent implements OnInit {
     });
   }
 
+  clear() {
+    this.g_sigs.selectAll("*").remove();
+  }
+
   plot_axis(data, j) {
-    console.log('plotting axis:', j, this.colors(j));
+    console.debug('plotting axis:', j, this.colors(j));
           // draw line(s)
           this.g_sigs.append("path")
               .datum(data)
@@ -90,13 +106,13 @@ export class DatabarComponent implements OnInit {
   set_domains(axes) {
     this.x.domain([0, axes[0].length]);
     this.y.domain([d3.min(axes, (ax) => d3.min(ax)), d3.max(axes, (ax) => d3.max(ax))]);
-    console.log('x domain', this.x.domain(), this.x.range());
-    console.log('y domain', this.y.domain(), this.y.range());
+    console.debug('x domain', this.x.domain(), this.x.range());
+    console.debug('y domain', this.y.domain(), this.y.range());
     return axes;
   }
   // #endregion
 
-  // #region Data Loading
+  // #region [Data Loading]
   loadData(): Promise<(Float32Array | Int32Array | Uint8Array)[]> {
     return this.dataloader.getData([0,1,2])
         .then(t => this._tensors = t)
@@ -105,7 +121,7 @@ export class DatabarComponent implements OnInit {
   }
   // #endregion
 
-  // region Event-Handlers
+  // region [Events]
   clicked(event: any) {
     console.log('clicked!', event);
     console.log('svg', this.el.nativeElement, this.el);
