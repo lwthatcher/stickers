@@ -43,16 +43,16 @@ export class DatabarComponent implements OnInit {
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
     this.y = d3.scaleLinear().rangeRound([this.height, 0]);
     this.line = d3.line()
-                  .x((d,i) => {return this.x(d.i)})
-                  .y((d,i) => {return this.y(d.value)})
+                  .x((d,i) => {return this.x(i)})
+                  .y((d,i) => {return this.y(d)})
     // when data loads:
     DATA.then((data) => {return data[0].data()})
-        .then((data) => {return Array.from(data, (d,i) => {return {value: +d, i:i}})})
+        // .then((data) => {return Array.from(data, (d,i) => {return {value: +d, i:i}})})
         .then((data) => {
           console.log('beginning data plot', data);
           // set domains
-          this.x.domain(d3.extent(data, (d,i) => {return d.i}));
-          this.y.domain(d3.extent(data, (d,i) => {return d.value}));
+          this.x.domain(d3.extent(data, (d,i) => {return i}));
+          this.y.domain(d3.extent(data, (d,i) => {return d}));
           console.log('x domain', this.x.domain(), this.x.range());
           console.log('y domain', this.y.domain(), this.y.range());
           // draw line(s)
