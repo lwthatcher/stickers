@@ -46,31 +46,22 @@ export class DatabarComponent implements OnInit {
                   .x((d,i) => {return this.x(i)})
                   .y((d,i) => {return this.y(d)})
     // when data loads:
-    DATA.then((data) => {return data[0].data()})
-        // .then((data) => {return Array.from(data, (d,i) => {return {value: +d, i:i}})})
-        .then((data) => {return this.plot_axis(data, 0)});
+    DATA.then((axes_data) => axes_data.map((axis) => axis.dataSync()) )
+        .then((axes) => this.set_domains(axes))
+        .then((axes) => {
+          for (let j = 0; j < axes.length; j++) {
+            this.plot_axis(axes[j], j);
+          }
+    });
     console.log('init databar', this);
   }
 
   clicked(event: any) {
     console.log('clicked!', event)
-    // d3.select(event.target)
-    //   .append('circle')
-    //   .attr('cx', event.offsetX)
-    //   .attr('cy', event.offsetY)
-    //   .attr('r', this.radius)
-    //   .attr('fill', 'red');
-    // console.log('data:', this._data);
-    // console.log(this._data[0].shape);
   }
 
   plot_axis(data, j) {
     console.log('plotting axis:', j);
-          // set domains
-          this.x.domain(d3.extent(data, (d,i) => {return i}));
-          this.y.domain(d3.extent(data, (d,i) => {return d}));
-          console.log('x domain', this.x.domain(), this.x.range());
-          console.log('y domain', this.y.domain(), this.y.range());
           // draw line(s)
           this.g_sigs.append("path")
               .datum(data)
@@ -78,6 +69,14 @@ export class DatabarComponent implements OnInit {
               .attr("stroke", "steelblue")
               .attr("stroke-width", 1.5)
               .attr("d", this.line);
+  }
+
+  set_domains(axes) {
+    this.x.domain([0, axes[0].length]);
+    this.y.domain([d3.min(axes, (ax) => d3.min(ax)), d3.max(axes, (ax) => d3.max(ax))]);
+    console.log('x domain', this.x.domain(), this.x.range());
+    console.log('y domain', this.y.domain(), this.y.range());
+    return axes;
   }
 
   initData() {
