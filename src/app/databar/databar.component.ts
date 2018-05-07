@@ -19,8 +19,6 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
 export class DatabarComponent implements OnInit {
   margin = {top: 20, right: 20, bottom: 30, left: 50}
   radius = 10;
-  width: number;
-  height: number;
   // element selectors
   svg; g; g_sigs;
   // line drawing functions
@@ -30,6 +28,10 @@ export class DatabarComponent implements OnInit {
   // data references
   _tensors: Array<tf.Tensor>;
   _data: Promise<(Float32Array | Int32Array | Uint8Array)[]>;
+
+  get width() { return this.el.nativeElement.offsetWidth - this.margin.left - this.margin.right; }
+
+  get height() { return +this.svg.attr("height") - - this.margin.top - this.margin.bottom; }
 
   constructor(private el: ElementRef, private dataloader: DataloaderService) { }
 
@@ -44,8 +46,6 @@ export class DatabarComponent implements OnInit {
     // width/height
     const WIDTH = this.el.nativeElement.offsetWidth;
     console.log('element width/height:', WIDTH, this.svg.attr("height"));
-    this.width = +this.svg.attr("width") - this.margin.left - this.margin.right;
-    this.height = +this.svg.attr("height") - this.margin.top - this.margin.bottom;
     console.log('width/height', this.width, this.height);
     // color map
     this.colors = d3.scaleOrdinal(d3.schemeAccent);
