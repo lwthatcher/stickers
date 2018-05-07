@@ -8,7 +8,7 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
 @Component({
   selector: 'app-databar',
   template: `
-    <svg width="960" height="600" class="databar" (click)="clicked($event)">
+    <svg width="100%" height="600" class="databar" (click)="clicked($event)">
       <g class="transform">
         <g class="signals"></g>
       </g>
@@ -17,6 +17,7 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
   styleUrls: ['./databar.component.css']
 })
 export class DatabarComponent implements OnInit {
+  // #region Variables
   margin = {top: 20, right: 20, bottom: 30, left: 50}
   radius = 10;
   // element selectors
@@ -28,11 +29,15 @@ export class DatabarComponent implements OnInit {
   // data references
   _tensors: Array<tf.Tensor>;
   _data: Promise<(Float32Array | Int32Array | Uint8Array)[]>;
+  // #endregion
 
+  // #region Accessors
   get width() { return this.el.nativeElement.offsetWidth - this.margin.left - this.margin.right; }
 
   get height() { return +this.svg.attr("height") - - this.margin.top - this.margin.bottom; }
+  // #endregion
 
+  // #region Constructors
   constructor(private el: ElementRef, private dataloader: DataloaderService) { }
 
   ngOnInit() {
@@ -43,10 +48,6 @@ export class DatabarComponent implements OnInit {
     this.g = d3.select("svg > g.transform")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     this.g_sigs = d3.select("g > g.signals");
-    // width/height
-    const WIDTH = this.el.nativeElement.offsetWidth;
-    console.log('element width/height:', WIDTH, this.svg.attr("height"));
-    console.log('width/height', this.width, this.height);
     // color map
     this.colors = d3.scaleOrdinal(d3.schemeAccent);
     // draw data (when it loads)
@@ -54,7 +55,9 @@ export class DatabarComponent implements OnInit {
     // log when finished
     console.log('init databar', this);
   }
+  // #endregion
 
+  // #region Drawing Methods
   draw(data) {
     // set the x/y scales
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
@@ -91,18 +94,22 @@ export class DatabarComponent implements OnInit {
     console.log('y domain', this.y.domain(), this.y.range());
     return axes;
   }
+  // #endregion
 
+  // #region Data Loading
   loadData(): Promise<(Float32Array | Int32Array | Uint8Array)[]> {
     return this.dataloader.getData([0,1,2])
         .then(t => this._tensors = t)
         .then(() => { console.log('loaded tensors', this._tensors); return this._tensors })
         .then((axes_data) => { return axes_data.map((axis) => axis.dataSync()) })
   }
+  // #endregion
 
-
+  // region Event-Handlers
   clicked(event: any) {
     console.log('clicked!', event);
     console.log('svg', this.el.nativeElement, this.el);
     console.log('svg', this.el.nativeElement.offsetWidth, this.el.nativeElement.offsetHeight);
   }
+  // #endregion
 }
