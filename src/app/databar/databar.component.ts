@@ -20,8 +20,12 @@ export class DatabarComponent implements OnInit {
   radius = 10;
   width: number;
   height: number;
+  // element selectors
   svg; g; g_sigs;
+  // line drawing functions
   x; y; line;
+  // color map
+  colors;
 
   _data: Array<tf.Tensor>;
 
@@ -39,6 +43,8 @@ export class DatabarComponent implements OnInit {
     this.width = +this.svg.attr("width") - this.margin.left - this.margin.right;
     this.height = +this.svg.attr("height") - this.margin.top - this.margin.bottom;
     console.log('widht/height', this.width, this.height);
+    // color map
+    this.colors = d3.scaleOrdinal(d3.schemeAccent);
     // line drawing funcs
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
     this.y = d3.scaleLinear().rangeRound([this.height, 0]);
@@ -61,12 +67,13 @@ export class DatabarComponent implements OnInit {
   }
 
   plot_axis(data, j) {
-    console.log('plotting axis:', j);
+    console.log('plotting axis:', j, this.colors(j));
           // draw line(s)
           this.g_sigs.append("path")
               .datum(data)
               .attr("fill", "none")
-              .attr("stroke", "steelblue")
+              .attr("class", "line line-" + j.toString())
+              .attr("stroke", this.colors(j))
               .attr("stroke-width", 1.5)
               .attr("d", this.line);
   }
