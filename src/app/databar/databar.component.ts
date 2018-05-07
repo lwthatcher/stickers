@@ -48,8 +48,24 @@ export class DatabarComponent implements OnInit {
     // when data loads:
     DATA.then((data) => {return data[0].data()})
         // .then((data) => {return Array.from(data, (d,i) => {return {value: +d, i:i}})})
-        .then((data) => {
-          console.log('beginning data plot', data);
+        .then((data) => {return this.plot_axis(data, 0)});
+    console.log('init databar', this);
+  }
+
+  clicked(event: any) {
+    console.log('clicked!', event)
+    // d3.select(event.target)
+    //   .append('circle')
+    //   .attr('cx', event.offsetX)
+    //   .attr('cy', event.offsetY)
+    //   .attr('r', this.radius)
+    //   .attr('fill', 'red');
+    // console.log('data:', this._data);
+    // console.log(this._data[0].shape);
+  }
+
+  plot_axis(data, j) {
+    console.log('plotting axis:', j);
           // set domains
           this.x.domain(d3.extent(data, (d,i) => {return i}));
           this.y.domain(d3.extent(data, (d,i) => {return d}));
@@ -62,20 +78,6 @@ export class DatabarComponent implements OnInit {
               .attr("stroke", "steelblue")
               .attr("stroke-width", 1.5)
               .attr("d", this.line);
-        });
-    console.log('init databar', this);
-  }
-
-  clicked(event: any) {
-    console.log('clicked!', event)
-    d3.select(event.target)
-      .append('circle')
-      .attr('cx', event.offsetX)
-      .attr('cy', event.offsetY)
-      .attr('r', this.radius)
-      .attr('fill', 'red');
-    console.log('data:', this._data);
-    console.log(this._data[0].shape);
   }
 
   initData() {
