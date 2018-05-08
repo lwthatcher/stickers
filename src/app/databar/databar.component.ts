@@ -10,6 +10,11 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
   template: `
     <svg width="100%" height="600" class="databar" (click)="clicked($event)">
       <g class="transform">
+        <defs>
+          <clipPath id="clip">
+            <rect class='clip-rect'></rect>
+          </clipPath>
+        </defs>
         <g class="signals"></g>
         <g class="axes"></g>
         <rect class="zoom"></rect>
@@ -23,7 +28,8 @@ export class DatabarComponent implements OnInit {
   margin = {top: 20, right: 20, bottom: 30, left: 50}
   radius = 10;
   // element selectors
-  svg; g; g_sigs; g_axes; r_zoom;
+  svg; g; g_sigs; g_axes; 
+  r_zoom; r_clip;
   // line drawing functions
   x; y; line; x0;
   // color map
@@ -58,6 +64,9 @@ export class DatabarComponent implements OnInit {
     this.g_sigs = d3.select("g.transform > g.signals");
     this.g_axes = d3.select("g.transform > g.axes");
     this.r_zoom = d3.select("g.transform > rect.zoom")
+                    .attr('width', this.width)
+                    .attr('height', this.height);
+    this.r_clip = d3.select('#clip > rect.clip-rect')
                     .attr('width', this.width)
                     .attr('height', this.height);
     // color map
@@ -130,6 +139,7 @@ export class DatabarComponent implements OnInit {
           this.g_sigs.append("path")
               .datum(data)
               .attr("fill", "none")
+              .attr("clip-path", "url(#clip)")
               .attr("class", "line line-" + j.toString())
               .attr("stroke", this.colors(j))
               .attr("stroke-width", 1.5)
