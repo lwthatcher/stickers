@@ -11,6 +11,7 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
     <svg width="100%" height="600" class="databar" (click)="clicked($event)">
       <g class="transform">
         <g class="signals"></g>
+        <g class="axes"></g>
       </g>
     </svg>
   `,
@@ -21,7 +22,7 @@ export class DatabarComponent implements OnInit {
   margin = {top: 20, right: 20, bottom: 30, left: 50}
   radius = 10;
   // element selectors
-  svg; g; g_sigs;
+  svg; g; g_sigs; g_axes;
   // line drawing functions
   x; y; line;
   // color map
@@ -51,7 +52,8 @@ export class DatabarComponent implements OnInit {
     this.svg = d3.select("svg");
     this.g = d3.select("svg > g.transform")
         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-    this.g_sigs = d3.select("g > g.signals");
+    this.g_sigs = d3.select("g.transform > g.signals");
+    this.g_axes = d3.select("g.transform > g.axes");
     // color map
     this.colors = d3.scaleOrdinal(d3.schemeAccent);
     // draw data (when it loads)
@@ -67,7 +69,7 @@ export class DatabarComponent implements OnInit {
   }
   // #endregion
 
-  // #region [Drawing Methods]
+  // #region [Plotting]
   draw() {
     // retrieve data promise
     const data = this._data;
@@ -79,9 +81,11 @@ export class DatabarComponent implements OnInit {
                   .y((d,i) => this.y(d));
     // plot data when ready
     data.then((axes) => this.set_domains(axes))
+        .then((axes) => this.draw_xAxis(axes))
+        .then((axes) => this.draw_yAxis(axes))
         .then((axes) => {
           for (let j = 0; j < axes.length; j++) {
-            this.plot_axis(axes[j], j);
+            this.plot_dim(axes[j], j);
           }
     });
   }
@@ -90,7 +94,22 @@ export class DatabarComponent implements OnInit {
     this.g_sigs.selectAll("*").remove();
   }
 
-  plot_axis(data, j) {
+  draw_xAxis(data) {
+    this.g_axes.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', 'translate(0,' + this.height + ')')
+        .call(d3.axisBottom(this.x));
+    return data;
+  }
+
+  draw_yAxis(data) {
+    this.g_axes.append('g')
+        .attr('class', 'y-axis')
+        .call(d3.axisLeft(this.y));
+    return data;
+  }
+
+  plot_dim(data, j) {
     console.debug('plotting axis:', j, this.colors(j));
           // draw line(s)
           this.g_sigs.append("path")
@@ -121,11 +140,10 @@ export class DatabarComponent implements OnInit {
   }
   // #endregion
 
-  // region [Events]
+  // region [Event Handlers]
   clicked(event: any) {
-    console.log('clicked!', event);
-    console.log('svg', this.el.nativeElement, this.el);
-    console.log('svg', this.el.nativeElement.offsetWidth, this.el.nativeElement.offsetHeight);
+    console.debug('clicked!', event);
+    console.debug('svg', this.el.nativeElement, this.el);
   }
   // #endregion
 }
