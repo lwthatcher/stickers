@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, Input } from '@angular/core';
 import { DataloaderService } from '../dataloader.service';
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
@@ -8,7 +8,7 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
 @Component({
   selector: 'app-databar',
   template: `
-    <svg width="100%" height="600" class="databar" (click)="clicked($event)">
+    <svg width="100%" class="databar" (click)="clicked($event)">
       <g class="transform">
         <defs>
           <clipPath id="clip">
@@ -24,6 +24,11 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
   styleUrls: ['./databar.component.css']
 })
 export class DatabarComponent implements OnInit {
+  // #region [Inputs]
+  @Input() _height: number;
+  defaultHeight = 200;
+  // #endregion
+
   // #region [Variables]
   margin = {top: 20, right: 20, bottom: 30, left: 50}
   radius = 10;
@@ -55,10 +60,12 @@ export class DatabarComponent implements OnInit {
   constructor(private el: ElementRef, private dataloader: DataloaderService) { }
 
   ngOnInit() {
+    console.log('init', this._height);
     // load data
     this._data = this.loadData();
     // selectors
-    this.svg = d3.select("svg");
+    this.svg = d3.select("svg")
+                 .attr('height', this._height);
     this.g = d3.select("svg > g.transform")
                .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     this.g_sigs = d3.select("g.transform > g.signals");

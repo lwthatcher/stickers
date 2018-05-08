@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+  databarHeight = 400;
+
+  getDataHeight() {
+    return this.databarHeight;
+  }
 }
