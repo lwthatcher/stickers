@@ -63,7 +63,11 @@ export class DatabarComponent implements OnInit {
     // color map
     this.colors = d3.scaleOrdinal(d3.schemeAccent);
     // setup zoom behaviour
-    this.zoom = d3.zoom().on('zoom', () => this.zoomed());
+    this.zoom = d3.zoom()
+                  .scaleExtent([1, 50])
+                  .translateExtent([[0, 0], [this.width, this.height]])
+                  .extent([[0, 0], [this.width, this.height]])
+                  .on('zoom', () => this.zoomed());
     this.r_zoom.call(this.zoom);
     // draw data (when it loads)
     this.draw();
@@ -102,6 +106,7 @@ export class DatabarComponent implements OnInit {
 
   clear() {
     this.g_sigs.selectAll("*").remove();
+    this.g_axes.selectAll("*").remove();
   }
 
   draw_xAxis(data) {
@@ -164,6 +169,10 @@ export class DatabarComponent implements OnInit {
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
     d3.selectAll('g.signals > path.line').attr("d", this.line);
+    // redraw x-axis
+    d3.selectAll('g.axes > g.x-axis').remove();
+    this.draw_xAxis(this._data);
+    // log event (verbose)
     console.debug('zoomed', this.x.domain(), this.x0.domain(), t);
   }
   // #endregion
