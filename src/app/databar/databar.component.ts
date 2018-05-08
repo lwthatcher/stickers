@@ -12,6 +12,7 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
       <g class="transform">
         <g class="signals"></g>
         <g class="axes"></g>
+        <rect class="zoom"></rect>
       </g>
     </svg>
   `,
@@ -22,11 +23,13 @@ export class DatabarComponent implements OnInit {
   margin = {top: 20, right: 20, bottom: 30, left: 50}
   radius = 10;
   // element selectors
-  svg; g; g_sigs; g_axes;
+  svg; g; g_sigs; g_axes; r_zoom;
   // line drawing functions
-  x; y; line;
+  x; y; line; x0;
   // color map
   colors;
+  // zoom handler
+  zoom;
   // data references
   _tensors: Array<tf.Tensor>;
   _data: Promise<(Float32Array | Int32Array | Uint8Array)[]>;
@@ -51,11 +54,17 @@ export class DatabarComponent implements OnInit {
     // selectors
     this.svg = d3.select("svg");
     this.g = d3.select("svg > g.transform")
-        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+               .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     this.g_sigs = d3.select("g.transform > g.signals");
     this.g_axes = d3.select("g.transform > g.axes");
+    this.r_zoom = d3.select("g.transform > rect.zoom")
+                    .attr('width', this.width)
+                    .attr('height', this.height);
     // color map
     this.colors = d3.scaleOrdinal(d3.schemeAccent);
+    // setup zoom behaviour
+    this.zoom = d3.zoom().on('zoom', () => this.zoomed());
+    this.r_zoom.call(this.zoom);
     // draw data (when it loads)
     this.draw();
     // redraw if window resized
@@ -69,12 +78,13 @@ export class DatabarComponent implements OnInit {
   }
   // #endregion
 
-  // #region [Plotting]
+  // #region [Plotting Methods]
   draw() {
     // retrieve data promise
     const data = this._data;
     // set the x/y scales
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
+    this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
     this.y = d3.scaleLinear().rangeRound([this.height, 0]);
     this.line = d3.line()
                   .x((d,i) => this.x(i))
@@ -124,8 +134,10 @@ export class DatabarComponent implements OnInit {
 
   set_domains(axes) {
     this.x.domain([0, axes[0].length]);
+    this.x0.domain(this.x.domain());
     this.y.domain([d3.min(axes, (ax) => d3.min(ax)), d3.max(axes, (ax) => d3.max(ax))]);
     console.debug('x domain', this.x.domain(), this.x.range());
+    console.debug('x0 domain', this.x0.domain(), this.x0.range());
     console.debug('y domain', this.y.domain(), this.y.range());
     return axes;
   }
@@ -144,6 +156,15 @@ export class DatabarComponent implements OnInit {
   clicked(event: any) {
     console.debug('clicked!', event);
     console.debug('svg', this.el.nativeElement, this.el);
+  }
+
+  zoomed() {
+    const t = d3.event.transform;
+    // rescale x-domain to zoom level
+    this.x.domain(t.rescaleX(this.x0).domain());
+    // redraw signals
+    d3.selectAll('g.signals > path.line').attr("d", this.line);
+    console.debug('zoomed', this.x.domain(), this.x0.domain(), t);
   }
   // #endregion
 }
