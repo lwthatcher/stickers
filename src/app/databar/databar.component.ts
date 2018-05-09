@@ -32,6 +32,7 @@ export class DatabarComponent implements OnInit {
   margin = {top: 20, right: 20, bottom: 30, left: 50}
   radius = 10;
   // element selectors
+  host;
   svg; g; g_sigs; g_axes; 
   r_zoom; r_clip;
   // line drawing functions
@@ -62,18 +63,21 @@ export class DatabarComponent implements OnInit {
     // load data
     this._data = this.loadData();
     // selectors
-    this.svg = d3.select("svg")
-                 .attr('height', this._height);
-    this.g = d3.select("svg > g.transform")
-               .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-    this.g_sigs = d3.select("g.transform > g.signals");
-    this.g_axes = d3.select("g.transform > g.axes");
-    this.r_zoom = d3.select("g.transform > rect.zoom")
-                    .attr('width', this.width)
-                    .attr('height', this.height);
-    this.r_clip = d3.select('#clip > rect.clip-rect')
-                    .attr('width', this.width)
-                    .attr('height', this.height);
+    let host = d3.select(this.el.nativeElement);
+    this.host = host;
+    console.log('HOST', this.host, this.el);
+    this.svg = host.select("svg")
+                   .attr('height', this._height);
+    this.g = host.select("svg > g.transform")
+                 .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+    this.g_sigs = host.select("g.transform > g.signals");
+    this.g_axes = host.select("g.transform > g.axes");
+    this.r_zoom = host.select("g.transform > rect.zoom")
+                      .attr('width', this.width)
+                      .attr('height', this.height);
+    this.r_clip = host.select('#clip > rect.clip-rect')
+                      .attr('width', this.width)
+                      .attr('height', this.height);
     // color map
     this.colors = d3.scaleOrdinal(d3.schemeAccent);
     // setup zoom behaviour
@@ -183,9 +187,9 @@ export class DatabarComponent implements OnInit {
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
-    d3.selectAll('g.signals > path.line').attr("d", this.line);
+    this.host.selectAll('g.signals > path.line').attr("d", this.line);
     // redraw x-axis
-    d3.selectAll('g.axes > g.x-axis').remove();
+    this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis(this._data);
   }
   // #endregion
