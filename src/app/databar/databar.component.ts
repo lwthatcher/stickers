@@ -26,7 +26,6 @@ import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
 export class DatabarComponent implements OnInit {
   // #region [Inputs]
   @Input() _height: number;
-  defaultHeight = 200;
   // #endregion
 
   // #region [Variables]

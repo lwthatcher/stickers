@@ -6,12 +6,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { DataloaderService } from './dataloader.service';
 import { AppComponent } from './app.component';
 import { DatabarComponent } from './databar/databar.component';
+import { DataviewComponent } from './dataview/dataview.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    DatabarComponent
+    DatabarComponent,
+    DataviewComponent
   ],
   imports: [
     BrowserModule,
