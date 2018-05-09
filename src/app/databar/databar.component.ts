@@ -3,7 +3,6 @@ import { DataloaderService } from '../dataloader.service';
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
-import { TypedArray } from '@tensorflow/tfjs-core/dist/kernels/webgl/tex_util';
 
 @Component({
   selector: 'app-databar',
@@ -59,7 +58,6 @@ export class DatabarComponent implements OnInit {
   constructor(private el: ElementRef, private dataloader: DataloaderService) { }
 
   ngOnInit() {
-    console.log('init', this._height);
     // load data
     this._data = this.loadData();
     // selectors
@@ -93,7 +91,7 @@ export class DatabarComponent implements OnInit {
       this.draw();
     })
     // log when finished
-    console.info('init databar', this);
+    console.info('databar init', this);
   }
   // #endregion
 
