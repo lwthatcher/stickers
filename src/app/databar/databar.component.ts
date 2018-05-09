@@ -26,6 +26,7 @@ export class DatabarComponent implements OnInit {
   // #region [Inputs]
   @Input() _height: number;
   @Input() dataset: string;
+  @Input() dims: Array<number>;
   // #endregion
 
   // #region [Variables]
@@ -169,7 +170,7 @@ export class DatabarComponent implements OnInit {
 
   // #region [Data Loading]
   loadData(): Promise<(Float32Array | Int32Array | Uint8Array)[]> {
-    return this.dataloader.getData(this.dataset, [0,1,2])
+    return this.dataloader.getData(this.dataset, this.dims)
         .then(t => this._tensors = t)
         .then(() => { console.log('loaded tensors', this._tensors); return this._tensors })
         .then((axes_data) => { return axes_data.map((axis) => axis.dataSync()) })

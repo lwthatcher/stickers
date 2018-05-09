@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styles: []
 })
 export class AppComponent {
-  title = 'app';
+  title = 'Stickers';
   databarHeight = 400;
 
   getDataHeight() {
