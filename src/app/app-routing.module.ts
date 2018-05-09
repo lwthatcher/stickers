@@ -1,9 +1,12 @@
 import { NgModule }             from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DataviewComponent } from './dataview/dataview.component';
+import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
-  { path: 'display', component: DataviewComponent}
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'display', component: DataviewComponent }
 ]
 
 @NgModule({
