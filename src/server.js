@@ -21,7 +21,7 @@ function bufferToArrayBuffer(b) {
 }
 
 app.route('/api/data').get(async (req, res) => {
-    let _path = path.join(__dirname, 'assets', 'pills-blue.npy');
+    let _path = path.join(__dirname, '..', 'data', 'pills-blue.npy');
     const b = fs.readFileSync(_path, null);
     res.write(b, 'binary');
     res.end(null, 'binary');
