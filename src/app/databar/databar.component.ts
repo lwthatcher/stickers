@@ -25,6 +25,7 @@ import * as d3 from "d3";
 export class DatabarComponent implements OnInit {
   // #region [Inputs]
   @Input() _height: number;
+  @Input() dataset: string;
   // #endregion
 
   // #region [Variables]
@@ -164,7 +165,7 @@ export class DatabarComponent implements OnInit {
 
   // #region [Data Loading]
   loadData(): Promise<(Float32Array | Int32Array | Uint8Array)[]> {
-    return this.dataloader.getData([0,1,2])
+    return this.dataloader.getData(this.dataset, [0,1,2])
         .then(t => this._tensors = t)
         .then(() => { console.log('loaded tensors', this._tensors); return this._tensors })
         .then((axes_data) => { return axes_data.map((axis) => axis.dataSync()) })
@@ -186,8 +187,6 @@ export class DatabarComponent implements OnInit {
     // redraw x-axis
     d3.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis(this._data);
-    // log event (verbose)
-    console.debug('zoomed', this.x.domain(), this.x0.domain(), t);
   }
   // #endregion
 }

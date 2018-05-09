@@ -14,13 +14,9 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-
-function bufferToArrayBuffer(b) {
-    return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength);
-}
-
-app.route('/api/data').get(async (req, res) => {
-    let _path = path.join(__dirname, '..', 'data', 'pills-blue.npy');
+app.route('/api/data/tensors/:dataset').get(async (req, res) => {
+    const dataset = req.params['dataset'];
+    const _path = path.join(__dirname, '..', 'data', dataset + '.npy');
     const b = fs.readFileSync(_path, null);
     res.write(b, 'binary');
     res.end(null, 'binary');
