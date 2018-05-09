@@ -1,7 +1,6 @@
 // Get dependencies
 const express = require('express');
 const bodyParser = require('body-parser');
-const np = require('tfjs-npy');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors')
@@ -12,7 +11,7 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
 }
 
-app.use(cors(corsOptions))
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 
