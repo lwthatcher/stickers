@@ -7,17 +7,21 @@ import { DataloaderService } from './dataloader.service';
 import { AppComponent } from './app.component';
 import { DatabarComponent } from './databar/databar.component';
 import { DataviewComponent } from './dataview/dataview.component';
+import { AppRoutingModule } from './/app-routing.module';
+import { HomeComponent } from './home/home.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     DatabarComponent,
-    DataviewComponent
+    DataviewComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [DataloaderService],
   bootstrap: [AppComponent]
