@@ -7,6 +7,7 @@ import { DataloaderService } from './dataloader.service';
 import { AppComponent } from './app.component';
 import { DatabarComponent } from './databar/databar.component';
 import { DataviewComponent } from './dataview/dataview.component';
+import { AppRoutingModule } from './/app-routing.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { DataviewComponent } from './dataview/dataview.component';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [DataloaderService],
   bootstrap: [AppComponent]
