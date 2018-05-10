@@ -27,6 +27,16 @@ class TensorDataset implements Dataset {
     return new TensorDataset(newaxes);
   }
 }
+
+class CsvDataset implements Dataset {
+  axes: number[][]
+  constructor(axes: number[][]) { this.axes = axes; }
+  format() { return this.axes; }
+  filter(idx: number[]): Dataset {
+    const newaxes = this.axes.filter((e,i) => idx.includes(i));
+    return new CsvDataset(newaxes);
+  }
+}
 // #endregion
 
 // #region [Service]

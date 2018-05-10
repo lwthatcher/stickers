@@ -171,9 +171,9 @@ export class DatabarComponent implements OnInit {
   // #region [Data Loading]
   loadData(): Promise<SignalStream> {
     return this.dataloader.getData(this.dataset, this.dims)
-        .then(t => this._dataset = t)
-        .then(() => { console.log('loaded dataset', this._dataset); return this._dataset })
-        .then((_dataset) => { return _dataset.format() })
+        .then((_dataset) => this._dataset = _dataset)
+        .then(() => { console.info('loaded dataset', this._dataset) })
+        .then(() => { return this._dataset.format() })
   }
   // #endregion
 
