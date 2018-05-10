@@ -14,6 +14,7 @@ export class DataviewComponent implements OnInit {
   databarHeight = 400;
   dimensions = [[0,1,2], [3,4,5], [6,7,8], [9,10,11]];
   dataset: string;
+  format: string;
 
   constructor(
     private route: ActivatedRoute, 
@@ -22,7 +23,8 @@ export class DataviewComponent implements OnInit {
 
   ngOnInit() {
     this.dataset = this.route.snapshot.paramMap.get('dataset');
-    this.dataloader.setDataset(this.dataset);
+    this.format = this.route.snapshot.paramMap.get('format') || 'csv';
+    this.dataloader.setDataset(this.dataset, this.format);
     console.info('dataview init', this);
   }
 

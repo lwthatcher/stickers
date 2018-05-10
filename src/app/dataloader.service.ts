@@ -3,6 +3,8 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient } from '@angular/common/http';
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
+import * as d3 from "d3";
+import * as math from 'mathjs';
 
 // #region [Interfaces]
 export interface Dataset {
@@ -28,13 +30,15 @@ class TensorDataset implements Dataset {
   }
 }
 
-class CsvDataset implements Dataset {
+class CSVDataset implements Dataset {
   axes: number[][]
   constructor(axes: number[][]) { this.axes = axes; }
-  format() { return this.axes; }
+  format() { return math.transpose(this.axes) }
   filter(idx: number[]): Dataset {
-    const newaxes = this.axes.filter((e,i) => idx.includes(i));
-    return new CsvDataset(newaxes);
+    let filterRow = (row: number[]) => { return row.filter((d,i) => idx.includes(i)) }
+    const newaxes = this.axes.filter(filterRow);
+    console.log('filtered csv', idx, this.axes, newaxes);
+    return new CSVDataset(newaxes);
   }
 }
 // #endregion
@@ -48,10 +52,20 @@ export class DataloaderService {
     this.datasets = new Map();
   }
 
-  setDataset(dataset: string) {
-    const val = this.fetchTensors(dataset);
-    this.datasets.set(dataset, val);
-    console.debug('added dataset', dataset, this.datasets);
+  setDataset(dataset: string, format: string) {
+    if (format == 'tensor') {
+      this.datasets.set(dataset, this.fetchTensors(dataset));
+      console.debug('added dataset', dataset, this.datasets);
+    }
+    else if (format == 'csv') {
+      this.datasets.set(dataset, this.fetchCSV(dataset));
+      console.debug('added dataset', dataset, this.datasets);
+    }
+    else {
+      console.error('Invalid format: "' + format + '" for dataset.', dataset);
+      console.trace('Stack Trace:');
+    }
+    
   }
 
   getData(dataset: string, idx: number[]): Promise<Dataset> {
@@ -65,8 +79,16 @@ export class DataloaderService {
     return this.http.get('/api/data/tensors/' + dataset, {responseType: 'arraybuffer'})
                 .toPromise()
                 .then((b) => parse(b))
-                .then(t => {return tf.split(t, t.shape[1], 1)})
-                .then((axes) => {return new TensorDataset(axes)})
+                .then(t => { return tf.split(t, t.shape[1], 1) })
+                .then((axes) => { return new TensorDataset(axes) })
+  }
+
+  private fetchCSV(dataset: string): Promise<CSVDataset> {
+    let asNumber = (d: Array<string>) => { return d.map((di) => +di) }
+    return this.http.get('/api/data/csv/' + dataset, {responseType: 'text'})
+               .toPromise()
+               .then((str) => { return d3.csvParseRows(str, asNumber) })
+               .then((axes) => { return new CSVDataset(axes) })
   }
   // #endregion
 }
