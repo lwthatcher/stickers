@@ -4,9 +4,12 @@ import { HttpClient } from '@angular/common/http';
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 
+export type Axes = Array<Axis>
+type Axis = tf.Tensor | number[]
+
 @Injectable()
 export class DataloaderService {
-  private datasets: Map<String,Promise<Array<tf.Tensor>>>;
+  private datasets: Map<String,Promise<Axes>>;
 
   constructor(private http: HttpClient) { 
     this.datasets = new Map();
@@ -18,7 +21,7 @@ export class DataloaderService {
     console.debug('added dataset', dataset, this.datasets);
   }
 
-  getData(dataset: string, idx: Array<number>): Promise<Array<tf.Tensor>> {
+  getData(dataset: string, idx: Array<number>): Promise<Axes> {
     console.debug('retrieving data', dataset, idx, this);
     let promise = this.datasets.get(dataset);
     console.debug('dataset promise', promise);

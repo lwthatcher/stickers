@@ -14,13 +14,21 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-app.route('/api/data/tensors/:dataset').get(async (req, res) => {
+app.route('/api/data/tensors/:dataset').get((req, res) => {
     const dataset = req.params['dataset'];
     const _path = path.join(__dirname, '..', 'data', dataset + '.npy');
     const b = fs.readFileSync(_path, null);
     res.write(b, 'binary');
     res.end(null, 'binary');
 });
+
+app.route('/api/data/csv/:dataset').get((req, res) => {
+    const dataset = req.params['dataset'];
+    const _path = path.join(__dirname, '..', 'data', dataset + '.csv');
+    const b = fs.readFileSync(_path, null);
+    res.send(b);
+});
+
 
 app.listen(3000, () => {
     console.log('Node server listening on port: 3000');

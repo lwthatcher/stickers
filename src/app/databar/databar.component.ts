@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, Input } from '@angular/core';
-import { DataloaderService } from '../dataloader.service';
+import { DataloaderService, Axes } from '../dataloader.service';
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
@@ -43,7 +43,7 @@ export class DatabarComponent implements OnInit {
   // zoom handler
   zoom;
   // data references
-  _tensors: Array<tf.Tensor>;
+  _tensors: Axes;
   _data: Promise<(Float32Array | Int32Array | Uint8Array)[]>;
   // #endregion
 
