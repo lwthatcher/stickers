@@ -6,7 +6,8 @@ import { HomeComponent } from './home/home.component';
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
-  { path: 'display/:dataset', component: DataviewComponent }
+  { path: 'display/:dataset', component: DataviewComponent },
+  { path: 'display/:dataset/:format', component: DataviewComponent }
 ]
 
 @NgModule({

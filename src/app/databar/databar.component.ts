@@ -66,7 +66,6 @@ export class DatabarComponent implements OnInit {
     // selectors
     let host = d3.select(this.el.nativeElement);
     this.host = host;
-    console.log('HOST', this.host, this.el);
     this.svg = host.select("svg")
                    .attr('height', this._height);
     this.g = host.select("svg > g.transform")
