@@ -25,7 +25,7 @@ app.route('/api/data/tensors/:dataset').get((req, res) => {
 app.route('/api/data/csv/:dataset').get((req, res) => {
     const dataset = req.params['dataset'];
     const _path = path.join(__dirname, '..', 'data', dataset + '.csv');
-    const b = fs.readFileSync(_path, null);
+    const b = fs.readFileSync(_path, 'utf8');
     res.send(b);
 });
 
