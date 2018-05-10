@@ -4,16 +4,18 @@ import { HttpClient } from '@angular/common/http';
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 
+// #region [Interfaces]
 export interface Dataset {
   axes: Axes;
   format(): SignalStream;
   filter(idx: number[]): Dataset;
 }
-
 type Axes = Array<Axis>
 type Axis = tf.Tensor | number[]
 export type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
+// #endregion
 
+// #region [Helper Classes]
 class TensorDataset implements Dataset {
   axes: Array<tf.Tensor>;
   constructor(axes: Array<tf.Tensor>) { this.axes = axes; }
@@ -25,7 +27,9 @@ class TensorDataset implements Dataset {
     return new TensorDataset(newaxes);
   }
 }
+// #endregion
 
+// #region [Service]
 @Injectable()
 export class DataloaderService {
   private datasets: Map<String,Promise<Dataset>>;
@@ -45,9 +49,6 @@ export class DataloaderService {
     return this.datasets.get(dataset)
                         .then((dataset) => {console.debug('datset type', typeof dataset); return dataset;})
                         .then((dataset) => dataset.filter(idx))
-    // console.debug('dataset promise', promise);
-    // return promise.then((ts) => {console.debug('parsing tensors', ts); return ts;})
-    //               .then((ts) => {return ts.filter((e,i) => idx.includes(i))})
   }
 
   private fetchTensors(dataset: string): Promise<TensorDataset> {
@@ -57,5 +58,5 @@ export class DataloaderService {
                 .then(t => {return tf.split(t, t.shape[1], 1)})
                 .then((axes) => {return new TensorDataset(axes)})
   }
-
+  // #endregion
 }
