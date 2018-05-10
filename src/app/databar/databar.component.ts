@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, Input } from '@angular/core';
-import { DataloaderService, Axes } from '../dataloader.service';
+import { DataloaderService, Dataset, SignalStream } from '../dataloader.service';
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
@@ -43,8 +43,8 @@ export class DatabarComponent implements OnInit {
   // zoom handler
   zoom;
   // data references
-  _tensors: Axes;
-  _data: Promise<(Float32Array | Int32Array | Uint8Array)[]>;
+  _dataset: Dataset;
+  _data: Promise<SignalStream>;
   // #endregion
 
   // #region [Accessors]
@@ -169,11 +169,11 @@ export class DatabarComponent implements OnInit {
   // #endregion
 
   // #region [Data Loading]
-  loadData(): Promise<(Float32Array | Int32Array | Uint8Array)[]> {
+  loadData(): Promise<SignalStream> {
     return this.dataloader.getData(this.dataset, this.dims)
-        .then(t => this._tensors = t)
-        .then(() => { console.log('loaded tensors', this._tensors); return this._tensors })
-        .then((axes_data) => { return axes_data.map((axis) => axis.dataSync()) })
+        .then(t => this._dataset = t)
+        .then(() => { console.log('loaded dataset', this._dataset); return this._dataset })
+        .then((_dataset) => { return _dataset.format() })
   }
   // #endregion
 
