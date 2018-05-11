@@ -36,8 +36,7 @@ class CSVDataset implements Dataset {
   format() { return math.transpose(this.axes) }
   filter(idx: number[]): Dataset {
     let filterRow = (row: number[]) => { return row.filter((d,i) => idx.includes(i)) }
-    const newaxes = this.axes.filter(filterRow);
-    console.log('filtered csv', idx, this.axes, newaxes);
+    const newaxes = this.axes.map(filterRow);
     return new CSVDataset(newaxes);
   }
 }
