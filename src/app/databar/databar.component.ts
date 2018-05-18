@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef, Input } from '@angular/core';
 import { DataloaderService, Dataset, SignalStream } from '../dataloader.service';
 import { parse } from "tfjs-npy";
+import { Spinner } from 'spin.js';
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 
@@ -45,6 +46,8 @@ export class DatabarComponent implements OnInit {
   // data references
   _dataset: Dataset;
   _data: Promise<SignalStream>;
+  // loading spinner
+  spinner: Spinner;
   // #endregion
 
   // #region [Accessors]
@@ -88,6 +91,7 @@ export class DatabarComponent implements OnInit {
                   .on('zoom', () => this.zoomed());
     this.r_zoom.call(this.zoom);
     // draw data (when it loads)
+    this.startSpinner();
     this.draw();
     // redraw if window resized
     window.addEventListener('resize', (e) => {
@@ -112,7 +116,8 @@ export class DatabarComponent implements OnInit {
                   .x((d,i) => this.x(i))
                   .y((d,i) => this.y(d));
     // plot data when ready
-    data.then((axes) => this.set_domains(axes))
+    data.then((axes) => this.stopSpinner(axes))
+        .then((axes) => this.set_domains(axes))
         .then((axes) => this.draw_xAxis(axes))
         .then((axes) => this.draw_yAxis(axes))
         .then((axes) => {
@@ -173,6 +178,36 @@ export class DatabarComponent implements OnInit {
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.info('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.format() })
+  }
+
+  startSpinner(): void {
+    const opts = {
+      lines: 13, // The number of lines to draw
+      length: 40, // The length of each line
+      width: 20, // The line thickness
+      radius: 45, // The radius of the inner circle
+      scale: 1, // Scales overall size of the spinner
+      corners: 1, // Corner roundness (0..1)
+      color: '#636288', // CSS color or array of colors
+      fadeColor: 'transparent', // CSS color or array of colors
+      speed: 1, // Rounds per second
+      rotate: 0, // The rotation offset
+      animation: 'spinner-line-fade-quick', // The CSS animation name for the lines
+      direction: 1, // 1: clockwise, -1: counterclockwise
+      zIndex: 2e9, // The z-index (defaults to 2000000000)
+      className: 'spinner', // The CSS class to assign to the spinner
+      top: '51%', // Top position relative to parent
+      left: '50%', // Left position relative to parent
+      shadow: '0 0 1px transparent', // Box-shadow for the lines
+      position: 'absolute' // Element positioning
+    }
+    let target = this.el.nativeElement;
+    this.spinner = new Spinner(opts).spin(target);
+  }
+
+  stopSpinner(data) {
+    this.spinner.stop();
+    return data;
   }
   // #endregion
 
