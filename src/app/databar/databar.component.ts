@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, Input } from '@angular/core';
 import { DataloaderService, Dataset, SignalStream } from '../dataloader.service';
 import { parse } from "tfjs-npy";
 import { Spinner } from 'spin.js';
+import { largestTriangleThreeBucket } from 'd3fc-sample';
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 
@@ -106,15 +107,12 @@ export class DatabarComponent implements OnInit {
 
   // #region [Plotting Methods]
   async draw() {
-    // set the x/y scales
-    this.x = d3.scaleLinear().rangeRound([0, this.width]);
-    this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
-    this.y = d3.scaleLinear().rangeRound([this.height, 0]);
-    this.line = d3.line()
-                  .x((d,i) => this.x(i))
-                  .y((d,i) => this.y(d));
+    // set the respective ranges for x/y
+    this.set_ranges();
     // wait for data to load
-    const data = await this._data;
+    let data = await this._data;
+    data = this.downsample(data);
+    // stop loading-spinner, update domains
     this.stop_spinner();
     this.set_domains(data);
     // draw axes
@@ -122,7 +120,7 @@ export class DatabarComponent implements OnInit {
     this.draw_yAxis();
     // draw each signal
     for (let j = 0; j < data.length; j++) {
-      this.plot_dim(data[j], j);
+      this.plot_signal(data[j], j);
     }
   }
 
@@ -131,24 +129,34 @@ export class DatabarComponent implements OnInit {
     this.g_axes.selectAll("*").remove();
   }
 
-  draw_xAxis() {
+  private downsample(data) {
+    const sampler = largestTriangleThreeBucket();
+    sampler.x((d,i) => d)
+           .y((d,i) => i)
+    // for now, constant bucket size
+    sampler.bucketSize(10);
+    // return sampled data
+    return sampler(data);
+  }
+
+  private draw_xAxis() {
     this.g_axes.append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + this.height + ')')
         .call(d3.axisBottom(this.x));
   }
 
-  draw_yAxis() {
+  private draw_yAxis() {
     this.g_axes.append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this.y));
   }
 
-  plot_dim(data, j) {
+  private plot_signal(signal, j) {
     console.debug('plotting axis:', j, this.colors(j));
     // draw line(s)
     this.g_sigs.append("path")
-        .datum(data)
+        .datum(signal)
         .attr("fill", "none")
         .attr("clip-path", "url(#clip)")
         .attr("class", "line line-" + j.toString())
@@ -158,7 +166,18 @@ export class DatabarComponent implements OnInit {
         .attr("d", this.line);
   }
 
-  set_domains(axes) {
+  private set_ranges() {
+    // set x-ranges
+    this.x = d3.scaleLinear().rangeRound([0, this.width]);
+    this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
+    // set y-ranges
+    this.y = d3.scaleLinear().rangeRound([this.height, 0]);
+    // update line method to new ranges
+    this.line = d3.line().x((d,i) => this.x(i))
+                         .y((d,i) => this.y(d));
+  }
+
+  private set_domains(axes) {
     this.x.domain([0, axes[0].length]);
     this.x0.domain(this.x.domain());
     this.y.domain([d3.min(axes, (ax) => d3.min(ax)), d3.max(axes, (ax) => d3.max(ax))]);
@@ -176,7 +195,7 @@ export class DatabarComponent implements OnInit {
         .then(() => { return this._dataset.format() })
   }
 
-  start_spinner(): void {
+  private start_spinner(): void {
     const opts = {
       lines: 13, // The number of lines to draw
       length: 40, // The length of each line
@@ -201,7 +220,7 @@ export class DatabarComponent implements OnInit {
     this.spinner = new Spinner(opts).spin(target);
   }
 
-  stop_spinner() {
+  private stop_spinner() {
     this.spinner.stop();
   }
   // #endregion
