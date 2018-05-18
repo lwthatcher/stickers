@@ -65,7 +65,7 @@ export class DatabarComponent implements OnInit {
 
   ngOnInit() {
     // load data
-    this._data = this.loadData();
+    this._data = this.load_data();
     // selectors
     let host = d3.select(this.el.nativeElement);
     this.host = host;
@@ -91,7 +91,7 @@ export class DatabarComponent implements OnInit {
                   .on('zoom', () => this.zoomed());
     this.r_zoom.call(this.zoom);
     // draw data (when it loads)
-    this.startSpinner();
+    this.start_spinner();
     this.draw();
     // redraw if window resized
     window.addEventListener('resize', (e) => {
@@ -115,11 +115,11 @@ export class DatabarComponent implements OnInit {
                   .y((d,i) => this.y(d));
     // wait for data to load
     const data = await this._data;
-    this.stopSpinner(data);
+    this.stop_spinner();
     this.set_domains(data);
     // draw axes
-    this.draw_xAxis(data);
-    this.draw_yAxis(data);
+    this.draw_xAxis();
+    this.draw_yAxis();
     // draw each signal
     for (let j = 0; j < data.length; j++) {
       this.plot_dim(data[j], j);
@@ -131,33 +131,31 @@ export class DatabarComponent implements OnInit {
     this.g_axes.selectAll("*").remove();
   }
 
-  draw_xAxis(data) {
+  draw_xAxis() {
     this.g_axes.append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + this.height + ')')
         .call(d3.axisBottom(this.x));
-    return data;
   }
 
-  draw_yAxis(data) {
+  draw_yAxis() {
     this.g_axes.append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this.y));
-    return data;
   }
 
   plot_dim(data, j) {
     console.debug('plotting axis:', j, this.colors(j));
-          // draw line(s)
-          this.g_sigs.append("path")
-              .datum(data)
-              .attr("fill", "none")
-              .attr("clip-path", "url(#clip)")
-              .attr("class", "line line-" + j.toString())
-              .attr("stroke", this.colors(j))
-              .attr("stroke-width", 1.5)
-              .attr("stroke-opacity", 0.7)
-              .attr("d", this.line);
+    // draw line(s)
+    this.g_sigs.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("clip-path", "url(#clip)")
+        .attr("class", "line line-" + j.toString())
+        .attr("stroke", this.colors(j))
+        .attr("stroke-width", 1.5)
+        .attr("stroke-opacity", 0.7)
+        .attr("d", this.line);
   }
 
   set_domains(axes) {
@@ -167,19 +165,18 @@ export class DatabarComponent implements OnInit {
     console.debug('x domain', this.x.domain(), this.x.range());
     console.debug('x0 domain', this.x0.domain(), this.x0.range());
     console.debug('y domain', this.y.domain(), this.y.range());
-    return axes;
   }
   // #endregion
 
   // #region [Data Loading]
-  loadData(): Promise<SignalStream> {
+  load_data(): Promise<SignalStream> {
     return this.dataloader.getData(this.dataset, this.dims)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.info('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.format() })
   }
 
-  startSpinner(): void {
+  start_spinner(): void {
     const opts = {
       lines: 13, // The number of lines to draw
       length: 40, // The length of each line
@@ -204,9 +201,8 @@ export class DatabarComponent implements OnInit {
     this.spinner = new Spinner(opts).spin(target);
   }
 
-  stopSpinner(data) {
+  stop_spinner() {
     this.spinner.stop();
-    return data;
   }
   // #endregion
 
@@ -224,7 +220,7 @@ export class DatabarComponent implements OnInit {
     this.host.selectAll('g.signals > path.line').attr("d", this.line);
     // redraw x-axis
     this.host.selectAll('g.axes > g.x-axis').remove();
-    this.draw_xAxis(this._data);
+    this.draw_xAxis();
   }
   // #endregion
 }
