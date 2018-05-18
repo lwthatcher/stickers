@@ -101,7 +101,7 @@ export class DatabarComponent implements OnInit {
       this.draw();
     })
     // log when finished
-    console.info('databar init', this);
+    console.info('databar initialized', this);
   }
   // #endregion
 
@@ -153,8 +153,6 @@ export class DatabarComponent implements OnInit {
   }
 
   private plot_signal(signal, j) {
-    console.debug('plotting axis:', j, this.colors(j));
-    // draw line(s)
     this.g_sigs.append("path")
         .datum(signal)
         .attr("fill", "none")
@@ -191,7 +189,7 @@ export class DatabarComponent implements OnInit {
   load_data(): Promise<SignalStream> {
     return this.dataloader.getData(this.dataset, this.dims)
         .then((_dataset) => this._dataset = _dataset)
-        .then(() => { console.info('loaded dataset', this._dataset) })
+        .then(() => { console.debug('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.format() })
   }
 
