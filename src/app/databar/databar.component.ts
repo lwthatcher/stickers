@@ -105,9 +105,7 @@ export class DatabarComponent implements OnInit {
   // #endregion
 
   // #region [Plotting Methods]
-  draw() {
-    // retrieve data promise
-    const data = this._data;
+  async draw() {
     // set the x/y scales
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
     this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
@@ -115,16 +113,17 @@ export class DatabarComponent implements OnInit {
     this.line = d3.line()
                   .x((d,i) => this.x(i))
                   .y((d,i) => this.y(d));
-    // plot data when ready
-    data.then((axes) => this.stopSpinner(axes))
-        .then((axes) => this.set_domains(axes))
-        .then((axes) => this.draw_xAxis(axes))
-        .then((axes) => this.draw_yAxis(axes))
-        .then((axes) => {
-          for (let j = 0; j < axes.length; j++) {
-            this.plot_dim(axes[j], j);
-          }
-    });
+    // wait for data to load
+    const data = await this._data;
+    this.stopSpinner(data);
+    this.set_domains(data);
+    // draw axes
+    this.draw_xAxis(data);
+    this.draw_yAxis(data);
+    // draw each signal
+    for (let j = 0; j < data.length; j++) {
+      this.plot_dim(data[j], j);
+    }
   }
 
   clear() {
