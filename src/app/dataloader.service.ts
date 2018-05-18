@@ -32,12 +32,15 @@ class TensorDataset implements Dataset {
 
 class CSVDataset implements Dataset {
   axes: number[][]
-  constructor(axes: number[][]) { this.axes = axes; }
-  format() { return math.transpose(this.axes) }
+  constructor(axes: number[][], transpose = true) {
+    if (transpose) this.axes = math.transpose(axes); 
+    else this.axes = axes;
+  }
+  format() { return this.axes }
   filter(idx: number[]): Dataset {
     let filterRow = (row: number[]) => { return row.filter((d,i) => idx.includes(i)) }
-    const newaxes = this.axes.map(filterRow);
-    return new CSVDataset(newaxes);
+    const newaxes = this.axes.filter((e,i) => idx.includes(i));
+    return new CSVDataset(newaxes, false);
   }
 }
 // #endregion
