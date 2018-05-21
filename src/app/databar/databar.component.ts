@@ -110,12 +110,14 @@ export class DatabarComponent implements OnInit {
     // set the respective ranges for x/y
     this.set_ranges();
     // wait for data to load
-    let data = await this._data;
-    // let data = await this.downsample(data);
-    console.debug('filtered data', data.length);
+    let _data = await this._data;
+    let _format = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) }
+    let data1 =_data.map(_format);
+    console.debug('data1', data1[0].length, data1);
+    let data = this.downsample(data1);
     // stop loading-spinner, update domains
     this.stop_spinner();
-    this.set_domains(data);
+    this.set_domains(data1);
     // draw axes
     this.draw_xAxis();
     this.draw_yAxis();
@@ -133,19 +135,17 @@ export class DatabarComponent implements OnInit {
   private downsample(data) {
     console.debug('data', data);
     let _ds = (axis) => {
-      console.log('axis', axis);
-      console.count('_ds axis');
+      console.debug('AXIS', axis)
       const sampler = largestTriangleThreeBucket();
-      sampler.x((d,i) => {return d})
-             .y((d,i) => {return i})
+      sampler.x((d) => {return d.d})
+             .y((d) => {return d.i})
       // for now, constant bucket size
-      console.debug('x/y', sampler.x, sampler.y);
       sampler.bucketSize(10);
       return sampler(axis);
     }
     
     // return sampled data
-    return data.map((axis) => { console.log('AXIS', axis); return _ds(axis) });
+    return data.map((axis) => { return _ds(axis) });
   }
 
   private draw_xAxis() {
@@ -180,14 +180,15 @@ export class DatabarComponent implements OnInit {
     // set y-ranges
     this.y = d3.scaleLinear().rangeRound([this.height, 0]);
     // update line method to new ranges
-    this.line = d3.line().x((d,i) => this.x(i))
-                         .y((d,i) => this.y(d));
+    this.line = d3.line().x((d,i) => this.x(d.i))
+                         .y((d,i) => this.y(d.d));
   }
 
   private set_domains(axes) {
     this.x.domain([0, axes[0].length]);
     this.x0.domain(this.x.domain());
-    this.y.domain([d3.min(axes, (ax) => d3.min(ax)), d3.max(axes, (ax) => d3.max(ax))]);
+    this.y.domain([d3.min(axes, (ax) => d3.min(ax, (d) => d.d)), 
+                   d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
     console.debug('x domain', this.x.domain(), this.x.range());
     console.debug('x0 domain', this.x0.domain(), this.x0.range());
     console.debug('y domain', this.y.domain(), this.y.range());
