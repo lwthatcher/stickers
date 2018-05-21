@@ -1,9 +1,15 @@
 import { Component, OnInit, ElementRef, Input } from '@angular/core';
-import { DataloaderService, Dataset, SignalStream } from '../dataloader.service';
+import { DataloaderService, Dataset } from '../dataloader.service';
 import { parse } from "tfjs-npy";
 import { Spinner } from 'spin.js';
+import { largestTriangleThreeBucket } from 'd3fc-sample';
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
+
+interface datum {
+  d: number;
+  i: number;
+}
 
 @Component({
   selector: 'app-databar',
@@ -43,9 +49,10 @@ export class DatabarComponent implements OnInit {
   colors;
   // zoom handler
   zoom;
+  _old_bucket_size;
   // data references
   _dataset: Dataset;
-  _data: Promise<SignalStream>;
+  _data: Promise<Array<datum>[]>;
   // loading spinner
   spinner: Spinner;
   // #endregion
@@ -58,6 +65,10 @@ export class DatabarComponent implements OnInit {
   get width() { return this.el.nativeElement.offsetWidth - this.margin.left - this.margin.right; }
 
   get height() { return +this.svg.attr("height") - this.margin.top - this.margin.bottom; }
+
+  get points_per_pixel() { return (this.x.domain()[1] - this.x.domain()[0]) / (this.x.range()[1] - this.x.range()[0]) }
+
+  get bucket_size() { return Math.trunc(this.points_per_pixel / 2) }
   // #endregion
 
   // #region [Constructors]
@@ -93,37 +104,28 @@ export class DatabarComponent implements OnInit {
     // draw data (when it loads)
     this.start_spinner();
     this.draw();
+    this._old_bucket_size = this.bucket_size;
     // redraw if window resized
-    window.addEventListener('resize', (e) => {
-      console.debug('window resize', this.width, this.height, e);
-      this.clear();
-      this.draw();
-    })
+    window.addEventListener('resize', (e) => { this.resize(e) })
     // log when finished
-    console.info('databar init', this);
+    console.info('databar initialized', this);
   }
   // #endregion
 
   // #region [Plotting Methods]
   async draw() {
-    // set the x/y scales
-    this.x = d3.scaleLinear().rangeRound([0, this.width]);
-    this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
-    this.y = d3.scaleLinear().rangeRound([this.height, 0]);
-    this.line = d3.line()
-                  .x((d,i) => this.x(i))
-                  .y((d,i) => this.y(d));
+    // set the respective ranges for x/y
+    this.set_ranges();
     // wait for data to load
-    const data = await this._data;
+    let data = await this._data;
+    // stop loading-spinner once the domains are updated
+    await this.set_domains(data);
     this.stop_spinner();
-    this.set_domains(data);
     // draw axes
     this.draw_xAxis();
     this.draw_yAxis();
     // draw each signal
-    for (let j = 0; j < data.length; j++) {
-      this.plot_dim(data[j], j);
-    }
+    this.plot_signals(data);
   }
 
   clear() {
@@ -131,24 +133,44 @@ export class DatabarComponent implements OnInit {
     this.g_axes.selectAll("*").remove();
   }
 
-  draw_xAxis() {
+  private downsample(data) {
+    const sampler = largestTriangleThreeBucket();
+    sampler.x((d) => {return d.d})
+            .y((d) => {return d.i})
+    // adaptive bucket size
+    sampler.bucketSize(this.bucket_size);
+    // return sampled data
+    const result = data.map((axis) => { return sampler(axis) });
+    console.debug('downsampled:', data[0].length, result[0].length, this.bucket_size);
+    return result;
+  }
+
+  private draw_xAxis() {
     this.g_axes.append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + this.height + ')')
         .call(d3.axisBottom(this.x));
   }
 
-  draw_yAxis() {
+  private draw_yAxis() {
     this.g_axes.append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this.y));
   }
 
-  plot_dim(data, j) {
-    console.debug('plotting axis:', j, this.colors(j));
-    // draw line(s)
+  private async plot_signals(_data) {
+    // downsample first
+    _data = await Promise.resolve(_data);
+    let data = this.downsample(_data);
+    // draw each signal
+    for (let j = 0; j < data.length; j++) {
+      this.plot_signal(data[j], j);
+    }
+  }
+
+  private plot_signal(signal, j) {
     this.g_sigs.append("path")
-        .datum(data)
+        .datum(signal)
         .attr("fill", "none")
         .attr("clip-path", "url(#clip)")
         .attr("class", "line line-" + j.toString())
@@ -158,25 +180,37 @@ export class DatabarComponent implements OnInit {
         .attr("d", this.line);
   }
 
-  set_domains(axes) {
+  private set_ranges() {
+    // set x-ranges
+    this.x = d3.scaleLinear().rangeRound([0, this.width]);
+    this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
+    // set y-ranges
+    this.y = d3.scaleLinear().rangeRound([this.height, 0]);
+    // update line method to new ranges
+    this.line = d3.line().x((d,i) => this.x(d.i))
+                         .y((d,i) => this.y(d.d));
+  }
+
+  private async set_domains(axes) {
     this.x.domain([0, axes[0].length]);
     this.x0.domain(this.x.domain());
-    this.y.domain([d3.min(axes, (ax) => d3.min(ax)), d3.max(axes, (ax) => d3.max(ax))]);
-    console.debug('x domain', this.x.domain(), this.x.range());
-    console.debug('x0 domain', this.x0.domain(), this.x0.range());
-    console.debug('y domain', this.y.domain(), this.y.range());
+    this.y.domain([d3.min(axes, (ax) => d3.min(ax, (d) => d.d)), 
+                   d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
+    console.debug('domains/ranges', this.domains_and_ranges());
+    return Promise.resolve();
   }
   // #endregion
 
   // #region [Data Loading]
-  load_data(): Promise<SignalStream> {
+  load_data(): Promise<Array<datum>[]> {
     return this.dataloader.getData(this.dataset, this.dims)
         .then((_dataset) => this._dataset = _dataset)
-        .then(() => { console.info('loaded dataset', this._dataset) })
+        .then(() => { console.debug('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.format() })
+        .then((axes) => {return axes.map((axis) => { return Array.from(axis).map((d,i) => { return {d, i} })}) })
   }
 
-  start_spinner(): void {
+  private start_spinner(): void {
     const opts = {
       lines: 13, // The number of lines to draw
       length: 40, // The length of each line
@@ -201,12 +235,12 @@ export class DatabarComponent implements OnInit {
     this.spinner = new Spinner(opts).spin(target);
   }
 
-  stop_spinner() {
+  private stop_spinner() {
     this.spinner.stop();
   }
   // #endregion
 
-  // region [Event Handlers]
+  // #region [Event Handlers]
   clicked(event: any) {
     console.debug('clicked!', event);
     console.debug('svg', this.el.nativeElement, this.el);
@@ -214,13 +248,37 @@ export class DatabarComponent implements OnInit {
 
   zoomed() {
     const t = d3.event.transform;
+    // update bucket size
+    const bucket_delta = this._old_bucket_size - this.bucket_size;
+    const redraw = !(bucket_delta === 0);
+    this._old_bucket_size = this.bucket_size;
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
-    this.host.selectAll('g.signals > path.line').attr("d", this.line);
+    if (!redraw)
+      this.host.selectAll('g.signals > path.line').attr("d", this.line);
+    else {
+      this.host.selectAll('g.signals > path.line').remove();
+      this.plot_signals(this._data);
+    }
     // redraw x-axis
     this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis();
+    // log debug info
+    console.debug('zoom', this.bucket_size, bucket_delta, redraw);
   }
+
+  resize(event: any) {
+    console.debug('window resize', this.width, this.height);
+    this.clear();
+    this.draw();
+  }
+  // #endregion
+
+  // #region [Helper Methods]
+    private domains_and_ranges() {
+      let dr = (d) => {return [d.domain(), d.range()]}
+      return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
+    }
   // #endregion
 }

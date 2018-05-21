@@ -1979,6 +1979,20 @@
         "d3-transition": "1.1.1"
       }
     },
+    "d3fc-rebind": {
+      "version": "4.1.1",
+      "resolved": "https://registry.npmjs.org/d3fc-rebind/-/d3fc-rebind-4.1.1.tgz",
+      "integrity": "sha1-cMjWtj/uY9uzy1d8aHMt7VNfmzI="
+    },
+    "d3fc-sample": {
+      "version": "3.0.5",
+      "resolved": "https://registry.npmjs.org/d3fc-sample/-/d3fc-sample-3.0.5.tgz",
+      "integrity": "sha1-Wwp1jxoELhpiS2o35/Dd0Rrn+Go=",
+      "requires": {
+        "d3-array": "1.2.1",
+        "d3fc-rebind": "4.1.1"
+      }
+    },
     "dashdash": {
       "version": "1.14.1",
       "resolved": "https://registry.npmjs.org/dashdash/-/dashdash-1.14.1.tgz",

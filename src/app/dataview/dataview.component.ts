@@ -22,10 +22,16 @@ export class DataviewComponent implements OnInit {
     private dataloader: DataloaderService) { }
 
   ngOnInit() {
+    console.groupCollapsed('dataview init')
     this.dataset = this.route.snapshot.paramMap.get('dataset');
     this.format = this.route.snapshot.paramMap.get('format') || 'csv';
     this.dataloader.setDataset(this.dataset, this.format);
-    console.info('dataview init', this);
+    console.info('dataview initialized', this);
+  }
+
+  ngAfterViewInit() {
+    console.debug('dataview children initialized', this);
+    console.groupEnd();
   }
 
 }
