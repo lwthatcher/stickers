@@ -158,8 +158,9 @@ export class DatabarComponent implements OnInit {
         .call(d3.axisLeft(this.y));
   }
 
-  private plot_signals(_data) {
+  private async plot_signals(_data) {
     // downsample first
+    _data = await Promise.resolve(_data);
     let data = this.downsample(_data);
     // draw each signal
     for (let j = 0; j < data.length; j++) {
@@ -249,15 +250,22 @@ export class DatabarComponent implements OnInit {
     const t = d3.event.transform;
     // update bucket size
     const bucket_delta = this._old_bucket_size - this.bucket_size;
-    console.debug('zoom',this.bucket_size, this._old_bucket_size, bucket_delta);
+    const redraw = !(bucket_delta === 0);
     this._old_bucket_size = this.bucket_size;
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
-    this.host.selectAll('g.signals > path.line').attr("d", this.line);
+    if (!redraw)
+      this.host.selectAll('g.signals > path.line').attr("d", this.line);
+    else {
+      this.host.selectAll('g.signals > path.line').remove();
+      this.plot_signals(this._data);
+    }
     // redraw x-axis
     this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis();
+    // log debug info
+    console.debug('zoom', this.bucket_size, bucket_delta, redraw);
   }
 
   resize(event: any) {
