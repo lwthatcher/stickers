@@ -111,7 +111,8 @@ export class DatabarComponent implements OnInit {
     this.set_ranges();
     // wait for data to load
     let data = await this._data;
-    data = this.downsample(data);
+    // let data = await this.downsample(data);
+    console.debug('filtered data', data.length);
     // stop loading-spinner, update domains
     this.stop_spinner();
     this.set_domains(data);
@@ -130,13 +131,21 @@ export class DatabarComponent implements OnInit {
   }
 
   private downsample(data) {
-    const sampler = largestTriangleThreeBucket();
-    sampler.x((d,i) => d)
-           .y((d,i) => i)
-    // for now, constant bucket size
-    sampler.bucketSize(10);
+    console.debug('data', data);
+    let _ds = (axis) => {
+      console.log('axis', axis);
+      console.count('_ds axis');
+      const sampler = largestTriangleThreeBucket();
+      sampler.x((d,i) => {return d})
+             .y((d,i) => {return i})
+      // for now, constant bucket size
+      console.debug('x/y', sampler.x, sampler.y);
+      sampler.bucketSize(10);
+      return sampler(axis);
+    }
+    
     // return sampled data
-    return sampler(data);
+    return data.map((axis) => { console.log('AXIS', axis); return _ds(axis) });
   }
 
   private draw_xAxis() {
@@ -238,6 +247,9 @@ export class DatabarComponent implements OnInit {
     // redraw x-axis
     this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis();
+    // debug info
+    let points_per_pixel = (this.x.domain()[1] - this.x.domain()[0]) / (this.x.range()[1] - this.x.range()[0]);
+    console.debug('zoom',this.x.domain(), this.x.range(), points_per_pixel);
   }
   // #endregion
 }
