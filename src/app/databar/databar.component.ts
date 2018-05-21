@@ -6,6 +6,11 @@ import { largestTriangleThreeBucket } from 'd3fc-sample';
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 
+interface datum {
+  d: number;
+  i: number;
+}
+
 @Component({
   selector: 'app-databar',
   template: `
@@ -44,9 +49,10 @@ export class DatabarComponent implements OnInit {
   colors;
   // zoom handler
   zoom;
+  _old_bucket_size;
   // data references
   _dataset: Dataset;
-  _data: Promise<SignalStream>;
+  _data: Promise<Array<datum>[]>;
   // loading spinner
   spinner: Spinner;
   // #endregion
@@ -59,6 +65,10 @@ export class DatabarComponent implements OnInit {
   get width() { return this.el.nativeElement.offsetWidth - this.margin.left - this.margin.right; }
 
   get height() { return +this.svg.attr("height") - this.margin.top - this.margin.bottom; }
+
+  get points_per_pixel() { return (this.x.domain()[1] - this.x.domain()[0]) / (this.x.range()[1] - this.x.range()[0]) }
+
+  get bucket_size() { return Math.trunc(this.points_per_pixel / 2) }
   // #endregion
 
   // #region [Constructors]
@@ -99,6 +109,7 @@ export class DatabarComponent implements OnInit {
       console.debug('window resize', this.width, this.height, e);
       this.clear();
       this.draw();
+      this._old_bucket_size = this.bucket_size;
     })
     // log when finished
     console.info('databar initialized', this);
@@ -111,13 +122,10 @@ export class DatabarComponent implements OnInit {
     this.set_ranges();
     // wait for data to load
     let _data = await this._data;
-    let _format = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) }
-    let data1 =_data.map(_format);
-    console.debug('data1', data1[0].length, data1);
-    let data = this.downsample(data1);
+    let data = this.downsample(_data);
     // stop loading-spinner, update domains
     this.stop_spinner();
-    this.set_domains(data1);
+    this.set_domains(_data);
     // draw axes
     this.draw_xAxis();
     this.draw_yAxis();
@@ -139,8 +147,8 @@ export class DatabarComponent implements OnInit {
       const sampler = largestTriangleThreeBucket();
       sampler.x((d) => {return d.d})
              .y((d) => {return d.i})
-      // for now, constant bucket size
-      sampler.bucketSize(10);
+      // adaptive bucket size
+      sampler.bucketSize(this.bucket_size);
       return sampler(axis);
     }
     
@@ -196,11 +204,12 @@ export class DatabarComponent implements OnInit {
   // #endregion
 
   // #region [Data Loading]
-  load_data(): Promise<SignalStream> {
+  load_data(): Promise<Array<datum>[]> {
     return this.dataloader.getData(this.dataset, this.dims)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.debug('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.format() })
+        .then((axes) => {return axes.map((axis) => { return Array.from(axis).map((d,i) => { return {d, i} })}) })
   }
 
   private start_spinner(): void {
@@ -241,6 +250,9 @@ export class DatabarComponent implements OnInit {
 
   zoomed() {
     const t = d3.event.transform;
+    // update bucket size
+    const bucket_delta = this._old_bucket_size - this.bucket_size;
+    this._old_bucket_size = this.bucket_size;
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
@@ -249,8 +261,8 @@ export class DatabarComponent implements OnInit {
     this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis();
     // debug info
-    let points_per_pixel = (this.x.domain()[1] - this.x.domain()[0]) / (this.x.range()[1] - this.x.range()[0]);
-    console.debug('zoom',this.x.domain(), this.x.range(), points_per_pixel);
+    // let points_per_pixel = (this.x.domain()[1] - this.x.domain()[0]) / (this.x.range()[1] - this.x.range()[0]);
+    console.debug('zoom',this.x.domain(), this.x.range(), this.bucket_size);
   }
   // #endregion
 }
