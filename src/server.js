@@ -6,6 +6,7 @@ const path = require('path');
 const cors = require('cors')
 
 const app = express();
+const WORKSPACES_PATH = path.join('/users', 'data', 'workspaces');
 
 var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
@@ -28,6 +29,13 @@ app.route('/api/data/csv/:dataset').get((req, res) => {
     const b = fs.readFileSync(_path, 'utf8');
     res.send(b);
 });
+
+app.route('/api/list-workspaces').get((req, res) => {
+    console.log('PATH', WORKSPACES_PATH, __dirname);
+    const files = fs.readdirSync(WORKSPACES_PATH);
+    console.log('FILES', files);
+    res.send(files);
+})
 
 
 app.listen(3000, () => {
