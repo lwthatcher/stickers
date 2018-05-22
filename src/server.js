@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 
 // #region [Helper Methods]
-function listWorkspaces(dir, filelist=[]) {
+function listWorkspaces(dir, filelist={}) {
     // paths relative to workspaces directory
     let _path;
     if (dir) _path = path.join(WORKSPACES_PATH, dir);
@@ -32,12 +32,14 @@ function listWorkspaces(dir, filelist=[]) {
         let dirFile;
         if (dir) dirFile = path.join(dir, file);
         else dirFile = file;
+        // if file is a directory
         try { filelist = listWorkspaces(dirFile, filelist) }
+        // if it is not a directory
         catch (err) {
             if (err.code === 'ENOTDIR' || err.code === 'EBUSY') {
                 if (file.endsWith('.workspace.json')) {
                     let ws = dir.split(path.sep).join('.');
-                    filelist = [...filelist, ws];
+                    filelist[ws] = workspaceInfo(path.join(WORKSPACES_PATH, dirFile));
                 }
             }
             else throw err;
@@ -45,6 +47,10 @@ function listWorkspaces(dir, filelist=[]) {
     });
     // return result
     return filelist;
+}
+
+function workspaceInfo(file) {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 // #endregion
 
