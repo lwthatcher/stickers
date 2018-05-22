@@ -5,8 +5,12 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors')
 
-const app = express();
+// #region [Variables]
 const WORKSPACES_PATH = path.join('/users', 'data', 'workspaces');
+// #endregion
+
+// #region [Express Setup]
+const app = express();
 
 var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
@@ -14,7 +18,37 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
+// #endregion
 
+
+// #region [Helper Methods]
+function listWorkspaces(dir, filelist=[]) {
+    // paths relative to workspaces directory
+    let _path;
+    if (dir) _path = path.join(WORKSPACES_PATH, dir);
+    else _path = WORKSPACES_PATH;
+    // recursively look in each directory
+    fs.readdirSync(_path).forEach(file => {
+        let dirFile;
+        if (dir) dirFile = path.join(dir, file);
+        else dirFile = file;
+        try { filelist = listWorkspaces(dirFile, filelist) }
+        catch (err) {
+            if (err.code === 'ENOTDIR' || err.code === 'EBUSY') {
+                if (file.endsWith('.workspace.json')) {
+                    let ws = dir.split(path.sep).join('.');
+                    filelist = [...filelist, ws];
+                }
+            }
+            else throw err;
+        }
+    });
+    // return result
+    return filelist;
+}
+// #endregion
+
+// #region [API Routes]
 app.route('/api/data/tensors/:dataset').get((req, res) => {
     const dataset = req.params['dataset'];
     const _path = path.join(__dirname, '..', 'data', dataset + '.npy');
@@ -31,11 +65,10 @@ app.route('/api/data/csv/:dataset').get((req, res) => {
 });
 
 app.route('/api/list-workspaces').get((req, res) => {
-    console.log('PATH', WORKSPACES_PATH, __dirname);
-    const files = fs.readdirSync(WORKSPACES_PATH);
-    console.log('FILES', files);
+    const files = listWorkspaces();
     res.send(files);
-})
+});
+// #endregion
 
 
 app.listen(3000, () => {
