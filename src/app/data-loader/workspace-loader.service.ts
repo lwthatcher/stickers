@@ -7,9 +7,9 @@ export class WorkspaceLoaderService {
 
   constructor(private http: HttpClient) { }
 
-  listWorkspaces() {
+  listWorkspaces():  Observable<Object[]>{
     console.debug('retrieving list of workspaces');
-    return this.http.get('/api/list-workspaces');
+    return this.http.get('/api/list-workspaces') as Observable<Object[]>;
   }
 
 }
