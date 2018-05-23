@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.route.data.subscribe((workspaces) => {this.workspaces = workspaces});
+    this.route.data.subscribe((data) => {this.workspaces = data.workspaces});
     console.log('workspaces', this.workspaces);
   }
 
