@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { DataloaderService } from './data-loader/data-loader.service';
 import { AppComponent } from './app.component';
@@ -23,7 +23,8 @@ import { WorkspaceLoaderService } from './data-loader/workspace-loader.service';
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule
   ],
   providers: [DataloaderService, WorkspaceResolver, WorkspaceLoaderService],
   bootstrap: [AppComponent]
