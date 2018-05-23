@@ -3,13 +3,13 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
 
-import { DataloaderService } from './data-loader.service';
+import { DataloaderService } from './data-loader/data-loader.service';
 import { AppComponent } from './app.component';
 import { DatabarComponent } from './databar/databar.component';
 import { DataviewComponent } from './dataview/dataview.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
-import { WorkspaceResolver } from './workspace-resolver.service';
+import { WorkspaceResolver } from './data-loader/workspace-resolver.service';
 
 
 @NgModule({
