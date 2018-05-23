@@ -1,0 +1,16 @@
+<h3>Home</h3>
+<div>
+  <ul class="list-group">
+   <li *ngFor="let dataset of datasets" class="list-group-item d-flex justify-content-between align-items-center">
+    <a routerLink="/display/{{dataset.name}}/{{dataset.format}}">{{dataset.name}}</a>
+    <span class="badge badge-primary badge-pill">{{dataset.format}}</span>
+   </li>
+  </ul>
+</div>
+<hr>
+
+<div *ngFor="let workspace of workspaces" class="card">
+  <div class="card-body">
+    <h5 class="card-title">{{workspace.name}}</h5>
+  </div>
+</div>

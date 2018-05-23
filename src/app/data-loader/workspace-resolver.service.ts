@@ -6,13 +6,14 @@ import { WorkspaceInfo } from './workspace-info';
 import { WorkspaceLoaderService } from './workspace-loader.service';
 
 @Injectable()
-export class WorkspaceResolver implements Resolve<WorkspaceInfo> {
+export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
 
   constructor(private loader: WorkspaceLoaderService) { }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<WorkspaceInfo> {
-    let workspaces = this.loader.listWorkspaces()
-    return workspaces.pipe(map((workspaces) => { return new Map(Object.entries(workspaces))} ))
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<WorkspaceInfo[]> {
+    let workspaces = this.loader.listWorkspaces();
+    let convert = (ws: Object[]) => { return ws.map((workspace) => {return new WorkspaceInfo(workspace)}) }
+    return workspaces.pipe(map(convert));
   }
 
   
