@@ -13,6 +13,11 @@
     <div *ngFor="let workspace of workspaces" class="card">
     <div class="card-body">
         <h5 class="card-title">{{workspace.name}}</h5>
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let entry of workspace.data | keys">
+                {{ entry.key }}
+            </li>
+        </ul>
     </div>
     </div>
 </div>

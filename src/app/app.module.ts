@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
 import { WorkspaceResolver } from './data-loader/workspace-resolver.service';
 import { WorkspaceLoaderService } from './data-loader/workspace-loader.service';
+import { KeysPipe } from './keys.pipe';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { WorkspaceLoaderService } from './data-loader/workspace-loader.service';
     AppComponent,
     DatabarComponent,
     DataviewComponent,
-    HomeComponent
+    HomeComponent,
+    KeysPipe
   ],
   imports: [
     BrowserModule,
