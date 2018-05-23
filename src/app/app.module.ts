@@ -10,6 +10,7 @@ import { DataviewComponent } from './dataview/dataview.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
 import { WorkspaceResolver } from './data-loader/workspace-resolver.service';
+import { WorkspaceLoaderService } from './data-loader/workspace-loader.service';
 
 
 @NgModule({
@@ -24,7 +25,7 @@ import { WorkspaceResolver } from './data-loader/workspace-resolver.service';
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [DataloaderService, WorkspaceResolver],
+  providers: [DataloaderService, WorkspaceResolver, WorkspaceLoaderService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

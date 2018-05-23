@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -19,10 +21,13 @@ export class HomeComponent implements OnInit {
   datasets = [{name:'pills-blue', format:'tensor'},
               {name:'pills-blue', format:'csv'},
               {name:'run-pink', format:'csv'}];
+  workspaces;
 
-  constructor() { }
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.route.data.subscribe((workspaces) => {this.workspaces = workspaces});
+    console.log('workspaces', this.workspaces);
   }
 
 }
