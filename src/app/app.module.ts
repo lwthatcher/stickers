@@ -3,12 +3,13 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
 
-import { DataloaderService } from './dataloader.service';
+import { DataloaderService } from './data-loader.service';
 import { AppComponent } from './app.component';
 import { DatabarComponent } from './databar/databar.component';
 import { DataviewComponent } from './dataview/dataview.component';
-import { AppRoutingModule } from './/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
+import { WorkspaceResolver } from './workspace-resolver.service';
 
 
 @NgModule({
@@ -23,7 +24,7 @@ import { HomeComponent } from './home/home.component';
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [DataloaderService],
+  providers: [DataloaderService, WorkspaceResolver],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

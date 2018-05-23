@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, Input } from '@angular/core';
-import { DataloaderService, Dataset } from '../dataloader.service';
+import { DataloaderService, Dataset } from '../data-loader.service';
 import { parse } from "tfjs-npy";
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
