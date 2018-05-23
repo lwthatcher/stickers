@@ -80,11 +80,30 @@ app.route('/api/data/csv/:dataset').get((req, res) => {
 });
 
 app.route('/api/data/:workspace/:dataset').get((req, res) => {
+    // parse params
     const workspace = req.params['workspace'];
     const dataset = req.params['dataset'];
+    // load data path/format
     let data = parse_workspace(ws_path(workspace))['data'][dataset];
-    console.log('data:', workspace, dataset, data);
-    res.send(data);
+    let _path = path.join(WORKSPACES_PATH, data.path);
+    let _format = data.format;
+    // send response based on format
+    switch (_format) {
+        case 'csv':
+            const csv = fs.readFileSync(_path, 'utf8');
+            res.send(csv);
+            break;
+        case 'tensor':
+            const tensor = fs.readFileSync(_path, null);
+            res.write(tensor, 'binary');
+            res.end(null, 'binary');
+            break;
+        case 'bdl':
+            res.sendStatus(501);
+            break;
+        default:
+            res.status(400).send('Bad Request: unrecognized format "' + _format + '"')
+    }
 });
 
 app.route('/api/list-workspaces').get((req, res) => {
