@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 
 // #region [Helper Methods]
-function listWorkspaces(dir, filelist=[]) {
+function list_workspaces(dir, filelist=[]) {
     // paths relative to workspaces directory
     let _path;
     if (dir) _path = path.join(WORKSPACES_PATH, dir);
@@ -33,13 +33,13 @@ function listWorkspaces(dir, filelist=[]) {
         if (dir) dirFile = path.join(dir, file);
         else dirFile = file;
         // if file is a directory
-        try { filelist = listWorkspaces(dirFile, filelist) }
+        try { filelist = list_workspaces(dirFile, filelist) }
         // if it is not a directory
         catch (err) {
             if (err.code === 'ENOTDIR' || err.code === 'EBUSY') {
                 if (file.endsWith('.workspace.json')) {
                     let ws = dir.split(path.sep).join('.');
-                    filelist = [...filelist, workspaceInfo(dirFile)];
+                    filelist = [...filelist, parse_workspace(dirFile)];
                 }
             }
             else throw err;
@@ -49,13 +49,21 @@ function listWorkspaces(dir, filelist=[]) {
     return filelist;
 }
 
-function workspaceInfo(file) {
+function parse_workspace(file) {
     let ws_path = path.join(WORKSPACES_PATH, file);
     return JSON.parse(fs.readFileSync(ws_path, 'utf8'));
+}
+
+function ws_path(workspace) {
+    let ws = workspace.split('.');
+    let ws_file = ws[ws.length-1] + '.workspace.json'
+    return path.join(...ws, ws_file);
 }
 // #endregion
 
 // #region [API Routes]
+
+// TODO: deprecate
 app.route('/api/data/tensors/:dataset').get((req, res) => {
     const dataset = req.params['dataset'];
     const _path = path.join(__dirname, '..', 'data', dataset + '.npy');
@@ -63,7 +71,7 @@ app.route('/api/data/tensors/:dataset').get((req, res) => {
     res.write(b, 'binary');
     res.end(null, 'binary');
 });
-
+// TODO: deprecate
 app.route('/api/data/csv/:dataset').get((req, res) => {
     const dataset = req.params['dataset'];
     const _path = path.join(__dirname, '..', 'data', dataset + '.csv');
@@ -71,8 +79,16 @@ app.route('/api/data/csv/:dataset').get((req, res) => {
     res.send(b);
 });
 
+app.route('/api/data/:workspace/:dataset').get((req, res) => {
+    const workspace = req.params['workspace'];
+    const dataset = req.params['dataset'];
+    let data = parse_workspace(ws_path(workspace))['data'][dataset];
+    console.log('data:', workspace, dataset, data);
+    res.send(data);
+});
+
 app.route('/api/list-workspaces').get((req, res) => {
-    const files = listWorkspaces();
+    const files = list_workspaces();
     res.send(files);
 });
 // #endregion
