@@ -14,14 +14,26 @@ export class WorkspaceInfo {
         this._info = info;
         this.name = this._workspace.join('.');
     }
+
+    getDataInfo(dataset: string): DataInfo {
+        let result = this.data[dataset];
+        result.workspace = this.name;
+        result.name = dataset;
+        return result;
+    }
 }
 
 export interface DataInfo {
+    // passed in params
+    workspace: string;
+    name: string;
+    // required params
     format: string;
     labelled: boolean | string;
     Hz: number;
     channels: string;
     path: string;
+    // optional params
     flashes?: number[];
     visible?: boolean;
     crop?: number[];

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { DataInfo } from './workspace-info';
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
@@ -14,7 +15,8 @@ export interface Dataset {
 }
 type Axes = Array<Axis>
 type Axis = tf.Tensor | number[]
-export type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
+type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
+type RawData = ArrayBuffer | string;
 // #endregion
 
 // #region [Helper Classes]
@@ -45,29 +47,26 @@ class CSVDataset implements Dataset {
 }
 // #endregion
 
-// #region [Service]
+
 @Injectable()
 export class DataloaderService {
-  private datasets: Map<String,Promise<Dataset>>;
 
+  // #region [Constructors]
+  private datasets: Map<String,Promise<Dataset>>;
   constructor(private http: HttpClient) { 
     this.datasets = new Map();
   }
+  // #endregion
 
-  setDataset(dataset: string, format: string) {
-    if (format == 'tensor') {
-      this.datasets.set(dataset, this.fetchTensors(dataset));
-      console.debug('added dataset', dataset, this.datasets);
-    }
-    else if (format == 'csv') {
-      this.datasets.set(dataset, this.fetchCSV(dataset));
-      console.debug('added dataset', dataset, this.datasets);
-    }
-    else {
-      console.error('Invalid format: "' + format + '" for dataset.', dataset);
-      console.trace('Stack Trace:');
-    }
-    
+  // #region [Public Methods]
+  loadDataset(data: DataInfo) {
+    let uri = '/api/data/' + data.workspace + '/' + data.name;
+    let options = this.getOptions(data.format);
+    let result = this.http.get(uri, options).toPromise()
+                     .then((d: RawData) => { return this.toDataset(d, data.format) });
+    this.datasets.set(data.name, result);
+    console.log('LOADING DATASET', result, data, this);
+    return this.datasets.get(data.name);
   }
 
   getData(dataset: string, idx: number[]): Promise<Dataset> {
@@ -76,7 +75,9 @@ export class DataloaderService {
                         .then((dataset) => {console.debug('datset type', typeof dataset); return dataset;})
                         .then((dataset) => dataset.filter(idx))
   }
+  // #endregion
 
+  // #region [Helper Methods]
   private fetchTensors(dataset: string): Promise<TensorDataset> {
     return this.http.get('/api/data/tensors/' + dataset, {responseType: 'arraybuffer'})
                 .toPromise()
@@ -91,6 +92,26 @@ export class DataloaderService {
                .toPromise()
                .then((str) => { return d3.csvParseRows(str, asNumber) })
                .then((axes) => { return new CSVDataset(axes) })
+  }
+
+  private toDataset(d: RawData, format: string): Dataset {
+    if (format === 'tensor') {
+      let tensors = parse(d as ArrayBuffer);
+      let axes = tf.split(tensors, tensors.shape[1], 1);
+      return new TensorDataset(axes);
+    }
+    else if (format === 'csv') {
+      let asNumber = (d: Array<string>) => { return d.map((di) => +di) };
+      let axes = d3.csvParseRows(d, asNumber);
+      return new CSVDataset(axes);
+    }
+    else throw new TypeError('unrecognized or unsupported format type: ' + format);
+  }
+
+  private getOptions(format: string): any {
+    if (format === 'tensor') return { responseType: 'arraybuffer' }
+    else if (format === 'csv') return { responseType: 'text' }
+    else throw new TypeError('unrecognized or unsupported format type: ' + format);
   }
   // #endregion
 }

@@ -33,10 +33,10 @@ export class DataviewComponent implements OnInit {
     this.format = this.route.snapshot.paramMap.get('format') || 'csv';
     // get resolved data
     this.info = this.route.snapshot.data.workspace[0];
-    this.data_info = this.info.data[this.dataset];
+    this.data_info = this.info.getDataInfo(this.dataset);
     console.debug('WS INFO', this.info, this.data_info);
     // specify which data to load
-    this.dataloader.setDataset(this.dataset, this.format);
+    this.dataloader.loadDataset(this.data_info);
     console.info('dataview initialized', this);
   }
 
