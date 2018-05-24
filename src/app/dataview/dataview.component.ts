@@ -15,6 +15,7 @@ export class DataviewComponent implements OnInit {
   dimensions = [[0,1,2], [3,4,5], [6,7,8], [9,10], [11, 12]];
   dataset: string;
   format: string;
+  workspace: string;
 
   constructor(
     private route: ActivatedRoute, 
@@ -23,8 +24,10 @@ export class DataviewComponent implements OnInit {
 
   ngOnInit() {
     console.groupCollapsed('dataview init')
+    this.workspace = this.route.snapshot.paramMap.get('workspace');
     this.dataset = this.route.snapshot.paramMap.get('dataset');
     this.format = this.route.snapshot.paramMap.get('format') || 'csv';
+    this.route.data.subscribe((data) => {console.log('dataview route data:', this.workspace, this.dataset, this.format, data)})
     this.dataloader.setDataset(this.dataset, this.format);
     console.info('dataview initialized', this);
   }
