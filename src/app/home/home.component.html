@@ -14,8 +14,9 @@
         <div class="card-body">
             <h5 class="card-title">{{workspace.name}}</h5>
             <ul class="list-group">
-                <li class="list-group-item" *ngFor="let entry of workspace.data | keys">
-                    <a routerLink="/workspace/{{workspace.name}}/{{entry.key}}">{{ entry.key }}</a>
+                <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let dataset of workspace.visibleData">
+                    <a routerLink="/workspace/{{workspace.name}}/{{dataset.name}}">{{dataset.name}}</a>
+                    <span class="badge badge-primary badge-pill">{{dataset.format}}</span>
                 </li>
             </ul>
         </div>

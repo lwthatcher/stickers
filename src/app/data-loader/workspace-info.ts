@@ -1,28 +1,53 @@
 export class WorkspaceInfo {
-    data: Object[];
+    // #region [Properties]
+    _data: Object;
     labels: Object[];
     video: Object[];
     name: string;
-    _workspace: string[];
     _info;
+    // #endregion
 
+    // #endregion [Constructor]
     constructor(info) { 
-        this.data = info.data;
+        this._data = info.data;
         this.labels = info.labels;
         this.video = info.video;
-        this._workspace = info.workspace;
         this._info = info;
-        this.name = this._workspace.join('.');
+        this.name = info.workspace.join('.');
+    }
+    // #endregion
+
+    // #region [Accessors]
+    get data(): DataInfo[] {
+        return Object.entries(this._data).map(entry => this.toInfo(entry));
     }
 
-    getDataInfo(dataset: string): DataInfo {
-        let result = this.data[dataset];
-        result.workspace = this.name;
-        result.name = dataset;
-        return result;
+    get visibleData(): DataInfo[] {
+        let visible = (data: DataInfo) => { return !data.hide }
+        return this.data.filter(visible);
     }
+    // #endregion
+
+    // #region [Public Methods]
+    getDataInfo(dataset: string): DataInfo {
+        let info = this._data[dataset];
+        info.workspace = this.name;
+        info.name = dataset;
+        return info;
+    }
+    // #endregion
+
+    // #region [Helper Methods]
+    private toInfo(entry): DataInfo {
+        let [dataset, info] = entry;
+        info.workspace = this.name;
+        info.name = dataset;
+        return info;
+    }
+    // #endregion
 }
 
+// #region [Interfaces]
 export interface DataInfo {
     // passed in params
     workspace: string;
@@ -35,6 +60,7 @@ export interface DataInfo {
     path: string;
     // optional params
     flashes?: number[];
-    visible?: boolean;
+    hide?: boolean;
     crop?: number[];
 }
+// #endregion
