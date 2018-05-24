@@ -78,22 +78,6 @@ export class DataloaderService {
   // #endregion
 
   // #region [Helper Methods]
-  private fetchTensors(dataset: string): Promise<TensorDataset> {
-    return this.http.get('/api/data/tensors/' + dataset, {responseType: 'arraybuffer'})
-                .toPromise()
-                .then((b) => parse(b))
-                .then(t => { return tf.split(t, t.shape[1], 1) })
-                .then((axes) => { return new TensorDataset(axes) })
-  }
-
-  private fetchCSV(dataset: string): Promise<CSVDataset> {
-    let asNumber = (d: Array<string>) => { return d.map((di) => +di) }
-    return this.http.get('/api/data/csv/' + dataset, {responseType: 'text'})
-               .toPromise()
-               .then((str) => { return d3.csvParseRows(str, asNumber) })
-               .then((axes) => { return new CSVDataset(axes) })
-  }
-
   private toDataset(d: RawData, format: string): Dataset {
     if (format === 'tensor') {
       let tensors = parse(d as ArrayBuffer);

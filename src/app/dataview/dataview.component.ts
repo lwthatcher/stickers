@@ -20,10 +20,7 @@ export class DataviewComponent implements OnInit {
   info: WorkspaceInfo;
   data_info: DataInfo;
 
-  constructor(
-    private route: ActivatedRoute,
-    private location: Location, 
-    private dataloader: DataloaderService) { }
+  constructor(private route: ActivatedRoute, private dataloader: DataloaderService) { }
 
   ngOnInit() {
     console.groupCollapsed('dataview init')
@@ -34,7 +31,6 @@ export class DataviewComponent implements OnInit {
     // get resolved data
     this.info = this.route.snapshot.data.workspace[0];
     this.data_info = this.info.getDataInfo(this.dataset);
-    console.debug('WS INFO', this.info, this.data_info);
     // specify which data to load
     this.dataloader.loadDataset(this.data_info);
     console.info('dataview initialized', this);

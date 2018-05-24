@@ -1,9 +1,10 @@
-// Get dependencies
+// #region [Imports]
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
-const cors = require('cors')
+const cors = require('cors');
+// #endregion
 
 // #region [Variables]
 const WORKSPACES_PATH = path.join('/users', 'data', 'workspaces');
@@ -20,6 +21,39 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 // #endregion
 
+// #region [API Routes]
+app.route('/api/data/:workspace/:dataset').get((req, res) => {
+    // parse params
+    const workspace = req.params['workspace'];
+    const dataset = req.params['dataset'];
+    // load data path/format
+    let data = parse_workspace(ws_path(workspace))['data'][dataset];
+    let _path = path.join(WORKSPACES_PATH, data.path);
+    let _format = data.format;
+    // send response based on format
+    switch (_format) {
+        case 'csv':
+            const csv = fs.readFileSync(_path, 'utf8');
+            res.send(csv);
+            break;
+        case 'tensor':
+            const tensor = fs.readFileSync(_path, null);
+            res.write(tensor, 'binary');
+            res.end(null, 'binary');
+            break;
+        case 'bdl':
+            res.sendStatus(501);
+            break;
+        default:
+            res.status(400).send('Bad Request: unrecognized format "' + _format + '"')
+    }
+});
+
+app.route('/api/list-workspaces').get((req, res) => {
+    const files = list_workspaces();
+    res.send(files);
+});
+// #endregion
 
 // #region [Helper Methods]
 function list_workspaces(dir, filelist=[]) {
@@ -61,58 +95,8 @@ function ws_path(workspace) {
 }
 // #endregion
 
-// #region [API Routes]
-
-// TODO: deprecate
-app.route('/api/data/tensors/:dataset').get((req, res) => {
-    const dataset = req.params['dataset'];
-    const _path = path.join(__dirname, '..', 'data', dataset + '.npy');
-    const b = fs.readFileSync(_path, null);
-    res.write(b, 'binary');
-    res.end(null, 'binary');
-});
-// TODO: deprecate
-app.route('/api/data/csv/:dataset').get((req, res) => {
-    const dataset = req.params['dataset'];
-    const _path = path.join(__dirname, '..', 'data', dataset + '.csv');
-    const b = fs.readFileSync(_path, 'utf8');
-    res.send(b);
-});
-
-app.route('/api/data/:workspace/:dataset').get((req, res) => {
-    // parse params
-    const workspace = req.params['workspace'];
-    const dataset = req.params['dataset'];
-    // load data path/format
-    let data = parse_workspace(ws_path(workspace))['data'][dataset];
-    let _path = path.join(WORKSPACES_PATH, data.path);
-    let _format = data.format;
-    // send response based on format
-    switch (_format) {
-        case 'csv':
-            const csv = fs.readFileSync(_path, 'utf8');
-            res.send(csv);
-            break;
-        case 'tensor':
-            const tensor = fs.readFileSync(_path, null);
-            res.write(tensor, 'binary');
-            res.end(null, 'binary');
-            break;
-        case 'bdl':
-            res.sendStatus(501);
-            break;
-        default:
-            res.status(400).send('Bad Request: unrecognized format "' + _format + '"')
-    }
-});
-
-app.route('/api/list-workspaces').get((req, res) => {
-    const files = list_workspaces();
-    res.send(files);
-});
-// #endregion
-
-
+// #region [Server]
 app.listen(3000, () => {
     console.log('Node server listening on port: 3000');
 });
+// #endregion

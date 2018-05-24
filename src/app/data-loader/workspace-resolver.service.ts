@@ -24,7 +24,6 @@ export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
 
   // #region [Implementation]
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<WorkspaceInfo[]> {
-    console.debug('RESOLVING WORKSPACE(S)', route, state);
     if ('workspace' in route.params) {
       let finder = this.find(route.params.workspace);
       return this.workspaces.pipe(map(finder));
