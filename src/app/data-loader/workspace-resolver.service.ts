@@ -15,7 +15,6 @@ export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
     let convert = (ws: Object[]) => { return ws.map((workspace) => {return new WorkspaceInfo(workspace)}) }
     return workspaces.pipe(map(convert));
   }
-
-  
-
 }
+
+// TODO: add resolver for individual workspace-info
