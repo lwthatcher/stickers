@@ -7,7 +7,7 @@ import { WorkspaceResolver } from './data-loader/workspace-resolver.service';
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent, resolve: {workspaces: WorkspaceResolver} },
-  { path: 'workspace/:workspace/:dataset', component: DataviewComponent },
+  { path: 'workspace/:workspace/:dataset', component: DataviewComponent, resolve: {workspaces: WorkspaceResolver} },
   { path: 'display/:dataset', component: DataviewComponent },
   { path: 'display/:dataset/:format', component: DataviewComponent }
 ]

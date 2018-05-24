@@ -1,4 +1,4 @@
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterState } from '@angular/router';
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
@@ -16,17 +16,22 @@ export class DataviewComponent implements OnInit {
   dataset: string;
   format: string;
   workspace: string;
+  state: RouterState;
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
+    private router: Router, 
     private location: Location, 
-    private dataloader: DataloaderService) { }
+    private dataloader: DataloaderService) { 
+      this.state = router.routerState;
+    }
 
   ngOnInit() {
     console.groupCollapsed('dataview init')
     this.workspace = this.route.snapshot.paramMap.get('workspace');
     this.dataset = this.route.snapshot.paramMap.get('dataset');
     this.format = this.route.snapshot.paramMap.get('format') || 'csv';
+    console.log('ROUTE STATE', this.state, this);
     this.route.data.subscribe((data) => {console.log('dataview route data:', this.workspace, this.dataset, this.format, data)})
     this.dataloader.setDataset(this.dataset, this.format);
     console.info('dataview initialized', this);

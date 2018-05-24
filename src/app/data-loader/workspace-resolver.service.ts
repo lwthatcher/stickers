@@ -7,14 +7,19 @@ import { WorkspaceLoaderService } from './workspace-loader.service';
 
 @Injectable()
 export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
+  _workspaces: Observable<Object[]>;
 
   constructor(private loader: WorkspaceLoaderService) { }
 
+  get workspaces() {
+    if (!this._workspaces)
+      this._workspaces = this.loader.listWorkspaces();
+    return this._workspaces;
+  }
+
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<WorkspaceInfo[]> {
-    let workspaces = this.loader.listWorkspaces();
+    let ws = this.workspaces;
     let convert = (ws: Object[]) => { return ws.map((workspace) => {return new WorkspaceInfo(workspace)}) }
-    return workspaces.pipe(map(convert));
+    return ws.pipe(map(convert));
   }
 }
-
-// TODO: add resolver for individual workspace-info
