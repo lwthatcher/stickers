@@ -15,3 +15,14 @@ export class WorkspaceInfo {
         this.name = this._workspace.join('.');
     }
 }
+
+export interface DataInfo {
+    format: string;
+    labelled: boolean | string;
+    Hz: number;
+    channels: string;
+    path: string;
+    flashes?: number[];
+    visible?: boolean;
+    crop?: number[];
+}

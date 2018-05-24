@@ -1,7 +1,8 @@
-import { ActivatedRoute, Router, RouterState } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
+import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 
 @Component({
   selector: 'app-dataview',
@@ -16,23 +17,25 @@ export class DataviewComponent implements OnInit {
   dataset: string;
   format: string;
   workspace: string;
-  state: RouterState;
+  info: WorkspaceInfo;
+  data_info: DataInfo;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router, 
     private location: Location, 
-    private dataloader: DataloaderService) { 
-      this.state = router.routerState;
-    }
+    private dataloader: DataloaderService) { }
 
   ngOnInit() {
     console.groupCollapsed('dataview init')
+    // get parameters
     this.workspace = this.route.snapshot.paramMap.get('workspace');
     this.dataset = this.route.snapshot.paramMap.get('dataset');
     this.format = this.route.snapshot.paramMap.get('format') || 'csv';
-    console.log('ROUTE STATE', this.state, this);
-    this.route.data.subscribe((data) => {console.log('dataview route data:', this.workspace, this.dataset, this.format, data)})
+    // get resolved data
+    this.info = this.route.snapshot.data.workspace[0];
+    this.data_info = this.info.data[this.dataset];
+    console.debug('WS INFO', this.info, this.data_info);
+    // specify which data to load
     this.dataloader.setDataset(this.dataset, this.format);
     console.info('dataview initialized', this);
   }
