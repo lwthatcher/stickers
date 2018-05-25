@@ -55,7 +55,6 @@ export class DatabarComponent implements OnInit, OnChanges {
   colors;
   // zoom handler
   _zoom;
-  _old_bucket_size;
   // data references
   _dataset: Dataset;
   _data: Promise<Array<datum>[]>;
@@ -110,7 +109,6 @@ export class DatabarComponent implements OnInit, OnChanges {
     // draw data (when it loads)
     this.start_spinner();
     this.draw();
-    this._old_bucket_size = this.bucket_size;
     // redraw if window resized
     window.addEventListener('resize', (e) => { this.resize(e) })
     // log when finished
@@ -243,7 +241,9 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   private downsample(data) {
+    // only downsample if enabled
     if (!this.enable_downsampling) return data;
+    // setup sampler
     const sampler = largestTriangleThreeBucket();
     sampler.x((d) => {return d.d})
            .y((d) => {return d.i})
@@ -265,13 +265,10 @@ export class DatabarComponent implements OnInit, OnChanges {
     console.debug('window resize', this.width, this.height);
     this.clear();
     this.draw();
+    this.r_clip.attr('width', this.width);
   }
 
   updateZoom(t) {
-    // update bucket size
-    const bucket_delta = this._old_bucket_size - this.bucket_size;
-    const redraw = !(bucket_delta === 0);
-    this._old_bucket_size = this.bucket_size;
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
