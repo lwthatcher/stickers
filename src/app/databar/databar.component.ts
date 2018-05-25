@@ -27,20 +27,7 @@ interface Selection {
 
 @Component({
   selector: 'app-databar',
-  template: `
-    <svg width="100%" class="databar" (click)="clicked($event)">
-      <g class="transform">
-        <defs>
-          <clipPath id="clip">
-            <rect class='clip-rect'></rect>
-          </clipPath>
-        </defs>
-        <g class="signals"></g>
-        <g class="axes"></g>
-        <rect class="zoom"></rect>
-      </g>
-    </svg>
-  `,
+  templateUrl: './databar.component.html',
   styleUrls: ['./databar.component.css']
 })
 export class DatabarComponent implements OnInit, OnChanges {
@@ -50,6 +37,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   @Input() dataset: string;
   @Input() dims: Array<number>;
   @Input() transform;
+  @Input() sensor;
   // #endregion
 
   // #region [Outputs]
@@ -67,6 +55,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   g_axes: Selection; 
   r_zoom: Selection;
   r_clip: Selection;
+  container: Element;
   // line drawing functions
   x; y; line; x0;
   // color map
@@ -81,13 +70,13 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #endregion
 
   // #region [Accessors]
-  get WIDTH() { return this.el.nativeElement.offsetWidth; }
+  get WIDTH() { return this.container.clientWidth; }
 
-  get HEIGHT() { return +this.svg.attr("height"); }
+  get HEIGHT() { return this._height; }
 
-  get width() { return this.el.nativeElement.offsetWidth - this.margin.left - this.margin.right; }
+  get width() { return this.WIDTH - this.margin.left - this.margin.right; }
 
-  get height() { return +this.svg.attr("height") - this.margin.top - this.margin.bottom; }
+  get height() { return this.HEIGHT - this.margin.top - this.margin.bottom; }
 
   get points_per_pixel() { return (this.x.domain()[1] - this.x.domain()[0]) / (this.x.range()[1] - this.x.range()[0]) }
 
@@ -98,12 +87,17 @@ export class DatabarComponent implements OnInit, OnChanges {
   constructor(private el: ElementRef, private dataloader: DataloaderService) { }
 
   ngOnInit() {
+    console.groupCollapsed('databar init', this.sensor);
+    
     // load data
     this._data = this.load_data();
     // selectors
+    this.container = document.querySelector('div.container-fluid');
+    console.debug('container', this.container);
+    console.debug('width/height', this.width, this.height);
     let host = d3.select(this.el.nativeElement);
     this.host = host;
-    this.svg = host.select("svg")
+    this.svg = host.select("div > svg")
                    .attr('height', this._height);
     this.g = host.select("svg > g.transform")
                  .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
@@ -131,6 +125,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     window.addEventListener('resize', (e) => { this.resize(e) })
     // log when finished
     console.info('databar initialized', this);
+    console.groupEnd()
   }
   // #endregion
 
@@ -200,8 +195,10 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   private set_ranges() {
     // set x-ranges
+    
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
     this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
+    console.log('SETTING RANGE', this.width, this.x.range());
     // set y-ranges
     this.y = d3.scaleLinear().rangeRound([this.height, 0]);
     // update line method to new ranges

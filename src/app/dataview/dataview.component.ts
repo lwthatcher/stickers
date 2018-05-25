@@ -4,12 +4,24 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 
+
 @Component({
   selector: 'app-dataview',
   templateUrl: 'dataview.component.html',
   styles: []
 })
 export class DataviewComponent implements OnInit {
+  // #region [Constants]
+  SENSOR_LENGTH_MAP = {
+    'A': [0,1,2],
+    'G': [3,4,5],
+    'C': [6,7,8],
+    'L': [9,10],
+    'B': [11, 12]
+  }
+  // #endregion
+
+
   // #region [Properties]
   databarHeight = 200;
   downsample = true;
@@ -19,6 +31,14 @@ export class DataviewComponent implements OnInit {
   info: WorkspaceInfo;
   data_info: DataInfo;
   zoom_transform;
+  // #endregion
+
+  // #region [Accessors]
+  get sensors() { 
+    let result = []
+    for (let s of this.data_info.channels) { result.push(s) }
+    return result
+  }
   // #endregion
 
   // #region [Constructors]
