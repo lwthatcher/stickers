@@ -32,6 +32,7 @@ interface datum {
 export class DatabarComponent implements OnInit, OnChanges {
   // #region [Inputs]
   @Input() _height: number;
+  @Input() enable_downsampling: boolean;
   @Input() dataset: string;
   @Input() dims: Array<number>;
   @Input() transform;
@@ -146,17 +147,6 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.g_axes.selectAll("*").remove();
   }
 
-  private downsample(data) {
-    const sampler = largestTriangleThreeBucket();
-    sampler.x((d) => {return d.d})
-           .y((d) => {return d.i})
-    // adaptive bucket size
-    sampler.bucketSize(this.bucket_size);
-    // return sampled data
-    const result = data.map((axis) => { return sampler(axis) });
-    return result;
-  }
-
   private draw_xAxis() {
     this.g_axes.append('g')
         .attr('class', 'x-axis')
@@ -215,11 +205,12 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   // #region [Data Loading]
   load_data(): Promise<Array<datum>[]> {
+    let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as Array<datum> }
     return this.dataloader.getData(this.dataset, this.dims)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.debug('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.format() })
-        .then((axes) => {return axes.map((axis) => { return Array.from(axis).map((d,i) => { return {d, i} })}) })
+        .then((axes) => {return axes.map(toArray)})
   }
 
   private start_spinner(): void {
@@ -250,6 +241,19 @@ export class DatabarComponent implements OnInit, OnChanges {
   private stop_spinner() {
     this.spinner.stop();
   }
+
+  private downsample(data) {
+    if (!this.enable_downsampling) return data;
+    const sampler = largestTriangleThreeBucket();
+    sampler.x((d) => {return d.d})
+           .y((d) => {return d.i})
+    // adaptive bucket size
+    sampler.bucketSize(this.bucket_size);
+    // return sampled data
+    const result = data.map((axis) => { return sampler(axis) });
+    console.debug('resampled size:', result[0].length)
+    return result;
+  }
   // #endregion
 
   // #region [Event Handlers]
@@ -271,12 +275,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
-    if (!redraw)
-      this.host.selectAll('g.signals > path.line').attr("d", this.line);
-    else {
-      this.host.selectAll('g.signals > path.line').remove();
-      this.plot_signals(this._data);
-    }
+    this.host.selectAll('g.signals > path.line').attr("d", this.line);
     // redraw x-axis
     this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis();

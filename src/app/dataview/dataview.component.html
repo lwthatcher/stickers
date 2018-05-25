@@ -1,5 +1,6 @@
 <app-databar *ngFor="let dims of dimensions" 
  [_height]="databarHeight" 
+ [enable_downsampling]="downsample"
  [dataset]="dataset" 
  [dims]="dims"
  [transform]="zoom_transform"
