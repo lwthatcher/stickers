@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, EventEmitter, Output, OnChanges, SimpleChange } from '@angular/core';
 import { DataloaderService, Dataset } from '../data-loader/data-loader.service';
 import { parse } from "tfjs-npy";
 import { Spinner } from 'spin.js';
@@ -29,11 +29,16 @@ interface datum {
   `,
   styleUrls: ['./databar.component.css']
 })
-export class DatabarComponent implements OnInit {
+export class DatabarComponent implements OnInit, OnChanges {
   // #region [Inputs]
   @Input() _height: number;
   @Input() dataset: string;
   @Input() dims: Array<number>;
+  @Input() transform;
+  // #endregion
+
+  // #region [Outputs]
+  @Output() zoom = new EventEmitter<any>();
   // #endregion
 
   // #region [Variables]
@@ -48,7 +53,7 @@ export class DatabarComponent implements OnInit {
   // color map
   colors;
   // zoom handler
-  zoom;
+  _zoom;
   _old_bucket_size;
   // data references
   _dataset: Dataset;
@@ -95,12 +100,12 @@ export class DatabarComponent implements OnInit {
     // color map
     this.colors = d3.scaleOrdinal(d3.schemeAccent);
     // setup zoom behaviour
-    this.zoom = d3.zoom()
+    this._zoom = d3.zoom()
                   .scaleExtent([1, 50])
                   .translateExtent([[0, 0], [this.width, this.height]])
                   .extent([[0, 0], [this.width, this.height]])
                   .on('zoom', () => this.zoomed());
-    this.r_zoom.call(this.zoom);
+    this.r_zoom.call(this._zoom);
     // draw data (when it loads)
     this.start_spinner();
     this.draw();
@@ -110,6 +115,14 @@ export class DatabarComponent implements OnInit {
     // log when finished
     console.info('databar initialized', this);
   }
+  // #endregion
+
+  // #region [Lifecycle Hooks]
+  ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+    let zoom_change = changes['transform'];
+    if (!zoom_change.firstChange) this.updateZoom(zoom_change.currentValue)
+  }
+
   // #endregion
 
   // #region [Plotting Methods]
@@ -136,12 +149,11 @@ export class DatabarComponent implements OnInit {
   private downsample(data) {
     const sampler = largestTriangleThreeBucket();
     sampler.x((d) => {return d.d})
-            .y((d) => {return d.i})
+           .y((d) => {return d.i})
     // adaptive bucket size
     sampler.bucketSize(this.bucket_size);
     // return sampled data
     const result = data.map((axis) => { return sampler(axis) });
-    console.debug('downsampled:', data[0].length, result[0].length, this.bucket_size);
     return result;
   }
 
@@ -241,13 +253,17 @@ export class DatabarComponent implements OnInit {
   // #endregion
 
   // #region [Event Handlers]
-  clicked(event: any) {
-    console.debug('clicked!', event);
-    console.debug('svg', this.el.nativeElement, this.el);
+  clicked(event: any) { console.debug('clicked!', event) }
+
+  zoomed() { this.zoom.emit(d3.event) }
+
+  resize(event: any) {
+    console.debug('window resize', this.width, this.height);
+    this.clear();
+    this.draw();
   }
 
-  zoomed() {
-    const t = d3.event.transform;
+  updateZoom(t) {
     // update bucket size
     const bucket_delta = this._old_bucket_size - this.bucket_size;
     const redraw = !(bucket_delta === 0);
@@ -264,14 +280,6 @@ export class DatabarComponent implements OnInit {
     // redraw x-axis
     this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis();
-    // log debug info
-    console.debug('zoom', this.bucket_size, bucket_delta, redraw);
-  }
-
-  resize(event: any) {
-    console.debug('window resize', this.width, this.height);
-    this.clear();
-    this.draw();
   }
   // #endregion
 

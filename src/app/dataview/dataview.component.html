@@ -1,0 +1,7 @@
+<app-databar *ngFor="let dims of dimensions" 
+ [_height]="databarHeight" 
+ [dataset]="dataset" 
+ [dims]="dims"
+ [transform]="zoom_transform"
+ (zoom)="onZoom($event)">
+</app-databar>

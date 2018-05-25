@@ -1,25 +1,26 @@
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 
 @Component({
   selector: 'app-dataview',
-  template: `
-    <app-databar *ngFor="let dims of dimensions" [_height]="databarHeight" [dataset]="dataset" [dims]="dims"></app-databar>
-  `,
+  templateUrl: 'dataview.component.html',
   styles: []
 })
 export class DataviewComponent implements OnInit {
+  // #region [Properties]
   databarHeight = 200;
   dimensions = [[0,1,2], [3,4,5], [6,7,8], [9,10], [11, 12]];
   dataset: string;
-  format: string;
   workspace: string;
   info: WorkspaceInfo;
   data_info: DataInfo;
+  zoom_transform;
+  // #endregion
 
+  // #region [Constructors]
   constructor(private route: ActivatedRoute, private dataloader: DataloaderService) { }
 
   ngOnInit() {
@@ -27,7 +28,6 @@ export class DataviewComponent implements OnInit {
     // get parameters
     this.workspace = this.route.snapshot.paramMap.get('workspace');
     this.dataset = this.route.snapshot.paramMap.get('dataset');
-    this.format = this.route.snapshot.paramMap.get('format') || 'csv';
     // get resolved data
     this.info = this.route.snapshot.data.workspace[0];
     this.data_info = this.info.getDataInfo(this.dataset);
@@ -40,5 +40,26 @@ export class DataviewComponent implements OnInit {
     console.debug('dataview children initialized', this);
     console.groupEnd();
   }
+  // #endregion
 
+  // #region [Event Handlers]
+  onZoom(event) { this.zoom_transform = event.transform }
+
+  @HostListener('document:keypress', ['$event'])
+  keyPress(event) {
+    if (event.key === 'i') this.logInfo();
+  }
+  // #endregion
+
+  // #region [Helper Methods]
+  private logInfo() {
+    console.groupCollapsed('Workspace Info');
+    console.log('name:', this.workspace);
+    console.log('dataset name:', this.dataset);
+    console.log('info:', this.info);
+    console.log('data info:', this.data_info);
+    console.log('component', this);
+    console.groupEnd();
+  }
+  // #endregion
 }
