@@ -6,10 +6,24 @@ import { largestTriangleThreeBucket } from 'd3fc-sample';
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 
+ // #region [Interfaces]
 interface datum {
   d: number;
   i: number;
 }
+
+interface Selection {
+  select(selector: string): Selection
+  selectAll(selector: string): Selection
+  attr(attribute: string): any
+  attr(attribue: string, value: any): Selection
+  append(element: string): Selection
+  data(data: any): Selection
+  datum(data: any): Selection
+  call(value: any)
+  remove()
+}
+// #endregion
 
 @Component({
   selector: 'app-databar',
@@ -46,9 +60,13 @@ export class DatabarComponent implements OnInit, OnChanges {
   margin = {top: 20, right: 20, bottom: 30, left: 50}
   radius = 10;
   // element selectors
-  host;
-  svg; g; g_sigs; g_axes; 
-  r_zoom; r_clip;
+  host: Selection;
+  svg: Selection; 
+  g: Selection; 
+  g_sigs: Selection; 
+  g_axes: Selection; 
+  r_zoom: Selection;
+  r_clip: Selection;
   // line drawing functions
   x; y; line; x0;
   // color map
