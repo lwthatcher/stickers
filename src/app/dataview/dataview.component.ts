@@ -4,6 +4,11 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 
+interface Sensor {
+  name: string;
+  idxs: number[];
+  dims: string[];
+}
 
 @Component({
   selector: 'app-dataview',
@@ -12,20 +17,34 @@ import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 })
 export class DataviewComponent implements OnInit {
   // #region [Constants]
+  SENSOR_DIMS = {
+    'A': ['x', 'y', 'z'],
+    'G': ['x', 'y', 'z'],
+    'C': ['x', 'y', 'z'],
+    'L': ['both', 'infrared'],
+    'B': ['altitude', 'temperature']
+  }
+
   SENSOR_LENGTH_MAP = {
-    'A': [0,1,2],
-    'G': [3,4,5],
-    'C': [6,7,8],
-    'L': [9,10],
+    'A': [0, 1, 2],
+    'G': [3, 4, 5],
+    'C': [6, 7, 8],
+    'L': [9, 10],
     'B': [11, 12]
   }
-  // #endregion
 
+  SENSOR_NAMES = {
+    'A': 'Accelerometer',
+    'G': 'Gyroscope',
+    'C': 'Compass',
+    'L': 'Light',
+    'B': 'Barometer'
+  }
+  // #endregion
 
   // #region [Properties]
   databarHeight = 200;
   downsample = true;
-  dimensions = [[0,1,2], [3,4,5], [6,7,8], [9,10], [11, 12]];
   dataset: string;
   workspace: string;
   info: WorkspaceInfo;
@@ -34,8 +53,10 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Accessors]
-  get sensors() { 
+  get sensors() {
     let result = []
+    let r2 = this.gen_sensors(this.data_info.channels);
+    console.log('SENSORS', r2);
     for (let s of this.data_info.channels) { result.push(s) }
     return result
   }
@@ -81,6 +102,24 @@ export class DataviewComponent implements OnInit {
     console.log('data info:', this.data_info);
     console.log('component', this);
     console.groupEnd();
+  }
+
+  private gen_sensors(channels: string): Sensor[] {
+    let toSensor = (channel,idx,arr) => {
+      let name = this.SENSOR_NAMES[channel];
+      let dims = this.SENSOR_DIMS[channel];
+      return {name, channel, dims}
+    }
+    let len = (sensor) => sensor.dims.length  // map -> # of sensors
+    let sum = (acc, cur) => acc + cur         // reduce -> sum over array
+
+    let getIdxs = (sensor,i,arr) => {
+      let so_far = arr.slice(0,i).map(len).reduce(sum, 0)
+      let idx = sensor.dims.map((_,i) => so_far+i);
+      sensor.idx = idx;
+      return sensor;
+    }
+    return [...channels].map(toSensor).map(getIdxs)
   }
   // #endregion
 }

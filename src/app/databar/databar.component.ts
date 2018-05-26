@@ -92,7 +92,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     // load data
     this._data = this.load_data();
     // selectors
-    this.container = document.querySelector('div.container-fluid');
+    this.container = document.querySelector('div.card');
     console.debug('container', this.container);
     console.debug('width/height', this.width, this.height);
     let host = d3.select(this.el.nativeElement);
@@ -195,10 +195,8 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   private set_ranges() {
     // set x-ranges
-    
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
     this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
-    console.log('SETTING RANGE', this.width, this.x.range());
     // set y-ranges
     this.y = d3.scaleLinear().rangeRound([this.height, 0]);
     // update line method to new ranges
