@@ -219,7 +219,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #region [Data Loading]
   load_data(): Promise<Array<datum>[]> {
     let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as Array<datum> }
-    return this.dataloader.getData(this.data_info.name, this.sensor.idxs)
+    return this.dataloader.getSensorStreams(this.data_info.name, this.sensor.idxs)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.debug('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.format() })

@@ -69,7 +69,7 @@ export class DataloaderService {
     return this.datasets.get(data.name);
   }
 
-  getData(dataset: string, idx: number[]): Promise<Dataset> {
+  getSensorStreams(dataset: string, idx: number[]): Promise<Dataset> {
     console.debug('retrieving data', dataset, idx, this);
     return this.datasets.get(dataset)
                         .then((dataset) => {console.debug('datset type', typeof dataset); return dataset;})
