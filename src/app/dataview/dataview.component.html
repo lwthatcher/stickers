@@ -1,8 +1,9 @@
-<app-databar *ngFor="let s of sensors" 
+<app-databar *ngFor="let s of visible_sensors" 
  [_height]="databarHeight" 
  [enable_downsampling]="downsample"
  [dataset]="dataset" 
  [sensor]="s"
  [transform]="zoom_transform"
+ (updateSensor)="onUpdateSensor($event)"
  (zoom)="onZoom($event)">
 </app-databar>

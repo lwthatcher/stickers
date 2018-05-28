@@ -5,9 +5,11 @@ import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 
 export interface Sensor {
+  id: number;
   name: string;
   idxs: number[];
   dims: string[];
+  hide: boolean;
 }
 
 @Component({
@@ -32,6 +34,10 @@ export class DataviewComponent implements OnInit {
     'L': 'Light',
     'B': 'Barometer'
   }
+  // #endregion
+
+  // #region [Accessors]
+  get visible_sensors() { return this.sensors.filter((s) => !s.hide) }
   // #endregion
 
   // #region [Properties]
@@ -72,6 +78,8 @@ export class DataviewComponent implements OnInit {
   // #region [Event Handlers]
   onZoom(event) { this.zoom_transform = event.transform }
 
+  onUpdateSensor(event) { this.sensors[event.id] = event }
+
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {
     if (event.key === 'i') this.logInfo();
@@ -85,6 +93,8 @@ export class DataviewComponent implements OnInit {
     console.log('dataset name:', this.dataset);
     console.log('info:', this.info);
     console.log('data info:', this.data_info);
+    console.log('sensors', this.sensors);
+    console.log('visible sensors', this.visible_sensors);
     console.log('component', this);
     console.groupEnd();
   }
@@ -98,10 +108,10 @@ export class DataviewComponent implements OnInit {
    */
   private setupSensors(channels: string): Sensor[] {
     // takes the channel and creates the name and dims aspects of the object
-    let toSensor = (channel: string ,idx,arr) => {
-      let name = this.SENSOR_NAMES[channel];
-      let dims = this.SENSOR_DIMS[channel];
-      return {name, channel, dims}
+    let toSensor = (channel: string ,idx) => {
+      const name = this.SENSOR_NAMES[channel];
+      const dims = this.SENSOR_DIMS[channel];
+      return {name, channel, dims, hide:false, id:idx}
     }
     let len = (sensor) => sensor.dims.length  // map -> # of sensors
     let sum = (acc, cur) => acc + cur         // reduce -> sum over array
