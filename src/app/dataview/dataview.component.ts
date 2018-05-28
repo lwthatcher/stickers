@@ -38,6 +38,8 @@ export class DataviewComponent implements OnInit {
 
   // #region [Accessors]
   get visible_sensors() { return this.sensors.filter((s) => !s.hide) }
+
+  get is_labelled() { return !!this.data_info.labelled }
   // #endregion
 
   // #region [Properties]
