@@ -3,6 +3,7 @@ import { DataloaderService, Dataset } from '../data-loader/data-loader.service';
 import { parse } from "tfjs-npy";
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
+import { Sensor } from "../dataview/dataview.component";
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 
@@ -35,9 +36,8 @@ export class DatabarComponent implements OnInit, OnChanges {
   @Input() _height: number;
   @Input() enable_downsampling: boolean;
   @Input() dataset: string;
-  @Input() dims: Array<number>;
   @Input() transform;
-  @Input() sensor;
+  @Input() sensor: Sensor;
   // #endregion
 
   // #region [Outputs]
@@ -87,7 +87,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   constructor(private el: ElementRef, private dataloader: DataloaderService) { }
 
   ngOnInit() {
-    console.groupCollapsed('databar init', this.sensor);
+    console.groupCollapsed('databar init', this.sensor.name);
     
     // load data
     this._data = this.load_data();
@@ -217,7 +217,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #region [Data Loading]
   load_data(): Promise<Array<datum>[]> {
     let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as Array<datum> }
-    return this.dataloader.getData(this.dataset, this.dims)
+    return this.dataloader.getData(this.dataset, this.sensor.idxs)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.debug('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.format() })

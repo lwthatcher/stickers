@@ -4,7 +4,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 
-interface Sensor {
+export interface Sensor {
   name: string;
   idxs: number[];
   dims: string[];
@@ -49,17 +49,8 @@ export class DataviewComponent implements OnInit {
   workspace: string;
   info: WorkspaceInfo;
   data_info: DataInfo;
+  sensors: Sensor[];
   zoom_transform;
-  // #endregion
-
-  // #region [Accessors]
-  get sensors() {
-    let result = []
-    let r2 = this.gen_sensors(this.data_info.channels);
-    console.log('SENSORS', r2);
-    for (let s of this.data_info.channels) { result.push(s) }
-    return result
-  }
   // #endregion
 
   // #region [Constructors]
@@ -73,6 +64,8 @@ export class DataviewComponent implements OnInit {
     // get resolved data
     this.info = this.route.snapshot.data.workspace[0];
     this.data_info = this.info.getDataInfo(this.dataset);
+    // create list of Sensor objects
+    this.sensors = this.setupSensors(this.data_info.channels);
     // specify which data to load
     this.dataloader.loadDataset(this.data_info);
     console.info('dataview initialized', this);
@@ -104,20 +97,28 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
   }
 
-  private gen_sensors(channels: string): Sensor[] {
-    let toSensor = (channel,idx,arr) => {
+  /**
+   * Takes the channel string and returns an ordered list of Sensor objects,
+   * including their corresponding dimensions and indices 
+   * to be passed to the data-bar components.
+   * 
+   * @param channels a string where each character specifies a sensor channel
+   */
+  private setupSensors(channels: string): Sensor[] {
+    // takes the channel and creates the name and dims aspects of the object
+    let toSensor = (channel: string ,idx,arr) => {
       let name = this.SENSOR_NAMES[channel];
       let dims = this.SENSOR_DIMS[channel];
       return {name, channel, dims}
     }
     let len = (sensor) => sensor.dims.length  // map -> # of sensors
     let sum = (acc, cur) => acc + cur         // reduce -> sum over array
-
+    // takes the (mostly) complete Sensor ojbect from toSensor and adds the idxs field
     let getIdxs = (sensor,i,arr) => {
       let so_far = arr.slice(0,i).map(len).reduce(sum, 0)
       let idx = sensor.dims.map((_,i) => so_far+i);
-      sensor.idx = idx;
-      return sensor;
+      sensor.idxs = idx;
+      return sensor as Sensor;
     }
     return [...channels].map(toSensor).map(getIdxs)
   }
