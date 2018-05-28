@@ -15,7 +15,7 @@ export interface Sensor {
 @Component({
   selector: 'app-dataview',
   templateUrl: 'dataview.component.html',
-  styles: []
+  styleUrls: ['dataview.component.css']
 })
 export class DataviewComponent implements OnInit {
   // #region [Constants]
@@ -78,11 +78,9 @@ export class DataviewComponent implements OnInit {
   // #region [Event Handlers]
   onZoom(event) { this.zoom_transform = event.transform }
 
-  onUpdateSensor(event) { this.sensors[event.id] = event }
+  hide(sensor: Sensor) { this.sensors[sensor.id].hide = true }
 
-  hide(sensor: Sensor) {
-    this.sensors[sensor.id].hide = true;
-  }
+  show(sensor: Sensor) { this.sensors[sensor.id].hide = false }
 
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {
