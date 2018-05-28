@@ -80,6 +80,8 @@ export class DatabarComponent implements OnInit, OnChanges {
   get points_per_pixel() { return (this.x.domain()[1] - this.x.domain()[0]) / (this.x.range()[1] - this.x.range()[0]) }
 
   get bucket_size() { return Math.trunc(this.points_per_pixel / 2) }
+
+  get is_labelled() { return !!this.data_info.labelled }
   // #endregion
 
   // #region [Constructors]
