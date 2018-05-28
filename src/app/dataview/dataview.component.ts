@@ -15,7 +15,8 @@ export interface Sensor {
 @Component({
   selector: 'app-dataview',
   templateUrl: 'dataview.component.html',
-  styleUrls: ['dataview.component.css']
+  styleUrls: ['dataview.component.css'],
+  providers: [DataloaderService]
 })
 export class DataviewComponent implements OnInit {
   // #region [Constants]
