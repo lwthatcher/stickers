@@ -1,5 +1,11 @@
 <div class="card">
     <div *ngFor="let sensor of sensors">
+        <div class='card-header d-flex justify-content-between align-items-center'>
+            {{sensor.name}}
+            <button type="button" (click)="close2(sensor)" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
         <app-databar  *ngIf="!sensor.hide"
         [_height]="databarHeight"
         [enable_downsampling]="downsample"

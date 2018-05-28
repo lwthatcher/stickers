@@ -80,6 +80,10 @@ export class DataviewComponent implements OnInit {
 
   onUpdateSensor(event) { this.sensors[event.id] = event }
 
+  close2(event) {
+    console.log('New close event:', event)
+  }
+
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {
     if (event.key === 'i') this.logInfo();
