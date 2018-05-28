@@ -93,7 +93,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     this._data = this.load_data();
     // selectors
     this.container = document.querySelector('div.card');
-    console.debug('container', this.container);
+    console.log('container', this.container);
     console.debug('width/height', this.width, this.height);
     let host = d3.select(this.el.nativeElement);
     this.host = host;
