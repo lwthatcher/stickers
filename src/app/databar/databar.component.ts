@@ -1,11 +1,9 @@
 import { Component, OnInit, ElementRef, Input, EventEmitter, Output, OnChanges, SimpleChange } from '@angular/core';
 import { DataloaderService, Dataset } from '../data-loader/data-loader.service';
-import { parse } from "tfjs-npy";
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../dataview/dataview.component";
 import { SettingsService } from '../settings/settings.service'
-import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 
  // #region [Interfaces]

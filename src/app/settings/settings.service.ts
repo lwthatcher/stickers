@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { SettingsModule } from './settings.module';
 
 @Injectable()
 export class SettingsService {
