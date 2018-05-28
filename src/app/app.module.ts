@@ -12,6 +12,7 @@ import { HomeComponent } from './home/home.component';
 import { WorkspaceResolver } from './data-loader/workspace-resolver.service';
 import { WorkspaceLoaderService } from './data-loader/workspace-loader.service';
 import { KeysPipe } from './keys.pipe';
+import { SettingsModule } from './settings/settings.module';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { KeysPipe } from './keys.pipe';
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    SettingsModule
   ],
   providers: [DataloaderService, WorkspaceResolver, WorkspaceLoaderService],
   bootstrap: [AppComponent]
