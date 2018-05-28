@@ -3,16 +3,14 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { DataloaderService } from './data-loader/data-loader.service';
 import { AppComponent } from './app.component';
 import { DatabarComponent } from './databar/databar.component';
 import { DataviewComponent } from './dataview/dataview.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './home/home.component';
-import { WorkspaceResolver } from './data-loader/workspace-resolver.service';
-import { WorkspaceLoaderService } from './data-loader/workspace-loader.service';
 import { KeysPipe } from './keys.pipe';
 import { SettingsModule } from './settings/settings.module';
+import { DataLoaderModule } from './data-loader/data-loader.module';
 
 
 @NgModule({
@@ -28,9 +26,10 @@ import { SettingsModule } from './settings/settings.module';
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    SettingsModule
+    SettingsModule,
+    DataLoaderModule
   ],
-  providers: [DataloaderService, WorkspaceResolver, WorkspaceLoaderService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
