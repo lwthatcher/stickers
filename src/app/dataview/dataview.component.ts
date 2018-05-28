@@ -25,14 +25,6 @@ export class DataviewComponent implements OnInit {
     'B': ['altitude', 'temperature']
   }
 
-  SENSOR_LENGTH_MAP = {
-    'A': [0, 1, 2],
-    'G': [3, 4, 5],
-    'C': [6, 7, 8],
-    'L': [9, 10],
-    'B': [11, 12]
-  }
-
   SENSOR_NAMES = {
     'A': 'Accelerometer',
     'G': 'Gyroscope',
