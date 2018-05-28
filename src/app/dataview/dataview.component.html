@@ -11,7 +11,7 @@
         <app-databar  *ngIf="!sensor.hide"
         [_height]="databarHeight"
         [enable_downsampling]="downsample"
-        [dataset]="dataset" 
+        [data_info]="data_info" 
         [sensor]="sensor"
         [transform]="zoom_transform"
         (zoom)="onZoom($event)">

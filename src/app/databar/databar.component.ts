@@ -3,7 +3,8 @@ import { DataloaderService, Dataset } from '../data-loader/data-loader.service';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../dataview/dataview.component";
-import { SettingsService } from '../settings/settings.service'
+import { SettingsService } from '../settings/settings.service';
+import { DataInfo } from '../data-loader/workspace-info';
 import * as d3 from "d3";
 
  // #region [Interfaces]
@@ -34,7 +35,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #region [Inputs]
   @Input() _height: number;
   @Input() enable_downsampling: boolean;
-  @Input() dataset: string;
+  @Input() data_info: DataInfo;
   @Input() transform;
   @Input() sensor: Sensor;
   // #endregion
@@ -216,7 +217,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #region [Data Loading]
   load_data(): Promise<Array<datum>[]> {
     let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as Array<datum> }
-    return this.dataloader.getData(this.dataset, this.sensor.idxs)
+    return this.dataloader.getData(this.data_info.name, this.sensor.idxs)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.debug('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.format() })
