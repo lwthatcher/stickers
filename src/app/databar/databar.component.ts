@@ -41,7 +41,6 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   // #region [Outputs]
   @Output() zoom = new EventEmitter<any>();
-  @Output() updateSensor = new EventEmitter<Sensor>();
   // #endregion
 
   // #region [Variables]
@@ -260,12 +259,6 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.clear();
     this.draw();
     this.r_clip.attr('width', this.width);
-  }
-
-  onClose(event: any) {
-    console.debug('closing databar', this.sensor.id, event);
-    this.sensor.hide = true;
-    this.updateSensor.emit(this.sensor);
   }
 
   private updateZoom(t) {

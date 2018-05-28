@@ -2,7 +2,7 @@
     <div *ngFor="let sensor of sensors">
         <div class='card-header d-flex justify-content-between align-items-center'>
             {{sensor.name}}
-            <button type="button" (click)="close2(sensor)" class="close" aria-label="Close">
+            <button type="button" (click)="hide(sensor)" class="close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -15,8 +15,5 @@
         (updateSensor)="onUpdateSensor($event)"
         (zoom)="onZoom($event)">
         </app-databar>
-        <div *ngIf="sensor.hide" class='card-header d-flex justify-content-between align-items-center'>
-            {{sensor.name}}
-        </div>
     </div>
 </div>
