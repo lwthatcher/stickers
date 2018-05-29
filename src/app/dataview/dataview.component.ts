@@ -17,6 +17,7 @@ export interface Label {
   start: number;
   end: number;
   label: number;
+  type?: string;
 }
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
@@ -48,9 +49,15 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Accessors]
-  get visible_sensors() { return this.sensors.filter((s) => !s.hide) }
+  get visibleSensors() { return this.sensors.filter((s) => !s.hide) }
 
   get is_labelled() { return !!this.data_info.labelled }
+
+  get eventMap() {
+    if (!this.data_info.labelled) return {}
+    const ds = this.data_info.labelled as string;
+    return this.info.labels[ds]['event-map']
+  }
   // #endregion
 
   // #region [Properties]
@@ -124,7 +131,7 @@ export class DataviewComponent implements OnInit {
     console.log('info:', this.info);
     console.log('data info:', this.data_info);
     console.log('sensors', this.sensors);
-    console.log('visible sensors', this.visible_sensors);
+    console.log('visible sensors', this.visibleSensors);
     console.log('component', this);
     console.groupEnd();
   }
@@ -140,7 +147,9 @@ export class DataviewComponent implements OnInit {
     let convert = (v,j,arr) => {
       let [i1,l1] = v;
       let [i2,l2] = arr[j+1] || lbls[lbls.length-1];
-      return {start:i1, end:i2, label:l1};
+      let result = {start:i1, end:i2, label:l1} as Label;
+      if (l1 in this.eventMap) result.type = this.eventMap[l1];
+      return result;
     }
     // format from ArrayLike -> array of tuples: [index, label]
     lbls = Array.from(lbls);            // make sure its an Array (not TypedArray)
@@ -148,7 +157,7 @@ export class DataviewComponent implements OnInit {
     // find boundaries (points where the values changed)
     let boundaries = lbls.filter(boundaryChange)
     boundaries.unshift(lbls[0])         // add the first point
-    // converts to a tuple: [start, end, label]
+    // converts to list of Label objects
     let result = boundaries.map(convert)
     return result;
   }
