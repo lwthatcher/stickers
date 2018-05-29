@@ -1,15 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { SettingsService } from './settings/settings.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styles: []
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Stickers';
-  databarHeight = 400;
+  version: Observable<string>;
 
-  getDataHeight() {
-    return this.databarHeight;
+  constructor(private settings: SettingsService) { }
+
+  ngOnInit(): void {
+    this.version = this.settings.version()
   }
 }

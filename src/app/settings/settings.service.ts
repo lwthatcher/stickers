@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class SettingsService {
@@ -23,7 +25,11 @@ export class SettingsService {
     position: 'absolute' // Element positioning
   }
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   get spinner_options() { return this._spinner_options }
+
+  version(): Observable<string> {
+    return this.http.get('/api/version', {responseType: 'text'});
+  }
 }
