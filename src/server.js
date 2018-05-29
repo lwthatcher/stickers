@@ -8,6 +8,7 @@ const cors = require('cors');
 
 // #region [Variables]
 const WORKSPACES_PATH = path.join('/users', 'data', 'workspaces');
+const pjson = require('../package.json');
 // #endregion
 
 // #region [Express Setup]
@@ -52,6 +53,10 @@ app.route('/api/data/:workspace/:dataset').get((req, res) => {
 app.route('/api/list-workspaces').get((req, res) => {
     const files = list_workspaces();
     res.send(files);
+});
+
+app.route('/api/version').get((req, res) => {
+    res.send(pjson.version);
 });
 // #endregion
 
