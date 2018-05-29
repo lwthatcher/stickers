@@ -4,6 +4,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 
+// #region [Interfaces]
 export interface Sensor {
   id: number;
   name: string;
@@ -11,6 +12,15 @@ export interface Sensor {
   dims: string[];
   hide: boolean;
 }
+
+export interface Label {
+  start: number;
+  end: number;
+  label: number;
+}
+
+type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
+// #endregion
 
 @Component({
   selector: 'app-dataview',
@@ -52,7 +62,7 @@ export class DataviewComponent implements OnInit {
   data_info: DataInfo;
   sensors: Sensor[];
   zoom_transform;
-  _labels;
+  labels: Label[];
   // #endregion
 
   // #region [Constructors]
@@ -72,8 +82,8 @@ export class DataviewComponent implements OnInit {
     this.dataloader.loadDataset(this.data_info);
     // parse labels (when ready)
     if (this.is_labelled) {
-      this._labels = this.dataloader.getLabels(this.dataset);
-      this.parse_labels(this._labels);
+      let _labels = this.dataloader.getLabels(this.dataset);
+      this.parse_labels(_labels);
     }
     // component initialized
     console.info('dataview initialized', this);
@@ -98,6 +108,15 @@ export class DataviewComponent implements OnInit {
   }
   // #endregion
 
+  // #region [Data Loading]
+  parse_labels(labels: Promise<ArrayLike>) {
+    labels.then((lbls) => {return this.boundaries(lbls)})
+          .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
+          .then((labels) => { console.log('labels ready', labels); return labels; })
+          .then((labels) => { this.labels = labels })
+  }
+  // #endregion
+
   // #region [Helper Methods]
   private logInfo() {
     console.groupCollapsed('Workspace Info');
@@ -111,20 +130,15 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
   }
 
-  private parse_labels(lbls: Promise<any>) {
-    lbls.then((l) => {return this.labelBoundaries(l)})
-        .then((l) => {console.log('BOUNDARIES', l)})
-  }
-
-  private labelBoundaries(lbls) {
-    // in-line functions
+  private boundaries(lbls: ArrayLike): Label[] {
+    // helper functions
     let boundaryChange = (v,i,arr) => { return arr[i-1] && v[1] != arr[i-1][1] }
     let convert = (v,j,arr) => {
       let [i1,l1] = v;
       let [i2,l2] = arr[j+1] || lbls[lbls.length-1];
-      return [i1, i2, l1];
+      return {start:i1, end:i2, label:l1};
     }
-    // format labels
+    // format from ArrayLike -> array of tuples: [index, label]
     lbls = Array.from(lbls);            // make sure its an Array (not TypedArray)
     lbls = Array.from(lbls.entries());  // look at both the value and index
     // find boundaries (points where the values changed)

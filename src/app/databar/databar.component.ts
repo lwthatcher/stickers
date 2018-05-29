@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, Input, EventEmitter, Output, OnChanges, 
 import { DataloaderService, Dataset } from '../data-loader/data-loader.service';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
-import { Sensor } from "../dataview/dataview.component";
+import { Sensor, Label } from "../dataview/dataview.component";
 import { SettingsService } from '../settings/settings.service';
 import { DataInfo } from '../data-loader/workspace-info';
 import * as d3 from "d3";
@@ -38,6 +38,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   @Input() data_info: DataInfo;
   @Input() transform;
   @Input() sensor: Sensor;
+  @Input() labels: Label[];
   // #endregion
 
   // #region [Outputs]
@@ -133,8 +134,9 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   // #region [Lifecycle Hooks]
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    let zoom_change = changes['transform'];
-    if (!zoom_change.firstChange) this.updateZoom(zoom_change.currentValue)
+    let {transform, labels} = changes;
+    if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
+    if (labels && labels.currentValue != labels.previousValue) this.draw_labels();
   }
 
   // #endregion
@@ -153,6 +155,10 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.draw_yAxis();
     // draw each signal
     this.plot_signals(data);
+  }
+
+  draw_labels() {
+    console.log('drawing labels', this.sensor.name);
   }
 
   clear() {
