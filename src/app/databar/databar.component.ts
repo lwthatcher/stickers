@@ -21,8 +21,14 @@ interface Selection {
   append(element: string): Selection
   data(data: any): Selection
   datum(data: any): Selection
+  enter(): Selection
   call(value: any)
   remove()
+  
+}
+
+interface ColorMap {
+  (i:number): any
 }
 // #endregion
 
@@ -46,20 +52,22 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #endregion
 
   // #region [Variables]
-  margin = {top: 20, right: 20, bottom: 30, left: 50}
+  margin = {top: 5, right: 20, bottom: 25, left: 50}
   // element selectors
   host: Selection;
   svg: Selection; 
   g: Selection; 
   g_sigs: Selection; 
-  g_axes: Selection; 
+  g_axes: Selection;
+  g_lbls: Selection; 
   r_zoom: Selection;
   r_clip: Selection;
   container: Element;
   // line drawing functions
   x; y; line; x0;
-  // color map
-  colors;
+  // color maps
+  line_color: ColorMap;
+  label_color: ColorMap;
   // zoom handler
   _zoom;
   // data references
@@ -106,14 +114,16 @@ export class DatabarComponent implements OnInit, OnChanges {
                  .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     this.g_sigs = host.select("g.transform > g.signals");
     this.g_axes = host.select("g.transform > g.axes");
+    this.g_lbls = host.select("g.transform > g.labels")
     this.r_zoom = host.select("g.transform > rect.zoom")
                       .attr('width', this.width)
                       .attr('height', this.height);
     this.r_clip = host.select('#clip > rect.clip-rect')
                       .attr('width', this.width)
                       .attr('height', this.height);
-    // color map
-    this.colors = d3.scaleOrdinal(d3.schemeAccent);
+    // color maps
+    this.line_color = d3.scaleOrdinal(d3.schemeAccent);
+    this.label_color = d3.scaleOrdinal(d3.schemePaired);
     // setup zoom behaviour
     this._zoom = d3.zoom()
                   .scaleExtent([1, 50])
@@ -158,7 +168,18 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   draw_labels() {
-    console.log('drawing labels', this.sensor.name);
+    console.log('drawing labels', this.labels);
+    this.g_lbls.selectAll('rect.label')
+               .data(this.labels)
+               .enter()
+               .append('rect')
+               .attr('y', 0)
+               .attr('height', this.height)
+               .attr('x', (d) => { return this.x(d.start)})
+               .attr('width', (d) =>{ return this.x(d.end - d.start) })
+               .attr('fill', (d) => { return this.label_color(d.label) })
+               .attr('class', 'label')
+               .attr('fill-opacitiy', 0.5)
   }
 
   clear() {
@@ -195,7 +216,7 @@ export class DatabarComponent implements OnInit, OnChanges {
         .attr("fill", "none")
         .attr("clip-path", "url(#clip)")
         .attr("class", "line line-" + j.toString())
-        .attr("stroke", this.colors(j))
+        .attr("stroke", this.line_color(j))
         .attr("stroke-width", 1.5)
         .attr("stroke-opacity", 0.7)
         .attr("d", this.line);
@@ -278,6 +299,9 @@ export class DatabarComponent implements OnInit, OnChanges {
     // redraw x-axis
     this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis();
+    // redraw labels
+    this.host.selectAll('g.labels rect.label').attr('x', (d) => {this.x(d.start)})
+                                              .attr('width', (d) => {this.x(d.end - d.start)})
   }
   // #endregion
 
