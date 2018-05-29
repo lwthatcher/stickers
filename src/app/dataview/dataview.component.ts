@@ -52,6 +52,7 @@ export class DataviewComponent implements OnInit {
   data_info: DataInfo;
   sensors: Sensor[];
   zoom_transform;
+  _labels;
   // #endregion
 
   // #region [Constructors]
@@ -69,6 +70,12 @@ export class DataviewComponent implements OnInit {
     this.sensors = this.setupSensors(this.data_info.channels);
     // specify which data to load
     this.dataloader.loadDataset(this.data_info);
+    // parse labels (when ready)
+    if (this.is_labelled) {
+      this._labels = this.dataloader.getLabels(this.dataset);
+      this.parse_labels(this._labels);
+    }
+    // component initialized
     console.info('dataview initialized', this);
   }
 
@@ -102,6 +109,30 @@ export class DataviewComponent implements OnInit {
     console.log('visible sensors', this.visible_sensors);
     console.log('component', this);
     console.groupEnd();
+  }
+
+  private parse_labels(lbls: Promise<any>) {
+    lbls.then((l) => {return this.labelBoundaries(l)})
+        .then((l) => {console.log('BOUNDARIES', l)})
+  }
+
+  private labelBoundaries(lbls) {
+    // in-line functions
+    let boundaryChange = (v,i,arr) => { return arr[i-1] && v[1] != arr[i-1][1] }
+    let convert = (v,j,arr) => {
+      let [i1,l1] = v;
+      let [i2,l2] = arr[j+1] || lbls[lbls.length-1];
+      return [i1, i2, l1];
+    }
+    // format labels
+    lbls = Array.from(lbls);            // make sure its an Array (not TypedArray)
+    lbls = Array.from(lbls.entries());  // look at both the value and index
+    // find boundaries (points where the values changed)
+    let boundaries = lbls.filter(boundaryChange)
+    boundaries.unshift(lbls[0])         // add the first point
+    // converts to a tuple: [start, end, label]
+    let result = boundaries.map(convert)
+    return result;
   }
 
   /**

@@ -65,15 +65,20 @@ export class DataloaderService {
     let result = this.http.get(uri, options).toPromise()
                      .then((d: RawData) => { return this.toDataset(d, data.format) });
     this.datasets.set(data.name, result);
-    console.log('LOADING DATASET', result, data, this);
+    console.debug('LOADING DATASET', result, data, this);
     return this.datasets.get(data.name);
   }
 
   getSensorStreams(dataset: string, idx: number[]): Promise<Dataset> {
     console.debug('retrieving data', dataset, idx, this);
     return this.datasets.get(dataset)
-                        .then((dataset) => {console.debug('datset type', typeof dataset); return dataset;})
                         .then((dataset) => dataset.filter(idx))
+  }
+
+  getLabels(dataset: string) {
+    return this.datasets.get(dataset)
+                        .then((ds) => ds.filter([ds.axes.length-1]))
+                        .then((ds) => ds.format()[0])
   }
   // #endregion
 
