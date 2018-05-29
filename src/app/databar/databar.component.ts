@@ -168,6 +168,9 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.draw_yAxis();
     // draw each signal
     this.plot_signals(data);
+    // draw labels
+    if (this.labels)
+      this.draw_labels();
   }
 
   draw_labels() {

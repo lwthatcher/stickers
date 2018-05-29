@@ -5,8 +5,8 @@
                 <li *ngIf="!sensor.hide" class="nav-item"><a class="nav-link active">{{sensor.name}}</a></li>
                 <li *ngIf="sensor.hide" class="nav-item"><a class="nav-link disabled">{{sensor.name}}</a></li>
             </ul>
-            <i *ngIf="!sensor.hide" (click)="hide(sensor)" class="material-icons icon" aria-label="Close">close</i>
-            <i *ngIf="sensor.hide" (click)="show(sensor)" class="material-icons icon" aria-label="Open">expand_more</i>
+            <i *ngIf="!sensor.hide" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">close</i>
+            <i *ngIf="sensor.hide" (click)="show(sensor)" class="material-icons icon" title='show' aria-label="show">expand_more</i>
         </div>
         <app-databar  *ngIf="!sensor.hide"
         [_height]="databarHeight"
