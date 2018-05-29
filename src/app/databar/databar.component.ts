@@ -52,7 +52,8 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #endregion
 
   // #region [Variables]
-  margin = {top: 5, right: 20, bottom: 25, left: 50}
+  margin = {top: 5, right: 20, bottom: 20, left: 50}
+  initialized = false;
   // element selectors
   host: Selection;
   svg: Selection; 
@@ -137,6 +138,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     // redraw if window resized
     window.addEventListener('resize', (e) => { this.resize(e) })
     // log when finished
+    this.initialized = true;
     console.info('databar initialized', this);
     console.groupEnd()
   }
@@ -146,7 +148,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
     let {transform, labels} = changes;
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
-    if (labels && labels.currentValue != labels.previousValue) this.draw_labels();
+    if (labels && this.initialized) this.draw_labels();
   }
 
   // #endregion
@@ -176,7 +178,7 @@ export class DatabarComponent implements OnInit, OnChanges {
                .attr('y', 0)
                .attr('height', this.height)
                .attr('x', (d) => { return this.x(d.start)})
-               .attr('width', (d) =>{ return this.x(d.end - d.start) })
+               .attr('width', (d) =>{ return this.x(d.end) - this.x(d.start) })
                .attr('fill', (d) => { return this.label_color(d.label) })
                .attr('class', 'label')
                .attr('fill-opacitiy', 0.5)
@@ -300,8 +302,8 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis();
     // redraw labels
-    this.host.selectAll('g.labels rect.label').attr('x', (d) => {this.x(d.start)})
-                                              .attr('width', (d) => {this.x(d.end - d.start)})
+    this.host.selectAll('g.labels rect.label').attr('x', (d) => { return this.x(d.start) })
+                                              .attr('width', (d) => { return this.x(d.end) - this.x(d.start) })
   }
   // #endregion
 
