@@ -185,6 +185,7 @@ export class DatabarComponent implements OnInit, OnChanges {
                .attr('width', (d) =>{ return this.x(d.end) - this.x(d.start) })
                .attr('fill', (d) => { return this.label_color(d.label) })
                .attr('class', 'label')
+               .attr("clip-path", "url(#clip)")
   }
 
   clear() {
