@@ -112,7 +112,6 @@ export class DataviewComponent implements OnInit {
   parse_labels(labels: Promise<ArrayLike>) {
     labels.then((lbls) => {return this.boundaries(lbls)})
           .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
-          .then((labels) => { console.log('labels ready', labels); return labels; })
           .then((labels) => { this.labels = labels })
   }
   // #endregion
@@ -130,6 +129,11 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
   }
 
+  /**
+   * Infers discrete event start/end times from a stream of label readings
+   * 
+   * @param lbls the stream of label IDs
+   */
   private boundaries(lbls: ArrayLike): Label[] {
     // helper functions
     let boundaryChange = (v,i,arr) => { return arr[i-1] && v[1] != arr[i-1][1] }
