@@ -18,6 +18,7 @@ interface Selection {
   selectAll(selector: string): Selection
   attr(attribute: string): any
   attr(attribue: string, value: any): Selection
+  style(attribute: string, value: any): Selection
   append(element: string): Selection
   data(data: any): Selection
   datum(data: any): Selection
@@ -181,7 +182,6 @@ export class DatabarComponent implements OnInit, OnChanges {
                .attr('width', (d) =>{ return this.x(d.end) - this.x(d.start) })
                .attr('fill', (d) => { return this.label_color(d.label) })
                .attr('class', 'label')
-               .attr('fill-opacitiy', 0.5)
   }
 
   clear() {
