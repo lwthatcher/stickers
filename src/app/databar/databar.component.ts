@@ -25,7 +25,9 @@ interface Selection {
   data(data: any): Selection
   datum(data: any): Selection
   enter(): Selection
+  on(event: string): any
   on(event: string, callback): Selection
+  on(event: string, callback, capture: boolean): Selection
   text(value): Selection
   call(value: any): Selection
   filter(filter: any): Selection
@@ -182,20 +184,26 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   draw_labels() {
     console.debug('drawing labels', this.labels);
-    let _rects = this.g_lbls.selectAll('rect.label').data(this.labels);
-    _rects = _rects
-          .enter()
-          .append('rect')
-          .attr('y', 0)
-          .attr('height', this.height)
-          .merge(_rects)
+    // updated elements
+    let rects = this.g_lbls.selectAll('rect.label')
+                    .data(this.labels)
+                    .classed('updated', true);
+    // entering (new) elements
+    let enter = rects.enter()
+                     .append('rect')
+                     .attr('y', 0)
+                     .attr('height', this.height)
+                     .attr("clip-path", "url(#clip)")
+                     .classed('label', true)
+                     .on('click', (...d) => { this.labelClicked(d) }, false)
+    enter.append('svg:title')
+         .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
+    // both updated or new elements
+    rects = enter.merge(rects)
           .attr('x', (d) => { return this.x(d.start)})
           .attr('width', (d) =>{ return this.x(d.end) - this.x(d.start) })
           .attr('fill', (d) => { return this.label_color(d.label) })
-          .attr('class', (d) => { return this.lbl_class(d) })
-          .attr("clip-path", "url(#clip)")
-          .on('click', (...d) => { this.labelClicked(d) })
-          .attr('title', (d) => {return d.type + ' event' || 'event ' + d.label.toString()})
+          .classed('selected', (d) => d.selected )
   }
 
   clear() {

@@ -3,6 +3,12 @@ rect.label {
     opacity: 0.5;
 }
 
+rect.label.updated {
+    opacity: 0.25;
+    stroke-width: 5px;
+    stroke: black;
+}
+
 rect.label.selected {
     opacity: 0.75;
     stroke-width: 2px;
