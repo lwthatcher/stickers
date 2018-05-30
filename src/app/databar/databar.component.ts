@@ -322,8 +322,9 @@ export class DatabarComponent implements OnInit, OnChanges {
     // declar local values
     let target = d3.select(arr[i]);
     let event = d3.event;
-    target.attr('x', d3.event.x);
-    console.debug('dragged', d, event);
+    let curr_x = parseInt(target.attr('x'));
+    target.attr('x', curr_x + event.dx);
+    console.debug('dragged', curr_x, event.dx, event.x, {d, event});
   }
 
   labelClicked(d) {
