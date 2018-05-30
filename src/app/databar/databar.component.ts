@@ -319,12 +319,11 @@ export class DatabarComponent implements OnInit, OnChanges {
     let [d,i,arr] = D;
     // only drag if selected
     if (!d.selected) { return }
-    // declar local values
-    let target = d3.select(arr[i]);
-    let event = d3.event;
-    let curr_x = parseInt(target.attr('x'));
-    target.attr('x', curr_x + event.dx);
-    console.debug('dragged', curr_x, event.dx, event.x, {d, event});
+    // update label's position
+    this.moveLabel(d, d3.select(arr[i]))
+    
+    // log drag
+    console.debug('dragged', {d, target:d3.select(arr[i]), event: d3.event});
   }
 
   labelClicked(d) {
@@ -370,6 +369,19 @@ export class DatabarComponent implements OnInit, OnChanges {
       // select this event
       lbl.selected = true;
       this.draw_labels();
+    }
+
+    private moveLabel(lbl, target) {
+      // specify variables
+      let x0 = parseInt(target.attr('x'));       // original left edge of label in pixel-space
+      let w  = parseInt(target.attr('width'));   // pixel width of label
+      let xs = x0 + d3.event.dx;                 // new x value (start position in pixel-space)
+      let xe = xs + w                            // end position in pixel-space
+      // move the drawn rectangle to the new position
+      target.attr('x', xs);
+      // update the domain position of label
+      lbl.start = this.x.invert(xs);
+      lbl.end = this.x.invert(xe);
     }
   // #endregion
 }
