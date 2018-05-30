@@ -196,6 +196,7 @@ export class DatabarComponent implements OnInit, OnChanges {
                      .attr("clip-path", "url(#clip)")
                      .classed('label', true)
                      .on('click', (d) => { this.labelClicked(d) }, false)
+                     .call(d3.drag().on('drag', (...d) => {this.dragged(d) }))
     enter.append('svg:title')
          .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
     // both updated or new elements
@@ -306,13 +307,24 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #region [Event Handlers]
   clicked(event: any) {
     let target = d3.select(event.target);
-    if (!target.classed('label')) {
-      this.deselect();
-      console.debug('clicked elsewhere', event);
-    }
+    // ignore clicks on labels
+    if (target.classed('label')) { return }
+    // deselect any selected labels
+    this.deselect();
   }
 
   zoomed() { this.zoom.emit(d3.event) }
+
+  dragged(D) {
+    let [d,i,arr] = D;
+    // only drag if selected
+    if (!d.selected) { return }
+    // declar local values
+    let target = d3.select(arr[i]);
+    let event = d3.event;
+    target.attr('x', d3.event.x);
+    console.debug('dragged', d, event);
+  }
 
   labelClicked(d) {
     console.debug('lbl clicked', d, event);
