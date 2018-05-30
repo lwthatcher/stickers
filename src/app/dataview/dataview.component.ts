@@ -1,8 +1,10 @@
+// #region [Imports]
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
+// #endregion
 
 // #region [Interfaces]
 export interface Sensor {
@@ -24,12 +26,14 @@ export interface Label {
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
 // #endregion
 
+// #region [Metadata]
 @Component({
   selector: 'app-dataview',
   templateUrl: 'dataview.component.html',
   styleUrls: ['dataview.component.css'],
   providers: [DataloaderService]
 })
+// #endregion
 export class DataviewComponent implements OnInit {
   // #region [Constants]
   SENSOR_DIMS = {

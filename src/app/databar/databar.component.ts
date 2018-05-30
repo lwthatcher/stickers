@@ -1,3 +1,4 @@
+// #region [Imports]
 import { Component, OnInit, ElementRef, Input, EventEmitter, Output, OnChanges, SimpleChange } from '@angular/core';
 import { DataloaderService, Dataset } from '../data-loader/data-loader.service';
 import { Spinner } from 'spin.js';
@@ -6,6 +7,7 @@ import { Sensor, Label } from "../dataview/dataview.component";
 import { SettingsService } from '../settings/settings.service';
 import { DataInfo } from '../data-loader/workspace-info';
 import * as d3 from "d3";
+// #endregion
 
  // #region [Interfaces]
 interface datum {
@@ -41,11 +43,13 @@ interface ColorMap {
 }
 // #endregion
 
+// #region [Metadata]
 @Component({
   selector: 'app-databar',
   templateUrl: './databar.component.html',
   styleUrls: ['./databar.component.css']
 })
+// #endregion
 export class DatabarComponent implements OnInit, OnChanges {
   // #region [Inputs]
   @Input() _height: number;
@@ -71,6 +75,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   g_sigs: Selection; 
   g_axes: Selection;
   g_lbls: Selection; 
+  g_hand: Selection;
   r_zoom: Selection;
   r_clip: Selection;
   container: Element;
@@ -125,7 +130,8 @@ export class DatabarComponent implements OnInit, OnChanges {
                  .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
     this.g_sigs = host.select("g.transform > g.signals");
     this.g_axes = host.select("g.transform > g.axes");
-    this.g_lbls = host.select("g.transform > g.labels")
+    this.g_lbls = host.select("g.transform > g.labels");
+    this.g_hand = host.select("g.transform > g.handles");
     this.r_zoom = host.select("g.transform > rect.zoom")
                       .attr('width', this.width)
                       .attr('height', this.height);
@@ -268,39 +274,31 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
   // #endregion
 
-  // #region [Data Loading]
-  load_data(): Promise<Array<datum>[]> {
-    let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as Array<datum> }
-    return this.dataloader.getSensorStreams(this.data_info.name, this.sensor.idxs)
-        .then((_dataset) => this._dataset = _dataset)
-        .then(() => { console.debug('loaded dataset', this._dataset) })
-        .then(() => { return this._dataset.format() })
-        .then((axes) => {return axes.map(toArray)})
+  // #region [Label Editting]
+  private deselect() {
+    for (let l of this.labels) { l.selected = false }
+    this.draw_labels();
   }
 
-  private start_spinner(): void {
-    const opts = this.settings.spinner_options;
-    let target = this.el.nativeElement;
-    this.spinner = new Spinner(opts).spin(target);
+  private selectLabel(lbl) {
+    // deselect all other labels
+    for (let l of this.labels) { l.selected = false }
+    // select this event
+    lbl.selected = true;
+    this.draw_labels();
   }
 
-  private stop_spinner() {
-    this.spinner.stop();
-  }
-
-  private downsample(data) {
-    // only downsample if enabled
-    if (!this.enable_downsampling) return data;
-    // setup sampler
-    const sampler = largestTriangleThreeBucket();
-    sampler.x((d) => {return d.d})
-           .y((d) => {return d.i})
-    // adaptive bucket size
-    sampler.bucketSize(this.bucket_size);
-    // return sampled data
-    const result = data.map((axis) => { return sampler(axis) });
-    console.debug('resampled size:', result[0].length)
-    return result;
+  private moveLabel(lbl, target) {
+    // specify variables
+    let x0 = parseInt(target.attr('x'));       // original left edge of label in pixel-space
+    let w  = parseInt(target.attr('width'));   // pixel width of label
+    let xs = x0 + d3.event.dx;                 // new x value (start position in pixel-space)
+    let xe = xs + w                            // end position in pixel-space
+    // move the drawn rectangle to the new position
+    target.attr('x', xs);
+    // update the domain position of label
+    lbl.start = this.x.invert(xs);
+    lbl.end = this.x.invert(xe);
   }
   // #endregion
 
@@ -347,36 +345,46 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
   // #endregion
 
+  // #region [Data Loading]
+  load_data(): Promise<Array<datum>[]> {
+    let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as Array<datum> }
+    return this.dataloader.getSensorStreams(this.data_info.name, this.sensor.idxs)
+        .then((_dataset) => this._dataset = _dataset)
+        .then(() => { console.debug('loaded dataset', this._dataset) })
+        .then(() => { return this._dataset.format() })
+        .then((axes) => {return axes.map(toArray)})
+  }
+
+  private start_spinner(): void {
+    const opts = this.settings.spinner_options;
+    let target = this.el.nativeElement;
+    this.spinner = new Spinner(opts).spin(target);
+  }
+
+  private stop_spinner() {
+    this.spinner.stop();
+  }
+
+  private downsample(data) {
+    // only downsample if enabled
+    if (!this.enable_downsampling) return data;
+    // setup sampler
+    const sampler = largestTriangleThreeBucket();
+    sampler.x((d) => {return d.d})
+           .y((d) => {return d.i})
+    // adaptive bucket size
+    sampler.bucketSize(this.bucket_size);
+    // return sampled data
+    const result = data.map((axis) => { return sampler(axis) });
+    console.debug('resampled size:', result[0].length)
+    return result;
+  }
+  // #endregion
+
   // #region [Helper Methods]
     private domains_and_ranges() {
       let dr = (d) => {return [d.domain(), d.range()]}
       return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
-    }
-
-    private deselect() {
-      for (let l of this.labels) { l.selected = false }
-      this.draw_labels();
-    }
-
-    private selectLabel(lbl) {
-      // deselect all other labels
-      for (let l of this.labels) { l.selected = false }
-      // select this event
-      lbl.selected = true;
-      this.draw_labels();
-    }
-
-    private moveLabel(lbl, target) {
-      // specify variables
-      let x0 = parseInt(target.attr('x'));       // original left edge of label in pixel-space
-      let w  = parseInt(target.attr('width'));   // pixel width of label
-      let xs = x0 + d3.event.dx;                 // new x value (start position in pixel-space)
-      let xe = xs + w                            // end position in pixel-space
-      // move the drawn rectangle to the new position
-      target.attr('x', xs);
-      // update the domain position of label
-      lbl.start = this.x.invert(xs);
-      lbl.end = this.x.invert(xe);
     }
   // #endregion
 }
