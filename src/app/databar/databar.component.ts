@@ -315,19 +315,13 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   zoomed() { this.zoom.emit(d3.event) }
 
-  dragged(D) {
-    let [d,i,arr] = D;
-    // only drag if selected
-    if (!d.selected) { return }
-    // update label's position
-    this.moveLabel(d, d3.select(arr[i]))
-    
-    // log drag
-    console.debug('dragged', {d, target:d3.select(arr[i]), event: d3.event});
+  dragged(_d) {
+    let [d,i,arr] = _d;
+    if (!d.selected) { return }           // only drag if selected
+    this.moveLabel(d, d3.select(arr[i]))  // otherwise move label
   }
 
   labelClicked(d) {
-    console.debug('lbl clicked', d, event);
     this.selectLabel(d);
   }
 
@@ -347,8 +341,9 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.host.selectAll('g.axes > g.x-axis').remove();
     this.draw_xAxis();
     // redraw labels
-    this.host.selectAll('g.labels rect.label').attr('x', (d) => { return this.x(d.start) })
-                                              .attr('width', (d) => { return this.x(d.end) - this.x(d.start) })
+    this.host.selectAll('g.labels rect.label')
+             .attr('x', (d) => { return this.x(d.start) })
+             .attr('width', (d) => { return this.x(d.end) - this.x(d.start) })
   }
   // #endregion
 
