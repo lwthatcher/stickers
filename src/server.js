@@ -9,6 +9,7 @@ const cors = require('cors');
 // #region [Variables]
 const WORKSPACES_PATH = path.join('/users', 'data', 'workspaces');
 const pjson = require('../package.json');
+const FgCyan = "\x1b[36m%s\x1b[0m";
 // #endregion
 
 // #region [Express Setup]
@@ -102,7 +103,7 @@ function ws_path(workspace) {
 
 // #region [Server]
 app.listen(3000, () => {
+    console.info(FgCyan, 'version (' + pjson.version + ')');
     console.log('Node server listening on port: 3000');
-    console.info('version (' + pjson.version + ')')
 });
 // #endregion
