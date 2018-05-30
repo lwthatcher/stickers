@@ -103,5 +103,6 @@ function ws_path(workspace) {
 // #region [Server]
 app.listen(3000, () => {
     console.log('Node server listening on port: 3000');
+    console.info('version (' + pjson.version + ')')
 });
 // #endregion
