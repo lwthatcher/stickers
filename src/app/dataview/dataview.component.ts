@@ -18,6 +18,7 @@ export interface Label {
   end: number;
   label: number;
   type?: string;
+  selected?: boolean;
 }
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]

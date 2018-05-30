@@ -18,6 +18,8 @@ interface Selection {
   selectAll(selector: string): Selection
   attr(attribute: string): any
   attr(attribue: string, value: any): Selection
+  classed(attribute: string): Selection
+  classed(attribue: string, value: any): Selection
   style(attribute: string, value: any): Selection
   append(element: string): Selection
   data(data: any): Selection
@@ -25,7 +27,9 @@ interface Selection {
   enter(): Selection
   on(event: string, callback): Selection
   text(value): Selection
-  call(value: any)
+  call(value: any): Selection
+  filter(filter: any): Selection
+  merge(selection: Selection): Selection
   remove()
   
 }
@@ -52,6 +56,7 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   // #region [Outputs]
   @Output() zoom = new EventEmitter<any>();
+  @Output() labelsChange = new EventEmitter<Label[]>();
   // #endregion
 
   // #region [Variables]
@@ -171,26 +176,26 @@ export class DatabarComponent implements OnInit, OnChanges {
     // draw each signal
     this.plot_signals(data);
     // draw labels
-    if (this.labels)
+    if (this.labels) 
       this.draw_labels();
   }
 
   draw_labels() {
     console.debug('drawing labels', this.labels);
-    let _rects = this.g_lbls.selectAll('rect.label');
-    _rects.data(this.labels)
+    let _rects = this.g_lbls.selectAll('rect.label').data(this.labels);
+    _rects = _rects
           .enter()
           .append('rect')
           .attr('y', 0)
           .attr('height', this.height)
+          .merge(_rects)
           .attr('x', (d) => { return this.x(d.start)})
           .attr('width', (d) =>{ return this.x(d.end) - this.x(d.start) })
           .attr('fill', (d) => { return this.label_color(d.label) })
-          .attr('class', 'label')
+          .attr('class', (d) => { return this.lbl_class(d) })
           .attr("clip-path", "url(#clip)")
-          .on('click', (d) => { this.labelClicked(d) })
-          .append("svg:title")
-          .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
+          .on('click', (...d) => { this.labelClicked(d) })
+          .attr('title', (d) => {return d.type + ' event' || 'event ' + d.label.toString()})
   }
 
   clear() {
@@ -295,8 +300,14 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   zoomed() { this.zoom.emit(d3.event) }
 
-  labelClicked(d) {
-    console.log('selected label', d);
+  labelClicked(D) {
+    let [d, i, arr] = D;
+    const t = d3.event.target;
+    let lbl = d;
+    lbl.selected = true;
+    this.labels[i] = lbl;
+    console.log('selected label', d, t, i, arr);
+    this.draw_labels();
   }
 
   resize(event: any) {
@@ -324,6 +335,16 @@ export class DatabarComponent implements OnInit, OnChanges {
     private domains_and_ranges() {
       let dr = (d) => {return [d.domain(), d.range()]}
       return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
+    }
+
+    private selectLabel(lbl) {
+
+    }
+
+    private lbl_class(d: Label) {
+      let result = 'label'
+      if (d.selected) result += ' selected'
+      return result;
     }
   // #endregion
 }
