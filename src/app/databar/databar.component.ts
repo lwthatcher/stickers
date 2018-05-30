@@ -195,7 +195,7 @@ export class DatabarComponent implements OnInit, OnChanges {
                      .attr('height', this.height)
                      .attr("clip-path", "url(#clip)")
                      .classed('label', true)
-                     .on('click', (...d) => { this.labelClicked(d) }, false)
+                     .on('click', (d) => { this.labelClicked(d) }, false)
     enter.append('svg:title')
          .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
     // both updated or new elements
@@ -304,18 +304,19 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #endregion
 
   // #region [Event Handlers]
-  clicked(event: any) { console.debug('clicked!', event) }
+  clicked(event: any) {
+    let target = d3.select(event.target);
+    if (!target.classed('label')) {
+      this.deselect();
+      console.debug('clicked elsewhere', event);
+    }
+  }
 
   zoomed() { this.zoom.emit(d3.event) }
 
-  labelClicked(D) {
-    let [d, i, arr] = D;
-    const t = d3.event.target;
-    let lbl = d;
-    lbl.selected = true;
-    this.labels[i] = lbl;
-    console.log('selected label', d, t, i, arr);
-    this.draw_labels();
+  labelClicked(d) {
+    console.debug('lbl clicked', d, event);
+    this.selectLabel(d);
   }
 
   resize(event: any) {
@@ -345,14 +346,17 @@ export class DatabarComponent implements OnInit, OnChanges {
       return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
     }
 
-    private selectLabel(lbl) {
-
+    private deselect() {
+      for (let l of this.labels) { l.selected = false }
+      this.draw_labels();
     }
 
-    private lbl_class(d: Label) {
-      let result = 'label'
-      if (d.selected) result += ' selected'
-      return result;
+    private selectLabel(lbl) {
+      // deselect all other labels
+      for (let l of this.labels) { l.selected = false }
+      // select this event
+      lbl.selected = true;
+      this.draw_labels();
     }
   // #endregion
 }
