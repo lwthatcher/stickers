@@ -152,7 +152,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.start_spinner();
     this.draw();
     // redraw if window resized
-    window.addEventListener('resize', (e) => { this.resize(e) })
+    window.addEventListener('resize', (e) => { this.window_resize(e) })
     // log when finished
     this.initialized = true;
     console.info('databar initialized', this);
@@ -201,8 +201,8 @@ export class DatabarComponent implements OnInit, OnChanges {
                      .attr('height', this.height)
                      .attr("clip-path", "url(#clip)")
                      .classed('label', true)
-                     .on('click', (d) => { this.labelClicked(d) }, false)
-                     .call(d3.drag().on('drag', (...d) => {this.dragged(d) }))
+                     .on('click', (d) => { this.lbl_clicked(d) }, false)
+                     .call(d3.drag().on('drag', (...d) => { this.dragged(d) }))
     enter.append('svg:title')
          .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
     // both updated or new elements
@@ -219,27 +219,28 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   private draw_handles(lbl) {
-    
     let left = this.g_hand.selectAll('rect.drag-handle.left').data([lbl]);
     let right = this.g_hand.selectAll('rect.drag-handle.right').data([lbl]);
 
     left.enter().append('rect')
-        .attr('x', (d) => { return this.x(d.start) -5 })
         .attr('width', 10)
         .classed('drag-handle', true)
         .classed('left', true)
         .attr('y', 0)
         .attr('height', this.height)
+        .call(d3.drag().on('drag', (d) => { this.lbl_resize(d, 'left') }))
+        .merge(left)
+        .attr('x', (d) => { return this.x(d.start) -5 })
 
     right.enter().append('rect')
-        .attr('x', (d) => { return this.x(d.end) -5 })
         .attr('width', 10)
         .classed('drag-handle', true)
         .classed('right', true)
         .attr('y', 0)
         .attr('height', this.height)
-
-        console.log('drawing handles', lbl, left, right);
+        .call(d3.drag().on('drag', (d) => { this.lbl_resize(d, 'right') }))
+        .merge(right)
+        .attr('x', (d) => { return this.x(d.end) -5 })
   }
 
   private draw_xAxis() {
@@ -276,7 +277,9 @@ export class DatabarComponent implements OnInit, OnChanges {
         .attr("stroke-opacity", 0.7)
         .attr("d", this.line);
   }
+  // #endregion
 
+  // #region [Domains and Ranges]
   private set_ranges() {
     // set x-ranges
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
@@ -326,6 +329,24 @@ export class DatabarComponent implements OnInit, OnChanges {
     // update the domain position of label
     lbl.start = this.x.invert(xs);
     lbl.end = this.x.invert(xe);
+    // update drag handles
+    this.draw_handles(lbl);
+  }
+
+  private handle_left(lbl) {
+    let event = d3.event;
+    let ls = this.x.invert(event.x);
+    lbl.start = ls;
+    this.draw_labels();
+    this.draw_handles(lbl);
+  }
+
+  private handle_right(lbl) {
+    let event = d3.event;
+    let le = this.x.invert(event.x);
+    lbl.end = le;
+    this.draw_labels();
+    this.draw_handles(lbl);
   }
   // #endregion
 
@@ -345,9 +366,14 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.moveLabel(d, d3.select(arr[i]))  // otherwise move label
   }
 
-  labelClicked(d) { this.selectLabel(d) }
+  lbl_resize(d, side) {
+    if (side === 'left') this.handle_left(d)
+    else this.handle_right(d)
+  }
 
-  resize(event: any) {
+  lbl_clicked(d) { this.selectLabel(d) }
+
+  window_resize(event: any) {
     console.debug('window resize', this.width, this.height);
     this.clear();
     this.draw();
