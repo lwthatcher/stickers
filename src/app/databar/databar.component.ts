@@ -242,33 +242,16 @@ export class DatabarComponent implements OnInit, OnChanges {
     if (layers.includes('y-axis')) this.g_axes.selectAll("g.y-axis").remove();
   }
 
-  private draw_handles(lbl?: Label) {
+  draw_handles(lbl?: Label) {
     // if no label is selected, clear the handles and return
     if (!lbl) { lbl = this.selected_label as Label }
     if (!lbl) { this.clear('handles'); return; }
-
+    // selections
     let left = this.g_hand.selectAll('rect.drag-handle.left').data([lbl]);
     let right = this.g_hand.selectAll('rect.drag-handle.right').data([lbl]);
-
-    left.enter().append('rect')
-        .attr('width', 10)
-        .classed('drag-handle', true)
-        .classed('left', true)
-        .attr('y', 0)
-        .attr('height', this.height)
-        .call(d3.drag().on('drag', (d) => { this.lbl_resize(d, 'left') }))
-        .merge(left)
-        .attr('x', (d) => { return this.x(d.start) -5 })
-
-    right.enter().append('rect')
-        .attr('width', 10)
-        .classed('drag-handle', true)
-        .classed('right', true)
-        .attr('y', 0)
-        .attr('height', this.height)
-        .call(d3.drag().on('drag', (d) => { this.lbl_resize(d, 'right') }))
-        .merge(right)
-        .attr('x', (d) => { return this.x(d.end) -5 })
+    // draw left/right handles
+    this._add_handle(left, 'left');
+    this._add_handle(right, 'right')
   }
 
   private draw_xAxis() {
@@ -305,6 +288,21 @@ export class DatabarComponent implements OnInit, OnChanges {
         .attr("stroke-opacity", 0.7)
         .attr("d", this.line);
   }
+
+  private _add_handle(selection: Selection, side: 'left' | 'right') {
+    let callback;
+    if (side === 'left') callback = (d) => { return this.x(d.start) - 5 }
+    else callback = (d) => { return this.x(d.end) - 5 }
+    selection.enter().append('rect')
+             .attr('width', 10)
+             .classed('drag-handle', true)
+             .classed(side, true)
+             .attr('y', 0)
+             .attr('height', this.height)
+             .call(d3.drag().on('drag', (d) => { this.lbl_resize(d, side) }))
+             .merge(selection)
+             .attr('x', callback)
+  }
   // #endregion
 
   // #region [Domains and Ranges]
@@ -335,18 +333,17 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.clear('handles');
   }
 
-  private selectLabel(lbl) {
+  private select(lbl) {
     // deselect all other labels
     for (let l of this.labels) { l.selected = false }
     // select this event
     lbl.selected = true;
-    // redraw labels
+    // redraw labels and add drag-handles
     this.draw_labels();
-    // draw drag-handles
     this.draw_handles(lbl);
   }
 
-  private moveLabel(lbl, target) {
+  private move(lbl, target) {
     // specify variables
     let x0 = parseInt(target.attr('x'));       // original left edge of label in pixel-space
     let w  = parseInt(target.attr('width'));   // pixel width of label
@@ -363,8 +360,16 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   private handle_left(lbl) {
     let event = d3.event;
-    let ls = this.x.invert(event.x);
-    lbl.start = ls;
+    let dx = this.x.invert(event.x);
+    // constraints
+    if (dx > lbl.end) dx = lbl.end;               // new width cannot be less than zero
+    for (let l of this.labels) {
+      if (l.selected) continue;                   // ignore the selected label
+      if (dx > l.start && dx < l.end) dx = l.end; // avoid overlap (assumes labels sorted)
+    }
+    // update start position
+    lbl.start = dx;
+    // redraw labels and handles
     this.draw_labels();
     this.draw_handles(lbl);
   }
@@ -391,7 +396,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   dragged(_d) {
     let [d,i,arr] = _d;
     if (!d.selected) { return }           // only drag if selected
-    this.moveLabel(d, d3.select(arr[i]))  // otherwise move label
+    this.move(d, d3.select(arr[i]))  // otherwise move label
   }
 
   lbl_resize(d, side) {
@@ -399,7 +404,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     else this.handle_right(d)
   }
 
-  lbl_clicked(d) { this.selectLabel(d) }
+  lbl_clicked(d) { this.select(d) }
 
   window_resize(event: any) {
     console.debug('window resize', this.width, this.height);
