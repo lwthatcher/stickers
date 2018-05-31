@@ -12,7 +12,12 @@ rect.label.updated {
 
 rect.label.selected {
     opacity: 0.75;
-    stroke-width: 5px;
     stroke: slateblue;
     cursor: move;
+}
+
+rect.drag-handle {
+    opacity: 0.65;
+    fill: slategray;
+    cursor: col-resize;
 }

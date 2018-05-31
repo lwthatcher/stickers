@@ -106,7 +106,7 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   get bucket_size() { return Math.trunc(this.points_per_pixel / 2) }
 
-  get is_labelled() { return !!this.data_info.labelled }
+  get selected_label() { return this.labels.find((lbl) => lbl.selected) || false }
   // #endregion
 
   // #region [Constructors]
@@ -218,6 +218,30 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.g_axes.selectAll("*").remove();
   }
 
+  private draw_handles(lbl) {
+    
+    let left = this.g_hand.selectAll('rect.drag-handle.left').data([lbl]);
+    let right = this.g_hand.selectAll('rect.drag-handle.right').data([lbl]);
+
+    left.enter().append('rect')
+        .attr('x', (d) => { return this.x(d.start) -5 })
+        .attr('width', 10)
+        .classed('drag-handle', true)
+        .classed('left', true)
+        .attr('y', 0)
+        .attr('height', this.height)
+
+    right.enter().append('rect')
+        .attr('x', (d) => { return this.x(d.end) -5 })
+        .attr('width', 10)
+        .classed('drag-handle', true)
+        .classed('right', true)
+        .attr('y', 0)
+        .attr('height', this.height)
+
+        console.log('drawing handles', lbl, left, right);
+  }
+
   private draw_xAxis() {
     this.g_axes.append('g')
         .attr('class', 'x-axis')
@@ -285,7 +309,10 @@ export class DatabarComponent implements OnInit, OnChanges {
     for (let l of this.labels) { l.selected = false }
     // select this event
     lbl.selected = true;
+    // redraw labels
     this.draw_labels();
+    // draw drag-handles
+    this.draw_handles(lbl);
   }
 
   private moveLabel(lbl, target) {
@@ -307,8 +334,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     let target = d3.select(event.target);
     // ignore clicks on labels
     if (target.classed('label')) { return }
-    // deselect any selected labels
-    this.deselect();
+    this.deselect();  // deselect any selected labels
   }
 
   zoomed() { this.zoom.emit(d3.event) }
@@ -319,9 +345,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.moveLabel(d, d3.select(arr[i]))  // otherwise move label
   }
 
-  labelClicked(d) {
-    this.selectLabel(d);
-  }
+  labelClicked(d) { this.selectLabel(d) }
 
   resize(event: any) {
     console.debug('window resize', this.width, this.height);
