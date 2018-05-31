@@ -1,5 +1,13 @@
 // #region [Imports]
-import { Component, OnInit, ElementRef, Input, EventEmitter, Output, OnChanges, SimpleChange } from '@angular/core';
+import { Component, 
+         OnInit, 
+         ElementRef, 
+         Input, 
+         EventEmitter, 
+         Output, 
+         OnChanges, 
+         SimpleChange, 
+         HostListener } from '@angular/core';
 import { DataloaderService, Dataset } from '../data-loader/data-loader.service';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
@@ -106,7 +114,7 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   get bucket_size() { return Math.trunc(this.points_per_pixel / 2) }
 
-  get selected_label() { return this.labels.find((lbl) => lbl.selected) || false }
+  get selected_label() { return this.labels && this.labels.find((lbl) => lbl.selected) || false }
   // #endregion
 
   // #region [Constructors]
@@ -186,6 +194,9 @@ export class DatabarComponent implements OnInit, OnChanges {
     // draw labels
     if (this.labels) 
       this.draw_labels();
+    // draw handles if label selected
+    if (this.selected_label)
+      this.draw_handles();
   }
 
   draw_labels() {
@@ -213,12 +224,29 @@ export class DatabarComponent implements OnInit, OnChanges {
           .classed('selected', (d) => d.selected )
   }
 
-  clear() {
-    this.g_sigs.selectAll("*").remove();
-    this.g_axes.selectAll("*").remove();
+  clear(...layers) {
+    // if no parameters given, clear everything
+    if (layers.length === 0) {
+      this.g_sigs.selectAll("*").remove();
+      this.g_axes.selectAll("*").remove();
+      this.g_lbls.selectAll("*").remove();
+      this.g_hand.selectAll("*").remove();
+      return;
+    }
+    // otherwise clear specified layers
+    if (layers.includes('signals')) this.g_sigs.selectAll("*").remove();
+    if (layers.includes('axes')) this.g_axes.selectAll("*").remove();
+    if (layers.includes('labels')) this.g_lbls.selectAll("*").remove();
+    if (layers.includes('handles')) this.g_hand.selectAll("*").remove();
+    if (layers.includes('x-axis')) this.g_axes.selectAll("g.x-axis").remove();
+    if (layers.includes('y-axis')) this.g_axes.selectAll("g.y-axis").remove();
   }
 
-  private draw_handles(lbl) {
+  private draw_handles(lbl?: Label) {
+    // if no label is selected, clear the handles and return
+    if (!lbl) { lbl = this.selected_label as Label }
+    if (!lbl) { this.clear('handles'); return; }
+
     let left = this.g_hand.selectAll('rect.drag-handle.left').data([lbl]);
     let right = this.g_hand.selectAll('rect.drag-handle.right').data([lbl]);
 
@@ -296,7 +324,6 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.x0.domain(this.x.domain());
     this.y.domain([d3.min(axes, (ax) => d3.min(ax, (d) => d.d)), 
                    d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
-    console.debug('domains/ranges', this.domains_and_ranges());
     return Promise.resolve();
   }
   // #endregion
@@ -305,6 +332,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   private deselect() {
     for (let l of this.labels) { l.selected = false }
     this.draw_labels();
+    this.clear('handles');
   }
 
   private selectLabel(lbl) {
@@ -380,18 +408,22 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.r_clip.attr('width', this.width);
   }
 
+  @HostListener('document:keypress', ['$event'])
+  keyPress(event) {
+    if (event.key === 'i') this.logInfo();
+  }
+
   private updateZoom(t) {
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
     this.host.selectAll('g.signals > path.line').attr("d", this.line);
     // redraw x-axis
-    this.host.selectAll('g.axes > g.x-axis').remove();
+    this.clear('x-axis');
     this.draw_xAxis();
     // redraw labels
-    this.host.selectAll('g.labels rect.label')
-             .attr('x', (d) => { return this.x(d.start) })
-             .attr('width', (d) => { return this.x(d.end) - this.x(d.start) })
+    this.draw_labels();
+    this.draw_handles();
   }
   // #endregion
 
@@ -432,9 +464,21 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #endregion
 
   // #region [Helper Methods]
-    private domains_and_ranges() {
-      let dr = (d) => {return [d.domain(), d.range()]}
-      return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
-    }
+  private logInfo() {
+    console.groupCollapsed('Databar ' + this.sensor.name);
+    console.log('heights/widths:', [this.height, this.width], [this.HEIGHT, this.WIDTH]);
+    console.log('labels:', this.labels);
+    console.log('sensor:', this.sensor);
+    console.log('current zoom:', this.transform);
+    console.log('Dataset:', this._dataset);
+    console.log('data info:', this.data_info);
+    console.log('domains/ranges:', this.domains_and_ranges());
+    console.groupEnd()
+  }
+
+  private domains_and_ranges() {
+    let dr = (d) => {return [d.domain(), d.range()]}
+    return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
+  }
   // #endregion
 }
