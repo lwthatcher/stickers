@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
-import { Label } from './databar/labeller';
+import { Label, LabelStream } from './databar/labeller';
 // #endregion
 
 // #region [Interfaces]
@@ -68,6 +68,7 @@ export class DataviewComponent implements OnInit {
   sensors: Sensor[];
   zoom_transform;
   labels: Label[];
+  labelStreams: LabelStream[] = [];
   // #endregion
 
   // #region [Constructors]
@@ -100,6 +101,12 @@ export class DataviewComponent implements OnInit {
   }
   // #endregion
 
+  // #region [Label Streams]
+  getLabelStream(name) {
+    return this.labelStreams.find((stream) => { return stream.name === name })
+  }
+  // #endregion
+
   // #region [Event Handlers]
   onZoom(event) { this.zoom_transform = event.transform }
 
@@ -117,7 +124,7 @@ export class DataviewComponent implements OnInit {
   parse_labels(labels: Promise<ArrayLike>) {
     labels.then((lbls) => {return this.boundaries(lbls)})
           .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
-          .then((labels) => { this.labels = labels })
+          .then((labels) => { this.labels = labels; this.labelStreams.push(new LabelStream('default', labels)) })
   }
   // #endregion
 

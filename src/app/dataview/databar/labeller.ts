@@ -8,8 +8,20 @@ export interface Label {
     label: number;
     type?: string;
     selected?: boolean;
+    id?: number;
 }
 // #endregion
+
+export class LabelStream {
+    name: string;
+    labels: Label[];
+
+    constructor(name:string, labels: Label[]) {
+        this.name = name;
+        this.labels = labels.map((lbl,i) => {lbl.id = i; return lbl} )
+    }
+}
+
 
 export class Labeller {
     // #region [Constructor]
