@@ -366,7 +366,9 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {
+    console.debug('key press!', event);
     if (event.key === 'i') this.logInfo();
+    else if (event.key === 'Delete' && this.selected_label) this.labeller.delete(this.selected_label);
   }
 
   private updateZoom(t) {
@@ -436,7 +438,5 @@ export class DatabarComponent implements OnInit, OnChanges {
     let dr = (d) => {return [d.domain(), d.range()]}
     return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
   }
-
-
   // #endregion
 }
