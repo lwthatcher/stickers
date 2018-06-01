@@ -5,20 +5,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
-import { DataviewComponent } from './dataview/dataview.component';
-import { DatabarComponent } from './dataview/databar/databar.component';
 import { HomeComponent } from './home/home.component';
 import { KeysPipe } from './keys.pipe';
 import { AppRoutingModule } from './app-routing.module';
 import { SettingsModule } from './settings/settings.module';
 import { DataLoaderModule } from './data-loader/data-loader.module';
+import { DataviewModule } from './dataview/dataview.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    DatabarComponent,
-    DataviewComponent,
     HomeComponent,
     KeysPipe
   ],
@@ -27,9 +24,10 @@ import { DataLoaderModule } from './data-loader/data-loader.module';
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    NgbModule.forRoot(),
     SettingsModule,
     DataLoaderModule,
-    NgbModule.forRoot()
+    DataviewModule
   ],
   providers: [],
   bootstrap: [AppComponent]
