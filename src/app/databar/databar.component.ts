@@ -159,8 +159,6 @@ export class DatabarComponent implements OnInit, OnChanges {
     // draw data (when it loads)
     this.start_spinner();
     this.draw();
-    // redraw if window resized
-    // window.addEventListener('resize', (e) => { this.window_resize(e) })
     // log when finished
     this.initialized = true;
     console.info('databar initialized', this);
@@ -342,6 +340,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   private select(lbl) {
+    console.debug('selected label', lbl);
     // deselect all other labels
     for (let l of this.labels) { l.selected = false }
     // select this event
@@ -352,16 +351,33 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   private move(lbl, target) {
-    // specify variables
-    let x0 = parseInt(target.attr('x'));       // original left edge of label in pixel-space
-    let w  = parseInt(target.attr('width'));   // pixel width of label
-    let xs = x0 + d3.event.dx;                 // new x value (start position in pixel-space)
-    let xe = xs + w                            // end position in pixel-space
+    // if no movement we don't have to compute anything
+    if (d3.event.dx === 0) return;
+    // side = direction it moved
+    let side = (d3.event.dx < 0) ? 'left' : 'right';
+    // pixel-coordinate variables
+    let p0 = parseInt(target.attr('x'));        // original left edge of label
+    let pw  = parseInt(target.attr('width'));   // width of label
+    let ps = p0 + d3.event.dx;                  // label start
+    let pe = ps + pw;                           // label end
+    // data-coordinate variables
+    let xs = this.x.invert(ps);
+    let xe = this.x.invert(pe);
+    let w  = xe - xs;
+    // don't allow overlap with other labels
+    if (side === 'left') {
+      xs = this.overlaps(xs, lbl, side);
+      xe = xs + w;
+    }
+    if (side === 'right') {
+      xe = this.overlaps(xe, lbl, side);
+      xs = xe - w;
+    }
     // move the drawn rectangle to the new position
-    target.attr('x', xs);
+    target.attr('x', this.x(xs));
     // update the domain position of label
-    lbl.start = this.x.invert(xs);
-    lbl.end = this.x.invert(xe);
+    lbl.start = xs;
+    lbl.end = xe;
     // update drag handles
     this.draw_handles(lbl);
   }
