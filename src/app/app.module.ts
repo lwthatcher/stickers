@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { DatabarComponent } from './databar/databar.component';
@@ -27,7 +28,8 @@ import { DataLoaderModule } from './data-loader/data-loader.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     SettingsModule,
-    DataLoaderModule
+    DataLoaderModule,
+    NgbModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
