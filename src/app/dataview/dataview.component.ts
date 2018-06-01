@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
-import { Label } from '../databar/labeller';
+import { Label } from './databar/labeller';
 // #endregion
 
 // #region [Interfaces]

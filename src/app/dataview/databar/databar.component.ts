@@ -8,12 +8,12 @@ import { Component,
          OnChanges, 
          SimpleChange, 
          HostListener } from '@angular/core';
-import { DataloaderService, Dataset } from '../data-loader/data-loader.service';
+import { SettingsService } from '../../settings/settings.service';
+import { DataloaderService, Dataset } from '../../data-loader/data-loader.service';
+import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
-import { Sensor } from "../dataview/dataview.component";
-import { SettingsService } from '../settings/settings.service';
-import { DataInfo } from '../data-loader/workspace-info';
+import { Sensor } from "../dataview.component";
 import { Labeller, Label } from './labeller';
 import * as d3 from "d3";
 // #endregion
