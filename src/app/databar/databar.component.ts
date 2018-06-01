@@ -250,8 +250,17 @@ export class DatabarComponent implements OnInit, OnChanges {
     let left = this.g_hand.selectAll('rect.drag-handle.left').data([lbl]);
     let right = this.g_hand.selectAll('rect.drag-handle.right').data([lbl]);
     // draw left/right handles
-    this._add_handle(left, 'left');
-    this._add_handle(right, 'right')
+    left = this._add_handle(left, 'left');
+    right = this._add_handle(right, 'right');
+    // conditionally format if width == 0
+    if (lbl.start === lbl.end) {
+      left.classed('warn', true);
+      right.classed('warn', true);
+    }
+    else {
+      left.classed('warn', false);
+      right.classed('warn', false);
+    }
   }
 
   private draw_xAxis() {
@@ -293,15 +302,15 @@ export class DatabarComponent implements OnInit, OnChanges {
     let callback;
     if (side === 'left') callback = (d) => { return this.x(d.start) - 5 }
     else callback = (d) => { return this.x(d.end) - 5 }
-    selection.enter().append('rect')
-             .attr('width', 10)
-             .classed('drag-handle', true)
-             .classed(side, true)
-             .attr('y', 0)
-             .attr('height', this.height)
-             .call(d3.drag().on('drag', (d) => { this.lbl_resize(d, side) }))
-             .merge(selection)
-             .attr('x', callback)
+    return selection.enter().append('rect')
+                    .attr('width', 10)
+                    .classed('drag-handle', true)
+                    .classed(side, true)
+                    .attr('y', 0)
+                    .attr('height', this.height)
+                    .call(d3.drag().on('drag', (d) => { this.lbl_resize(d, side) }))
+                    .merge(selection)
+                    .attr('x', callback)
   }
   // #endregion
 
@@ -361,11 +370,12 @@ export class DatabarComponent implements OnInit, OnChanges {
   private handle_left(lbl) {
     let event = d3.event;
     let dx = this.x.invert(event.x);
-    // constraints
-    if (dx > lbl.end) dx = lbl.end;               // new width cannot be less than zero
+    // constraints (left)
+    if (dx > lbl.end) dx = lbl.end;            // new width cannot be less than zero
     for (let l of this.labels) {
-      if (l.selected) continue;                   // ignore the selected label
-      if (dx > l.start && dx < l.end) dx = l.end; // avoid overlap (assumes labels sorted)
+      if (l.selected) continue;                             // ignore the selected label
+      if (dx > l.start && dx < l.end) dx = l.end;           // overlap (left)
+      if (dx < l.start && l.start < lbl.start) dx = l.end;  // consumes l
     }
     // update start position
     lbl.start = dx;

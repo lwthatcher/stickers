@@ -21,3 +21,7 @@ rect.drag-handle {
     fill: slategray;
     cursor: col-resize;
 }
+
+rect.drag-handle.warn {
+    fill: orange;
+}
