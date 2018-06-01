@@ -200,7 +200,6 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   draw_labels() {
-    console.debug('drawing labels', this.labels);
     // updated elements
     let rects = this.g_lbls.selectAll('rect.label')
                     .data(this.labels)
@@ -375,9 +374,9 @@ export class DatabarComponent implements OnInit, OnChanges {
     for (let l of this.labels) {
       if (l.selected) continue;                             // ignore the selected label
       if (dx > l.start && dx < l.end) dx = l.end;           // overlap (left)
-      if (dx < l.start && l.start < lbl.start) dx = l.end;  // consumes l
+      if (dx < l.start && l.start < lbl.start) dx = l.end;  // consumes (left)
     }
-    // update start position
+    // update selected label's start position
     lbl.start = dx;
     // redraw labels and handles
     this.draw_labels();
@@ -386,8 +385,17 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   private handle_right(lbl) {
     let event = d3.event;
-    let le = this.x.invert(event.x);
-    lbl.end = le;
+    let dx = this.x.invert(event.x);
+    // constraints (right)
+    if (dx < lbl.start) dx = lbl.start;       // new width cannot be less than zero
+    for (let l of this.labels) {
+      if (l.selected) continue;                           // ignore the selected label 
+      if (dx > l.start && dx < l.end) dx = l.start;       // overlap (right)
+      if (dx > l.end && lbl.start < l.start) dx = l.start;  // consumes (right)
+    }
+    // update selected label's end position
+    lbl.end = dx;
+    // redraw labels and handles
     this.draw_labels();
     this.draw_handles(lbl);
   }
