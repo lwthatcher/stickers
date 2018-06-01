@@ -11,9 +11,10 @@ import { Component,
 import { DataloaderService, Dataset } from '../data-loader/data-loader.service';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
-import { Sensor, Label } from "../dataview/dataview.component";
+import { Sensor } from "../dataview/dataview.component";
 import { SettingsService } from '../settings/settings.service';
 import { DataInfo } from '../data-loader/workspace-info';
+import { Labeller, Label } from './labeller';
 import * as d3 from "d3";
 // #endregion
 
@@ -99,6 +100,8 @@ export class DatabarComponent implements OnInit, OnChanges {
   _data: Promise<Array<datum>[]>;
   // loading spinner
   spinner: Spinner;
+  // helpers
+  labeller: Labeller;
   // #endregion
 
   // #region [Accessors]
@@ -149,6 +152,8 @@ export class DatabarComponent implements OnInit, OnChanges {
     // color maps
     this.line_color = d3.scaleOrdinal(d3.schemeAccent);
     this.label_color = d3.scaleOrdinal(d3.schemePaired);
+    // setup helpers
+    this.labeller = new Labeller(this);
     // setup zoom behaviour
     this._zoom = d3.zoom()
                   .scaleExtent([1, 50])
@@ -162,7 +167,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     // log when finished
     this.initialized = true;
     console.info('databar initialized', this);
-    console.groupEnd()
+    console.groupEnd();
   }
   // #endregion
 
@@ -172,7 +177,6 @@ export class DatabarComponent implements OnInit, OnChanges {
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
     if (labels && this.initialized) this.draw_labels();
   }
-
   // #endregion
 
   // #region [Plotting Methods]
@@ -210,7 +214,7 @@ export class DatabarComponent implements OnInit, OnChanges {
                      .attr("clip-path", "url(#clip)")
                      .classed('label', true)
                      .on('click', (d) => { this.lbl_clicked(d) }, false)
-                     .call(d3.drag().on('drag', (...d) => { this.dragged(d) }))
+                     .call(d3.drag().on('drag', (...d) => { this.lbl_dragged(d) }))
     enter.append('svg:title')
          .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
     // both updated or new elements
@@ -332,90 +336,25 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
   // #endregion
 
-  // #region [Label Editting]
-  private deselect() {
-    for (let l of this.labels) { l.selected = false }
-    this.draw_labels();
-    this.clear('handles');
-  }
-
-  private select(lbl) {
-    console.debug('selected label', lbl);
-    // deselect all other labels
-    for (let l of this.labels) { l.selected = false }
-    // select this event
-    lbl.selected = true;
-    // redraw labels and add drag-handles
-    this.draw_labels();
-    this.draw_handles(lbl);
-  }
-
-  private move(lbl, target) {
-    // if no movement we don't have to compute anything
-    if (d3.event.dx === 0) return;
-    // side = direction it moved
-    let side = (d3.event.dx < 0) ? 'left' : 'right';
-    // pixel-coordinate variables
-    let p0 = parseInt(target.attr('x'));        // original left edge of label
-    let pw  = parseInt(target.attr('width'));   // width of label
-    let ps = p0 + d3.event.dx;                  // label start
-    let pe = ps + pw;                           // label end
-    // data-coordinate variables
-    let xs = this.x.invert(ps);
-    let xe = this.x.invert(pe);
-    let w  = xe - xs;
-    // don't allow overlap with other labels
-    if (side === 'left') {
-      xs = this.overlaps(xs, lbl, side);
-      xe = xs + w;
-    }
-    if (side === 'right') {
-      xe = this.overlaps(xe, lbl, side);
-      xs = xe - w;
-    }
-    // move the drawn rectangle to the new position
-    target.attr('x', this.x(xs));
-    // update the domain position of label
-    lbl.start = xs;
-    lbl.end = xe;
-    // update drag handles
-    this.draw_handles(lbl);
-  }
-
-  private resize(lbl, side: 'left' | 'right') {
-    let event = d3.event;
-    let dx = this.x.invert(event.x);
-    // constraints
-    dx = this.min_width(dx, lbl, side);
-    dx = this.overlaps(dx, lbl, side);
-    // update dragged side
-    if (side === 'left') lbl.start = dx;
-    if (side === 'right') lbl.end = dx;
-    // redraw labels and drag-handles
-    this.draw_labels();
-    this.draw_handles(lbl);
-  }
-  // #endregion
-
   // #region [Event Handlers]
   clicked(event: any) {
     // ignore clicks on labels
     if (d3.select(event.target).classed('label')) { return }
     // otherwise deselect any selected labels
-    this.deselect();
+    this.labeller.deselect();
   }
 
   zoomed() { this.zoom.emit(d3.event) }
 
-  dragged(_d) {
+  lbl_resize(d, side) { this.labeller.resize(d, side) }
+
+  lbl_clicked(d) { this.labeller.select(d) }
+
+  lbl_dragged(_d) {
     let [d,i,arr] = _d;
-    if (!d.selected) { return }           // only drag if selected
-    this.move(d, d3.select(arr[i]))       // otherwise move label
+    if (!d.selected) { return }                   // only drag if selected
+    this.labeller.move(d, d3.select(arr[i]))       // otherwise move label
   }
-
-  lbl_resize(d, side) { this.resize(d, side) }
-
-  lbl_clicked(d) { this.select(d) }
 
   @HostListener('window:resize', ['$event'])
   window_resize(event: any) {
@@ -498,39 +437,6 @@ export class DatabarComponent implements OnInit, OnChanges {
     return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
   }
 
-  /**
-   * ensures that the new width of the label cannot be less than zero
-   * (see overlaps() for signature details)
-   */
-  private min_width(dx: number, lbl: Label, side: 'left' | 'right') {
-    if (side === 'left' && dx > lbl.end) dx = lbl.end;
-    if (side === 'right' && dx < lbl.start) dx = lbl.start;
-    return dx;
-  }
 
-  /**
-   * checks whether the new label position overlaps with any other labels
-   * @param dx the potential new label position
-   * @param lbl the selected label
-   * @param side whether moving in the right/left direction
-   * @returns updated dx value
-   */
-  private overlaps(dx: number, lbl: Label, side: 'left' | 'right') {
-    for (let l of this.labels) {
-      // ignore the selected label
-      if (l.selected) continue;
-      // check left side overlap 
-      if (side === 'left') {
-        if (dx > l.start && dx < l.end) dx = l.end;           // overlap (left)
-        if (dx < l.start && l.start < lbl.start) dx = l.end;  // consumes (left)
-      }
-      // check right side overlap
-      else {
-        if (dx > l.start && dx < l.end) dx = l.start;       // overlap (right)
-        if (dx > l.end && lbl.start < l.start) dx = l.start;  // consumes (right)
-      }
-    }
-    return dx;
-  }
   // #endregion
 }

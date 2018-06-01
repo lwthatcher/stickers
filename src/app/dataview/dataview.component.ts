@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
+import { Label } from '../databar/labeller';
 // #endregion
 
 // #region [Interfaces]
@@ -13,14 +14,6 @@ export interface Sensor {
   idxs: number[];
   dims: string[];
   hide: boolean;
-}
-
-export interface Label {
-  start: number;
-  end: number;
-  label: number;
-  type?: string;
-  selected?: boolean;
 }
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
