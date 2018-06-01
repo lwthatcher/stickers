@@ -160,7 +160,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.start_spinner();
     this.draw();
     // redraw if window resized
-    window.addEventListener('resize', (e) => { this.window_resize(e) })
+    // window.addEventListener('resize', (e) => { this.window_resize(e) })
     // log when finished
     this.initialized = true;
     console.info('databar initialized', this);
@@ -383,10 +383,10 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   // #region [Event Handlers]
   clicked(event: any) {
-    let target = d3.select(event.target);
     // ignore clicks on labels
-    if (target.classed('label')) { return }
-    this.deselect();  // deselect any selected labels
+    if (d3.select(event.target).classed('label')) { return }
+    // otherwise deselect any selected labels
+    this.deselect();
   }
 
   zoomed() { this.zoom.emit(d3.event) }
@@ -394,15 +394,14 @@ export class DatabarComponent implements OnInit, OnChanges {
   dragged(_d) {
     let [d,i,arr] = _d;
     if (!d.selected) { return }           // only drag if selected
-    this.move(d, d3.select(arr[i]))  // otherwise move label
+    this.move(d, d3.select(arr[i]))       // otherwise move label
   }
 
-  lbl_resize(d, side) {
-    this.handle(d, side);
-  }
+  lbl_resize(d, side) { this.handle(d, side) }
 
   lbl_clicked(d) { this.select(d) }
 
+  @HostListener('window:resize', ['$event'])
   window_resize(event: any) {
     console.debug('window resize', this.width, this.height);
     this.clear();
