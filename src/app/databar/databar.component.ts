@@ -366,36 +366,16 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.draw_handles(lbl);
   }
 
-  private handle_left(lbl) {
+  private handle(lbl, side: 'left' | 'right') {
     let event = d3.event;
     let dx = this.x.invert(event.x);
-    // constraints (left)
-    if (dx > lbl.end) dx = lbl.end;            // new width cannot be less than zero
-    for (let l of this.labels) {
-      if (l.selected) continue;                             // ignore the selected label
-      if (dx > l.start && dx < l.end) dx = l.end;           // overlap (left)
-      if (dx < l.start && l.start < lbl.start) dx = l.end;  // consumes (left)
-    }
-    // update selected label's start position
-    lbl.start = dx;
-    // redraw labels and handles
-    this.draw_labels();
-    this.draw_handles(lbl);
-  }
-
-  private handle_right(lbl) {
-    let event = d3.event;
-    let dx = this.x.invert(event.x);
-    // constraints (right)
-    if (dx < lbl.start) dx = lbl.start;       // new width cannot be less than zero
-    for (let l of this.labels) {
-      if (l.selected) continue;                           // ignore the selected label 
-      if (dx > l.start && dx < l.end) dx = l.start;       // overlap (right)
-      if (dx > l.end && lbl.start < l.start) dx = l.start;  // consumes (right)
-    }
-    // update selected label's end position
-    lbl.end = dx;
-    // redraw labels and handles
+    // constraints
+    dx = this.min_width(dx, lbl, side);
+    dx = this.overlaps(dx, lbl, side);
+    // update dragged side
+    if (side === 'left') lbl.start = dx;
+    if (side === 'right') lbl.end = dx;
+    // redraw labels and drag-handles
     this.draw_labels();
     this.draw_handles(lbl);
   }
@@ -418,8 +398,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   lbl_resize(d, side) {
-    if (side === 'left') this.handle_left(d)
-    else this.handle_right(d)
+    this.handle(d, side);
   }
 
   lbl_clicked(d) { this.select(d) }
@@ -502,6 +481,41 @@ export class DatabarComponent implements OnInit, OnChanges {
   private domains_and_ranges() {
     let dr = (d) => {return [d.domain(), d.range()]}
     return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
+  }
+
+  /**
+   * ensures that the new width of the label cannot be less than zero
+   * (see overlaps() for signature details)
+   */
+  private min_width(dx: number, lbl: Label, side: 'left' | 'right') {
+    if (side === 'left' && dx > lbl.end) dx = lbl.end;
+    if (side === 'right' && dx < lbl.start) dx = lbl.start;
+    return dx;
+  }
+
+  /**
+   * checks whether the new label position overlaps with any other labels
+   * @param dx the potential new label position
+   * @param lbl the selected label
+   * @param side whether moving in the right/left direction
+   * @returns updated dx value
+   */
+  private overlaps(dx: number, lbl: Label, side: 'left' | 'right') {
+    for (let l of this.labels) {
+      // ignore the selected label
+      if (l.selected) continue;
+      // check left side overlap 
+      if (side === 'left') {
+        if (dx > l.start && dx < l.end) dx = l.end;           // overlap (left)
+        if (dx < l.start && l.start < lbl.start) dx = l.end;  // consumes (left)
+      }
+      // check right side overlap
+      else {
+        if (dx > l.start && dx < l.end) dx = l.start;       // overlap (right)
+        if (dx > l.end && lbl.start < l.start) dx = l.start;  // consumes (right)
+      }
+    }
+    return dx;
   }
   // #endregion
 }
