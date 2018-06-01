@@ -382,7 +382,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.draw_handles(lbl);
   }
 
-  private handle(lbl, side: 'left' | 'right') {
+  private resize(lbl, side: 'left' | 'right') {
     let event = d3.event;
     let dx = this.x.invert(event.x);
     // constraints
@@ -413,7 +413,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.move(d, d3.select(arr[i]))       // otherwise move label
   }
 
-  lbl_resize(d, side) { this.handle(d, side) }
+  lbl_resize(d, side) { this.resize(d, side) }
 
   lbl_clicked(d) { this.select(d) }
 
