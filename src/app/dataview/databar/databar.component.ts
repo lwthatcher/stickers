@@ -14,7 +14,7 @@ import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../dataview.component";
-import { Labeller, Label } from './labeller';
+import { Labeller, Label, LabelStream } from './labeller';
 import * as d3 from "d3";
 // #endregion
 
@@ -44,7 +44,6 @@ interface Selection {
   filter(filter: any): Selection
   merge(selection: Selection): Selection
   remove()
-  
 }
 
 interface ColorMap {
@@ -66,7 +65,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   @Input() data_info: DataInfo;
   @Input() transform;
   @Input() sensor: Sensor;
-  @Input() labels: Label[];
+  @Input() labelstream: LabelStream;
   // #endregion
 
   // #region [Outputs]
@@ -118,6 +117,8 @@ export class DatabarComponent implements OnInit, OnChanges {
   get bucket_size() { return Math.trunc(this.points_per_pixel / 2) }
 
   get selected_label() { return this.labels && this.labels.find((lbl) => lbl.selected) || false }
+
+  get labels() { return this.labelstream && this.labelstream.labels }
   // #endregion
 
   // #region [Constructors]

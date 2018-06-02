@@ -14,9 +14,12 @@ export interface Sensor {
   idxs: number[];
   dims: string[];
   hide: boolean;
+  labelstream: string;
 }
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
+
+type LabelStreamMap = { [key: string]: LabelStream }
 // #endregion
 
 // #region [Metadata]
@@ -68,7 +71,7 @@ export class DataviewComponent implements OnInit {
   sensors: Sensor[];
   zoom_transform;
   labels: Label[];
-  labelStreams: LabelStream[] = [];
+  labelStreams: LabelStreamMap = {};
   // #endregion
 
   // #region [Constructors]
@@ -102,8 +105,9 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Label Streams]
-  getLabelStream(name) {
-    return this.labelStreams.find((stream) => { return stream.name === name })
+  getLabelStream(name: string): LabelStream {
+    console.log('getting stream', name);
+    return this.labelStreams[name];
   }
   // #endregion
 
@@ -124,7 +128,7 @@ export class DataviewComponent implements OnInit {
   parse_labels(labels: Promise<ArrayLike>) {
     labels.then((lbls) => {return this.boundaries(lbls)})
           .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
-          .then((labels) => { this.labels = labels; this.labelStreams.push(new LabelStream('default', labels)) })
+          .then((labels) => { this.labels = labels; this.labelStreams['default'] = new LabelStream('default', labels); })
   }
   // #endregion
 
@@ -179,7 +183,7 @@ export class DataviewComponent implements OnInit {
     let toSensor = (channel: string ,idx) => {
       const name = this.SENSOR_NAMES[channel];
       const dims = this.SENSOR_DIMS[channel];
-      return {name, channel, dims, hide:false, id:idx}
+      return {name, channel, dims, hide:false, id:idx, labelstream: 'default'}
     }
     let len = (sensor) => sensor.dims.length  // map -> # of sensors
     let sum = (acc, cur) => acc + cur         // reduce -> sum over array

@@ -14,7 +14,7 @@
         [data_info]="data_info" 
         [sensor]="sensor"
         [transform]="zoom_transform"
-        [(labels)]="labels"
+        [(labelstream)]="labelStreams[sensor.labelstream]"
         (zoom)="onZoom($event)">
         </app-databar>
     </div>
