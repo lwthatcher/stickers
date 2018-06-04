@@ -133,10 +133,9 @@ export class DataviewComponent implements OnInit {
 
   selectStream(stream) { console.log('selected label stream:', stream) }
 
-  toggleLabels(stream) {
-    this.labelStreams[stream].toggle();
-    console.debug('toggling labels for current stream', stream); 
-  }
+  toggleLabels(stream) { this.labelStreams[stream].toggle() }
+
+  newStream() { console.log('lets make another stream!') }
 
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {

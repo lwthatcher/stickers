@@ -30,6 +30,11 @@
                         <button class="btn btn-outline-secondary" title="current label stream" ngbDropdownToggle>{{sensor.labelstream}}</button>
                         <div class="dropdown-menu" ngbDropdownMenu>
                             <div *ngFor="let stream of streams" (click)="selectStream(stream)" class="dropdown-item">{{stream}}</div>
+                            <div class="dropdown-item dropdown-button">
+                                <button type="button" class="btn btn-outline-info add-stream" placement="right" >
+                                    <i class="material-icons icon">add</i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
