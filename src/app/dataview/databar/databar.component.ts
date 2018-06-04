@@ -369,7 +369,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   keyPress(event) {
     if (event.key === 'i') this.logInfo();
     else if (event.key === 'Delete' && this.selected_label) this.labeller.delete(this.selected_label);
-    else console.debug('unbound key-press:', event, d3.mouse());
+    else console.debug('unbound key-press:', event);
   }
 
   private updateZoom(t) {

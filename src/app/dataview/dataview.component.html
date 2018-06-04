@@ -1,12 +1,35 @@
 <div class="card">
     <div *ngFor="let sensor of sensors">
-        <div class='card-header d-flex justify-content-between align-items-center'>
+        <div class='card-header d-flex justify-content-between'>
+            
             <ul  class="nav nav-tabs card-header-tabs">
                 <li *ngIf="!sensor.hide" class="nav-item"><a class="nav-link active">{{sensor.name}}</a></li>
                 <li *ngIf="sensor.hide" class="nav-item"><a class="nav-link disabled">{{sensor.name}}</a></li>
+                <li class="nav-item"><a class="nav-link">...</a></li>
             </ul>
-            <i *ngIf="!sensor.hide" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">close</i>
-            <i *ngIf="sensor.hide" (click)="show(sensor)" class="material-icons icon" title='show' aria-label="show">add</i>
+
+            <div class='label-selector'>
+                <div class="btn-group">
+                    <button type="button" 
+                    (click)="toggleLabels(sensor.labelstream)" 
+                    class="btn btn-secondary" 
+                    title="current label stream">
+                        <span><i class="material-icons">label</i>{{sensor.labelstream}}</span>
+                    </button>
+                    <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+                        <button class="btn btn-secondary dropdown-toggle-split" ngbDropdownToggle></button>
+                        <div class="dropdown-menu" ngbDropdownMenu>
+                            <div *ngFor="let stream of streams" (click)="selectStream(stream)" class="dropdown-item">{{stream}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class='right'>
+                <i *ngIf="!sensor.hide" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">close</i>
+                <i *ngIf="sensor.hide" (click)="show(sensor)" class="material-icons icon" title='show' aria-label="show">add</i>
+            </div>
+            
         </div>
         <app-databar  *ngIf="!sensor.hide"
         [_height]="databarHeight"

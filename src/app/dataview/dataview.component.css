@@ -5,3 +5,14 @@
 .card-header {
     padding: .50rem 1.25rem;
 }
+
+div.card-header > div.label-selector {
+    float: left;
+    display: inline-flex;
+    padding-left: 20px;
+}
+
+span > i.material-icons {
+    vertical-align:middle;
+    padding-right: 5px;
+}

@@ -64,6 +64,10 @@ export class DataviewComponent implements OnInit {
     if (!this.is_labelled) return "user-labels";
     return this.data_info.labelled as string;
   }
+
+  get streams(): string[] {
+    return Object.keys(this.labelStreams)
+  }
   // #endregion
 
   // #region [Properties]
@@ -102,7 +106,7 @@ export class DataviewComponent implements OnInit {
     this.addStream('user-labels', []);
     // component initialized
     console.info('dataview initialized', this);
-  }
+  }Selected 
 
   ngAfterViewInit() {
     console.debug('dataview children initialized', this);
@@ -122,6 +126,10 @@ export class DataviewComponent implements OnInit {
   hide(sensor: Sensor) { this.sensors[sensor.id].hide = true }
 
   show(sensor: Sensor) { this.sensors[sensor.id].hide = false }
+
+  selectStream(event) { console.log('selected label stream:', event) }
+
+  toggleLabels(event) { console.log('toggling labels for current stream', event) }
 
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {
