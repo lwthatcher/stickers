@@ -227,10 +227,15 @@ export class DatabarComponent implements OnInit, OnChanges {
     // helper functions
     let key = (d,i) => { return d ? d.id : i }
     let middle = (d) => { return this.x(d.start + (d.end-d.start)/2) }
+    let width = (d) => { return this.x(d.end) - this.x(d.start) }
     // updated elements
     let rects = this.g_lbls.selectAll('rect.label')
                     .data(this.labels, key)
-                    .classed('updated', true);
+                    .classed('updated', true)
+                    .attr('x', (d) => { return this.x(d.start) })
+                    .attr('width', width)
+                    .attr('fill', (d) => { return this.label_color(d.label) })
+                    .classed('selected', (d) => d.selected )
     // exit (remove) elements
     rects.exit()
          .transition()
@@ -247,14 +252,24 @@ export class DatabarComponent implements OnInit, OnChanges {
                      .classed('label', true)
                      .on('click', (d) => { this.lbl_clicked(d) }, false)
                      .call(d3.drag().on('drag', (...d) => { this.lbl_dragged(d) }))
+                     .attr('x', middle)
+                     .attr('width', 0)
+                     .classed('selected', (d) => d.selected )
+                     .attr('fill', (d) => { return this.label_color(d.label) })
+    // add title pop-over
     enter.append('svg:title')
          .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
+    // transition for creation
+    enter.transition()
+         .duration(250)
+         .attr('x', (d) => { return this.x(d.start) })
+         .attr('width', width)
     // both updated or new elements
-    rects = enter.merge(rects)
-          .attr('x', (d) => { return this.x(d.start)})
-          .attr('width', (d) =>{ return this.x(d.end) - this.x(d.start) })
-          .attr('fill', (d) => { return this.label_color(d.label) })
-          .classed('selected', (d) => d.selected )
+    // rects = enter.merge(rects)
+    //       .attr('x', (d) => { return this.x(d.start) })
+    //       .attr('width', width)
+    //       .attr('fill', (d) => { return this.label_color(d.label) })
+    //       .classed('selected', (d) => d.selected )
   }
 
   draw_handles(lbl?: Label) {
