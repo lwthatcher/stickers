@@ -5,7 +5,7 @@
             <ul  class="nav nav-tabs card-header-tabs">
                 <li *ngIf="!sensor.hide" class="nav-item"><a class="nav-link active">{{sensor.name}}</a></li>
                 <li *ngIf="sensor.hide" class="nav-item"><a class="nav-link disabled">{{sensor.name}}</a></li>
-                <li class="nav-item"><a class="nav-link">...</a></li>
+                <li class="nav-item"><a class="nav-link btn-primary text-white">. . .</a></li>
             </ul>
 
             <div class='label-selector'>
@@ -14,7 +14,11 @@
                     (click)="toggleLabels(sensor.labelstream)" 
                     class="btn btn-secondary" 
                     title="current label stream">
-                        <span><i class="material-icons">label</i>{{sensor.labelstream}}</span>
+                        <span>
+                            <i *ngIf="showLabels(sensor)" class="material-icons">label</i>
+                            <i *ngIf="!showLabels(sensor)" class="material-icons">label_outline</i>
+                            {{sensor.labelstream}}
+                        </span>
                     </button>
                     <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
                         <button class="btn btn-secondary dropdown-toggle-split" ngbDropdownToggle></button>

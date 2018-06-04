@@ -118,6 +118,10 @@ export class DataviewComponent implements OnInit {
   addStream(name: string, labels: Label[] = []) {
     this.labelStreams[name] = new LabelStream(name, labels);
   }
+
+  showLabels(sensor: Sensor) {
+    return this.labelStreams[sensor.labelstream].show;
+  }
   // #endregion
 
   // #region [Event Handlers]
@@ -127,9 +131,13 @@ export class DataviewComponent implements OnInit {
 
   show(sensor: Sensor) { this.sensors[sensor.id].hide = false }
 
-  selectStream(event) { console.log('selected label stream:', event) }
+  selectStream(stream) { console.log('selected label stream:', stream) }
 
-  toggleLabels(event) { console.log('toggling labels for current stream', event) }
+  toggleLabels(stream) {
+    let ls = this.labelStreams[stream];
+    ls.show = !ls.show;
+    console.log('toggling labels for current stream', stream, ls); 
+  }
 
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {

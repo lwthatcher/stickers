@@ -15,10 +15,14 @@ export interface Label {
 export class LabelStream {
     name: string;
     labels: Label[];
+    show: boolean;
+    private _i: number;
 
     constructor(name:string, labels: Label[]) {
         this.name = name;
-        this.labels = labels.map((lbl,i) => {lbl.id = i; return lbl} )
+        this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl} )
+        this._i = this.labels.length;
+        this.show = true;
     }
 }
 
