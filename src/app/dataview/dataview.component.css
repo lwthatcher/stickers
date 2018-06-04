@@ -8,6 +8,15 @@ div.card-header > div.label-selector {
     display: inline-flex;
     padding-left: 20px;
 }
+
+div.card-header > div.right {
+    float: right;
+    display: -webkit-inline-box;
+    margin-left: auto;
+    margin-right: 0;
+    align-content: flex-end;
+    align-items: flex-end;
+}
 /*#endregion */
 
 /*#region [Icons] */

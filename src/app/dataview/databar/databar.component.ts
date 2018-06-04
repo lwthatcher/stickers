@@ -407,7 +407,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   stream_changed(e) {
-    console.log('detected label stream change!', e, this.labelstream);
+    console.debug('detected label stream change', e, this.labelstream);
     this.draw_labels();
     this.draw_handles();
   }
