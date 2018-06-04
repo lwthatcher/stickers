@@ -28,6 +28,10 @@ li.nav-item.show.dropdown > a.select-sensor {
     background-color: #0062cc;  /* bootstrap primary blue */
 }
 
+div.dropdown-item {
+    cursor: pointer;
+}
+
 div.dropdown-item.dropdown-button {
     padding: 1px 1px;
 }

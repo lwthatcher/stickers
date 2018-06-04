@@ -29,9 +29,9 @@
                     <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
                         <button class="btn btn-outline-secondary" title="current label stream" ngbDropdownToggle>{{sensor.labelstream}}</button>
                         <div class="dropdown-menu" ngbDropdownMenu>
-                            <div *ngFor="let stream of streams" (click)="selectStream(stream)" class="dropdown-item">{{stream}}</div>
+                            <div *ngFor="let stream of streams" (click)="selectStream(sensor, stream)" class="dropdown-item">{{stream}}</div>
                             <div class="dropdown-item dropdown-button">
-                                <button type="button" class="btn btn-outline-info add-stream" placement="right" >
+                                <button type="button" class="btn btn-outline-success add-stream" placement="right" >
                                     <i class="material-icons icon">add</i>
                                 </button>
                             </div>

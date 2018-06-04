@@ -106,7 +106,7 @@ export class DataviewComponent implements OnInit {
     this.addStream('user-labels', []);
     // component initialized
     console.info('dataview initialized', this);
-  }Selected 
+  }
 
   ngAfterViewInit() {
     console.debug('dataview children initialized', this);
@@ -131,7 +131,10 @@ export class DataviewComponent implements OnInit {
 
   show(sensor: Sensor) { this.sensors[sensor.id].hide = false }
 
-  selectStream(stream) { console.log('selected label stream:', stream) }
+  selectStream(sensor, stream) { 
+    console.log('selected label stream:', sensor, stream);
+    sensor.labelstream = stream;
+  }
 
   toggleLabels(stream) { this.labelStreams[stream].toggle() }
 

@@ -36,6 +36,7 @@ interface Selection {
   data(data: any): Selection
   datum(data: any): Selection
   enter(): Selection
+  exit(): Selection
   on(event: string): any
   on(event: string, callback): Selection
   on(event: string, callback, capture: boolean): Selection
@@ -221,6 +222,8 @@ export class DatabarComponent implements OnInit, OnChanges {
     let rects = this.g_lbls.selectAll('rect.label')
                     .data(this.labels)
                     .classed('updated', true);
+    // exit (remove) elements
+    rects.exit().remove();
     // entering (new) elements
     let enter = rects.enter()
                      .append('rect')
