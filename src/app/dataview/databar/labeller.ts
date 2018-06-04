@@ -33,6 +33,10 @@ export class LabelStream {
         this.show = !this.show;
         this.event.emit('toggle');
     }
+
+    remove(lbl) { 
+        this.labels = this.labels.filter((l) => { return l.id !== lbl.id })
+    }
 }
 
 
@@ -112,11 +116,8 @@ export class Labeller {
     }
 
     delete(lbl) {
-        // probably the BAD way to do this...
-        const idx = this.find(lbl);
-        if (idx !== -1)
-            this.labels.splice(idx,1);
-        this.deselect();
+        this.ls.remove(lbl);
+        this.ls.event.emit('delete');
     }
     // #endregion
 
