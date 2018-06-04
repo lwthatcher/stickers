@@ -34,6 +34,7 @@ interface Selection {
   style(attribute: string, value: any): Selection
   append(element: string): Selection
   data(data: any): Selection
+  data(data: any, key: any): Selection
   datum(data: any): Selection
   enter(): Selection
   exit(): Selection
@@ -44,7 +45,12 @@ interface Selection {
   call(value: any): Selection
   filter(filter: any): Selection
   merge(selection: Selection): Selection
+  transition(): SelectionTransition
   remove()
+}
+
+interface SelectionTransition extends Selection {
+  duration(length: number)
 }
 
 interface ColorMap {
@@ -218,12 +224,20 @@ export class DatabarComponent implements OnInit, OnChanges {
   draw_labels() {
     // erase labels if show-labels is false
     if (!this.show_labels) { this.clear('labels'); return; }
+    // helper functions
+    let key = (d,i) => { return d ? d.id : i }
+    let middle = (d) => { return this.x(d.start + (d.end-d.start)/2) }
     // updated elements
     let rects = this.g_lbls.selectAll('rect.label')
-                    .data(this.labels)
+                    .data(this.labels, key)
                     .classed('updated', true);
     // exit (remove) elements
-    rects.exit().remove();
+    rects.exit()
+         .transition()
+         .duration(250)
+         .attr('width', 0)
+         .attr('x', middle)
+         .remove();
     // entering (new) elements
     let enter = rects.enter()
                      .append('rect')
