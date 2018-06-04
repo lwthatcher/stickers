@@ -13,15 +13,14 @@
                     <button type="button" 
                     (click)="toggleLabels(sensor.labelstream)" 
                     class="btn btn-secondary" 
-                    title="current label stream">
+                    title="toggle labels on/off">
                         <span>
                             <i *ngIf="showLabels(sensor)" class="material-icons">label</i>
                             <i *ngIf="!showLabels(sensor)" class="material-icons">label_outline</i>
-                            {{sensor.labelstream}}
                         </span>
                     </button>
                     <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
-                        <button class="btn btn-secondary dropdown-toggle-split" ngbDropdownToggle></button>
+                        <button class="btn btn-secondary" title="current label stream" ngbDropdownToggle>{{sensor.labelstream}}</button>
                         <div class="dropdown-menu" ngbDropdownMenu>
                             <div *ngFor="let stream of streams" (click)="selectStream(stream)" class="dropdown-item">{{stream}}</div>
                         </div>
