@@ -189,11 +189,13 @@ export class DatabarComponent implements OnInit, OnChanges {
     let {transform, labelstream} = changes;
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
     if (labelstream && !labelstream.firstChange) {
+      // when initialized
       if (labelstream.currentValue && !this.init_ls) {
         console.log('INIT LBL STREAM', labelstream, this.labelstream);
         this.labelstream.event.subscribe((e) => { this.stream_update(e) })
         this.init_ls = true;
       }
+      // when stream changes
       this.stream_changed(labelstream);
     }
   }

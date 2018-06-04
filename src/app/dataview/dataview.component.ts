@@ -68,6 +68,11 @@ export class DataviewComponent implements OnInit {
   get streams(): string[] {
     return Object.keys(this.labelStreams)
   }
+
+  get sensor_names() {
+    let channels = this.data_info.channels;
+    return [...channels].map((c) => { return this.SENSOR_NAMES[c] })
+  }
   // #endregion
 
   // #region [Properties]
@@ -133,6 +138,8 @@ export class DataviewComponent implements OnInit {
 
   selectStream(sensor, stream) { sensor.labelstream = stream }
 
+  changeSensor(sensor, to) { console.log('changing sensor type:', sensor, to) }
+
   toggleLabels(stream) { this.labelStreams[stream].toggle() }
 
   newStream() { console.log('lets make another stream!') }
@@ -162,6 +169,7 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
     console.groupCollapsed('Sensors');
       console.log('sensors:', this.sensors);
+      console.log('sensor names:', this.sensor_names);
     console.groupEnd();
     console.groupCollapsed('Label Streams');
       console.log('label streams:', this.labelStreams);
@@ -206,10 +214,10 @@ export class DataviewComponent implements OnInit {
    */
   private setupSensors(channels: string): Sensor[] {
     // takes the channel and creates the name and dims aspects of the object
-    let toSensor = (channel: string ,idx) => {
+    let toSensor = (channel: string, i: number) => {
       const name = this.SENSOR_NAMES[channel];
       const dims = this.SENSOR_DIMS[channel];
-      return {name, channel, dims, hide:false, id:idx, labelstream: this.default_stream}
+      return {name, channel, dims, hide:false, id:i, labelstream: this.default_stream}
     }
     let len = (sensor) => sensor.dims.length  // map -> # of sensors
     let sum = (acc, cur) => acc + cur         // reduce -> sum over array

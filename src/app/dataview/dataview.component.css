@@ -1,7 +1,4 @@
-.icon {
-    cursor: pointer;
-}
-
+/*#region [Header] */
 .card-header {
     padding: 0px;
 }
@@ -11,11 +8,27 @@ div.card-header > div.label-selector {
     display: inline-flex;
     padding-left: 20px;
 }
+/*#endregion */
 
+/*#region [Icons] */
 button > i.material-icons,
 span > i.material-icons {
     vertical-align:middle;
     padding-right: 5px;
+}
+
+.icon {
+    cursor: pointer;
+}
+/*#endregion */
+
+/*#region [Select Sensor] */
+li.nav-item.dropdown > a.select-sensor {
+    cursor: pointer;
+}
+
+li.nav-item.show.dropdown > a.select-sensor {
+    background-color: #0062cc;  /* bootstrap primary blue */
 }
 
 a.select-sensor.dropdown-toggle::after {
@@ -23,11 +36,10 @@ a.select-sensor.dropdown-toggle::after {
     border-top: 0;
     content: none;
 }
+/*#endregion */
 
-li.nav-item.show.dropdown > a.select-sensor {
-    background-color: #0062cc;  /* bootstrap primary blue */
-}
-
+/*#region [Generic Dropdowns] */
+button.dropdown-item,
 div.dropdown-item {
     cursor: pointer;
 }
@@ -35,7 +47,9 @@ div.dropdown-item {
 div.dropdown-item.dropdown-button {
     padding: 1px 1px;
 }
+/*#endregion */
 
+/*#region [Label Streams] */
 div.dropdown-item.dropdown-button > button.add-stream {
     border-style: dotted; 
     width: 100%;
@@ -45,4 +59,4 @@ div.dropdown-item.dropdown-button > button.add-stream {
 div.dropdown-item.dropdown-button > button.add-stream > i.material-icons {
     vertical-align: middle;
 }
-
+/*#endregion */
