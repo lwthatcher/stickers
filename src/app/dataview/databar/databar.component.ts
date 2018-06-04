@@ -208,7 +208,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     // wait for data to load
     let data = await this._data;
     // stop loading-spinner once the domains are updated
-    await this.set_domains(data);
+    this.set_domains(data);
     this.stop_spinner();
     // draw axes
     this.draw_xAxis();
@@ -361,7 +361,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #endregion
 
   // #region [Domains and Ranges]
-  private set_ranges() {
+  set_ranges() {
     // set x-ranges
     this.x = d3.scaleLinear().rangeRound([0, this.width]);
     this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
@@ -372,12 +372,11 @@ export class DatabarComponent implements OnInit, OnChanges {
                          .y((d,i) => this.y(d.d));
   }
 
-  private async set_domains(axes) {
+  set_domains(axes) {
     this.x.domain([0, axes[0].length]);
     this.x0.domain(this.x.domain());
     this.y.domain([d3.min(axes, (ax) => d3.min(ax, (d) => d.d)), 
                    d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
-    return Promise.resolve();
   }
   // #endregion
 
