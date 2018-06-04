@@ -5,14 +5,21 @@
             <ul  class="nav nav-tabs card-header-tabs">
                 <li *ngIf="!sensor.hide" class="nav-item"><a class="nav-link active">{{sensor.name}}</a></li>
                 <li *ngIf="sensor.hide" class="nav-item"><a class="nav-link disabled">{{sensor.name}}</a></li>
-                <li class="nav-item"><a class="nav-link btn-primary text-white">. . .</a></li>
+                <li class="nav-item" ngbDropdown>
+                    <a class="nav-link btn-primary text-white select-sensor" id="dropdownBasic1" ngbDropdownToggle>...</a>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <button class="dropdown-item">Action - 1</button>
+                        <button class="dropdown-item">Another Action</button>
+                        <button class="dropdown-item">Something else is here</button>
+                    </div>
+                </li>
             </ul>
 
             <div class='label-selector'>
                 <div class="btn-group">
                     <button type="button" 
                     (click)="toggleLabels(sensor.labelstream)" 
-                    class="btn btn-secondary" 
+                    class="btn btn-outline-secondary" 
                     title="toggle labels on/off">
                         <span>
                             <i *ngIf="showLabels(sensor)" class="material-icons">label</i>
@@ -20,7 +27,7 @@
                         </span>
                     </button>
                     <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
-                        <button class="btn btn-secondary" title="current label stream" ngbDropdownToggle>{{sensor.labelstream}}</button>
+                        <button class="btn btn-outline-secondary" title="current label stream" ngbDropdownToggle>{{sensor.labelstream}}</button>
                         <div class="dropdown-menu" ngbDropdownMenu>
                             <div *ngFor="let stream of streams" (click)="selectStream(stream)" class="dropdown-item">{{stream}}</div>
                         </div>

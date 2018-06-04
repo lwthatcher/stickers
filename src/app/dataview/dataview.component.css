@@ -16,3 +16,13 @@ span > i.material-icons {
     vertical-align:middle;
     padding-right: 5px;
 }
+
+a.select-sensor.dropdown-toggle::after {
+    margin-left: 0;
+    border-top: 0;
+    content: none;
+}
+
+li.nav-item.show.dropdown > a.select-sensor {
+    background-color: #0062cc;  /* bootstrap primary blue */
+}
