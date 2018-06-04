@@ -264,12 +264,6 @@ export class DatabarComponent implements OnInit, OnChanges {
          .duration(250)
          .attr('x', (d) => { return this.x(d.start) })
          .attr('width', width)
-    // both updated or new elements
-    // rects = enter.merge(rects)
-    //       .attr('x', (d) => { return this.x(d.start) })
-    //       .attr('width', width)
-    //       .attr('fill', (d) => { return this.label_color(d.label) })
-    //       .classed('selected', (d) => d.selected )
   }
 
   draw_handles(lbl?: Label) {

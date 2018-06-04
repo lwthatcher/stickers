@@ -131,10 +131,7 @@ export class DataviewComponent implements OnInit {
 
   show(sensor: Sensor) { this.sensors[sensor.id].hide = false }
 
-  selectStream(sensor, stream) { 
-    console.log('selected label stream:', sensor, stream);
-    sensor.labelstream = stream;
-  }
+  selectStream(sensor, stream) { sensor.labelstream = stream }
 
   toggleLabels(stream) { this.labelStreams[stream].toggle() }
 
