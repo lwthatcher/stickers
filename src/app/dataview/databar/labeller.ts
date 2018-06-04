@@ -13,6 +13,7 @@ export interface Label {
 }
 // #endregion
 
+// #region [Label Streams]
 export class LabelStream {
     name: string;
     labels: Label[];
@@ -29,6 +30,7 @@ export class LabelStream {
         this.event.emit('init');
     }
 
+    // TODO: move to sensor, instead of label-stream
     toggle() {
         this.show = !this.show;
         this.event.emit('toggle');
@@ -38,7 +40,7 @@ export class LabelStream {
         this.labels = this.labels.filter((l) => { return l.id !== lbl.id })
     }
 }
-
+// #endregion
 
 export class Labeller {
     // #region [Constructor]
