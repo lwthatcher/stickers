@@ -118,7 +118,7 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   get selected_label() { return this.labels && this.labels.find((lbl) => lbl.selected) || false }
 
-  get labels() { return this.labelstream && this.labelstream.labels }
+  get labels() { return this.labelstream && this.labelstream.labels || [] }
   // #endregion
 
   // #region [Constructors]
@@ -367,9 +367,9 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {
-    console.debug('key press!', event);
     if (event.key === 'i') this.logInfo();
     else if (event.key === 'Delete' && this.selected_label) this.labeller.delete(this.selected_label);
+    else console.debug('unbound key-press:', event, d3.mouse());
   }
 
   private updateZoom(t) {
@@ -426,12 +426,14 @@ export class DatabarComponent implements OnInit, OnChanges {
   private logInfo() {
     console.groupCollapsed('Databar ' + this.sensor.name);
     console.log('heights/widths:', [this.height, this.width], [this.HEIGHT, this.WIDTH]);
+    console.log('label-stream:', this.labelstream);
     console.log('labels:', this.labels);
     console.log('sensor:', this.sensor);
     console.log('current zoom:', this.transform);
     console.log('Dataset:', this._dataset);
     console.log('data info:', this.data_info);
     console.log('domains/ranges:', this.domains_and_ranges());
+    console.log('databar component', this);
     console.groupEnd()
   }
 

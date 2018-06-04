@@ -52,12 +52,17 @@ export class DataviewComponent implements OnInit {
   // #region [Accessors]
   get visibleSensors() { return this.sensors.filter((s) => !s.hide) }
 
-  get is_labelled() { return !!this.data_info.labelled }
+  get is_labelled(): boolean { return !!this.data_info.labelled }
 
   get eventMap() {
-    if (!this.data_info.labelled) return {}
+    if (!this.is_labelled) return {}
     const ds = this.data_info.labelled as string;
-    return this.info.labels[ds]['event-map']
+    return this.info.labels[ds]['event-map'];
+  }
+
+  get default_stream(): string {
+    if (!this.is_labelled) return "user-labels";
+    return this.data_info.labelled as string;
   }
   // #endregion
 
@@ -94,6 +99,7 @@ export class DataviewComponent implements OnInit {
       let _labels = this.dataloader.getLabels(this.dataset);
       this.parse_labels(_labels);
     }
+    this.addStream('user-labels', []);
     // component initialized
     console.info('dataview initialized', this);
   }
@@ -105,9 +111,8 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Label Streams]
-  getLabelStream(name: string): LabelStream {
-    console.log('getting stream', name);
-    return this.labelStreams[name];
+  addStream(name: string, labels: Label[] = []) {
+    this.labelStreams[name] = new LabelStream(name, labels);
   }
   // #endregion
 
@@ -128,20 +133,27 @@ export class DataviewComponent implements OnInit {
   parse_labels(labels: Promise<ArrayLike>) {
     labels.then((lbls) => {return this.boundaries(lbls)})
           .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
-          .then((labels) => { this.labels = labels; this.labelStreams['default'] = new LabelStream('default', labels); })
+          .then((labels) => { this.addStream(this.default_stream, labels) })
   }
   // #endregion
 
   // #region [Helper Methods]
   private logInfo() {
-    console.groupCollapsed('Workspace Info');
+    console.groupCollapsed('Dataview');
     console.log('name:', this.workspace);
-    console.log('dataset name:', this.dataset);
-    console.log('info:', this.info);
-    console.log('data info:', this.data_info);
-    console.log('sensors', this.sensors);
-    console.log('visible sensors', this.visibleSensors);
-    console.log('component', this);
+    console.groupCollapsed('Workspace Info');
+      console.log('dataset name:', this.dataset);
+      console.log('data info:', this.data_info);
+      console.log('workspace info:', this.info);
+    console.groupEnd();
+    console.groupCollapsed('Sensors');
+      console.log('sensors:', this.sensors);
+    console.groupEnd();
+    console.groupCollapsed('Label Streams');
+      console.log('label streams:', this.labelStreams);
+      console.log('default label stream:', this.default_stream);
+    console.groupEnd();
+    console.log('dataview component', this);
     console.groupEnd();
   }
 
@@ -183,7 +195,7 @@ export class DataviewComponent implements OnInit {
     let toSensor = (channel: string ,idx) => {
       const name = this.SENSOR_NAMES[channel];
       const dims = this.SENSOR_DIMS[channel];
-      return {name, channel, dims, hide:false, id:idx, labelstream: 'default'}
+      return {name, channel, dims, hide:false, id:idx, labelstream: this.default_stream}
     }
     let len = (sensor) => sensor.dims.length  // map -> # of sensors
     let sum = (acc, cur) => acc + cur         // reduce -> sum over array
