@@ -1,4 +1,5 @@
 import { DatabarComponent } from './databar.component';
+import { EventEmitter } from '@angular/core';
 import * as d3 from "d3";
 
 // #region [Interfaces]
@@ -16,6 +17,7 @@ export class LabelStream {
     name: string;
     labels: Label[];
     show: boolean;
+    event: EventEmitter<string>;
     private _i: number;
 
     constructor(name:string, labels: Label[]) {
@@ -23,6 +25,13 @@ export class LabelStream {
         this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl} )
         this._i = this.labels.length;
         this.show = true;
+        this.event = new EventEmitter<string>();
+        this.event.emit('init');
+    }
+
+    toggle() {
+        this.show = !this.show;
+        this.event.emit('toggle');
     }
 }
 

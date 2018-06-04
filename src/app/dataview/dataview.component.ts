@@ -120,7 +120,7 @@ export class DataviewComponent implements OnInit {
   }
 
   showLabels(sensor: Sensor) {
-    return this.labelStreams[sensor.labelstream].show;
+    return this.labelStreams[sensor.labelstream] && this.labelStreams[sensor.labelstream].show;
   }
   // #endregion
 
@@ -134,9 +134,8 @@ export class DataviewComponent implements OnInit {
   selectStream(stream) { console.log('selected label stream:', stream) }
 
   toggleLabels(stream) {
-    let ls = this.labelStreams[stream];
-    ls.show = !ls.show;
-    console.log('toggling labels for current stream', stream, ls); 
+    this.labelStreams[stream].toggle();
+    console.debug('toggling labels for current stream', stream); 
   }
 
   @HostListener('document:keypress', ['$event'])

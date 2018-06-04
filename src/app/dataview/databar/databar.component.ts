@@ -75,7 +75,7 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   // #region [Variables]
   margin = {top: 5, right: 20, bottom: 20, left: 50}
-  initialized = false;
+  
   // element selectors
   host: Selection;
   svg: Selection; 
@@ -101,6 +101,9 @@ export class DatabarComponent implements OnInit, OnChanges {
   spinner: Spinner;
   // helpers
   labeller: Labeller;
+  // initialization flags
+  initialized = false;
+  private init_ls = false;
   // #endregion
 
   // #region [Accessors]
@@ -119,6 +122,8 @@ export class DatabarComponent implements OnInit, OnChanges {
   get selected_label() { return this.labels && this.labels.find((lbl) => lbl.selected) || false }
 
   get labels() { return this.labelstream && this.labelstream.labels || [] }
+
+  get show_labels() { return this.labelstream && this.labelstream.show }
   // #endregion
 
   // #region [Constructors]
@@ -174,9 +179,16 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   // #region [Lifecycle Hooks]
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    let {transform, labels} = changes;
+    let {transform, labelstream} = changes;
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
-    if (labels && this.initialized) this.draw_labels();
+    if (labelstream && !labelstream.firstChange) {
+      if (labelstream.currentValue && !this.init_ls) {
+        console.log('INIT LBL STREAM', labelstream, this.labelstream);
+        this.labelstream.event.subscribe((e) => { this.stream_update(e) })
+        this.init_ls = true;
+      }
+      this.stream_changed(labelstream);
+    }
   }
   // #endregion
 
@@ -203,6 +215,8 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   draw_labels() {
+    // erase labels if show-labels is false
+    if (!this.show_labels) { this.clear('labels'); return; }
     // updated elements
     let rects = this.g_lbls.selectAll('rect.label')
                     .data(this.labels)
@@ -226,25 +240,9 @@ export class DatabarComponent implements OnInit, OnChanges {
           .classed('selected', (d) => d.selected )
   }
 
-  clear(...layers) {
-    // if no parameters given, clear everything
-    if (layers.length === 0) {
-      this.g_sigs.selectAll("*").remove();
-      this.g_axes.selectAll("*").remove();
-      this.g_lbls.selectAll("*").remove();
-      this.g_hand.selectAll("*").remove();
-      return;
-    }
-    // otherwise clear specified layers
-    if (layers.includes('signals')) this.g_sigs.selectAll("*").remove();
-    if (layers.includes('axes')) this.g_axes.selectAll("*").remove();
-    if (layers.includes('labels')) this.g_lbls.selectAll("*").remove();
-    if (layers.includes('handles')) this.g_hand.selectAll("*").remove();
-    if (layers.includes('x-axis')) this.g_axes.selectAll("g.x-axis").remove();
-    if (layers.includes('y-axis')) this.g_axes.selectAll("g.y-axis").remove();
-  }
-
   draw_handles(lbl?: Label) {
+    // erase handles if show-labels is false
+    if (!this.show_labels) { this.clear('handles'); return; }
     // if no label is selected, clear the handles and return
     if (!lbl) { lbl = this.selected_label as Label }
     if (!lbl) { this.clear('handles'); return; }
@@ -263,6 +261,24 @@ export class DatabarComponent implements OnInit, OnChanges {
       left.classed('warn', false);
       right.classed('warn', false);
     }
+  }
+
+  clear(...layers) {
+    // if no parameters given, clear everything
+    if (layers.length === 0) {
+      this.g_sigs.selectAll("*").remove();
+      this.g_axes.selectAll("*").remove();
+      this.g_lbls.selectAll("*").remove();
+      this.g_hand.selectAll("*").remove();
+      return;
+    }
+    // otherwise clear specified layers
+    if (layers.includes('signals')) this.g_sigs.selectAll("*").remove();
+    if (layers.includes('axes')) this.g_axes.selectAll("*").remove();
+    if (layers.includes('labels')) this.g_lbls.selectAll("*").remove();
+    if (layers.includes('handles')) this.g_hand.selectAll("*").remove();
+    if (layers.includes('x-axis')) this.g_axes.selectAll("g.x-axis").remove();
+    if (layers.includes('y-axis')) this.g_axes.selectAll("g.y-axis").remove();
   }
 
   private draw_xAxis() {
@@ -355,6 +371,18 @@ export class DatabarComponent implements OnInit, OnChanges {
     let [d,i,arr] = _d;
     if (!d.selected) { return }                   // only drag if selected
     this.labeller.move(d, d3.select(arr[i]))       // otherwise move label
+  }
+
+  stream_update(e) {
+    console.log('label stream update:', e);
+    this.draw_labels();
+    this.draw_handles();
+  }
+
+  stream_changed(e) {
+    console.log('detected label stream change!', e, this.labelstream);
+    this.draw_labels();
+    this.draw_handles();
   }
 
   @HostListener('window:resize', ['$event'])
