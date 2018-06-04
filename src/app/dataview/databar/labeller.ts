@@ -43,6 +43,8 @@ export class Labeller {
     // #endregion
 
     // #region [Accessors]
+    get ls() { return this.databar.labelstream }
+
     get labels() { return this.databar.labels }
 
     get x() { return this.databar.x }
@@ -51,8 +53,9 @@ export class Labeller {
     // #region [Public Methods]
     deselect() {
         for (let l of this.labels) { l.selected = false }
-        this.databar.draw_labels();
-        this.databar.clear('handles');
+        this.ls.event.emit('deselect');
+        // this.databar.draw_labels();
+        // this.databar.clear('handles');
     }
     
     select(lbl) {
@@ -62,8 +65,7 @@ export class Labeller {
         // select this event
         lbl.selected = true;
         // redraw labels and add drag-handles
-        this.databar.draw_labels();
-        this.databar.draw_handles(lbl);
+        this.ls.event.emit('select');
     }
     
     move(lbl, target) {
@@ -89,13 +91,11 @@ export class Labeller {
             xe = this.overlaps(xe, lbl, side);
             xs = xe - w;
         }
-        // move the drawn rectangle to the new position
-        target.attr('x', this.x(xs));
-        // update the domain position of label
+        // update label's new bounds
         lbl.start = xs;
         lbl.end = xe;
-        // update drag handles
-        this.databar.draw_handles(lbl);
+        // redraw labels and drag-handles
+        this.ls.event.emit('move');
     }
     
     resize(lbl, side: 'left' | 'right') {
@@ -108,8 +108,7 @@ export class Labeller {
         if (side === 'left') lbl.start = dx;
         if (side === 'right') lbl.end = dx;
         // redraw labels and drag-handles
-        this.databar.draw_labels();
-        this.databar.draw_handles(lbl);
+        this.ls.event.emit('resize');
     }
 
     delete(lbl) {

@@ -373,8 +373,8 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.labeller.move(d, d3.select(arr[i]))       // otherwise move label
   }
 
-  stream_update(e) {
-    console.log('label stream update:', e);
+  stream_update(event) {
+    console.debug('label stream update:', event);
     this.draw_labels();
     this.draw_handles();
   }
