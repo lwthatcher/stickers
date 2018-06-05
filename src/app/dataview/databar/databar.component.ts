@@ -178,6 +178,9 @@ export class DatabarComponent implements OnInit, OnChanges {
     // draw data (when it loads)
     this.start_spinner();
     this.draw();
+    // mode and label-stream initialization
+    this.mode_changed(this.mode);
+    if (!this.init_ls && this.labelstream !== undefined) this.initialize_lblstream();
     // log when finished
     this.initialized = true;
     console.info('databar initialized', this);
@@ -190,7 +193,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     let {transform, labelstream, mode} = changes;
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
     if (labelstream && !labelstream.firstChange) this.stream_changed(labelstream);
-    if (mode && mode.currentValue) this.mode_changed(mode);
+    if (mode && !mode.firstChange) this.mode_changed(mode);
   }
   // #endregion
 
@@ -402,16 +405,14 @@ export class DatabarComponent implements OnInit, OnChanges {
   stream_changed(labelstream) {
     // first time initialization
     if (labelstream.currentValue && !this.init_ls) {
-      console.debug('INIT LBL STREAM', labelstream, this.labelstream);
-      this.labelstream.event.subscribe((e) => { this.stream_update(e) })
-      this.init_ls = true;
+      this.initialize_lblstream();
     }
     // redraw labels/drag-handles
     this.draw_labels();
     this.draw_handles();
   }
 
-  mode_changed(mode) { console.debug('detected label mode change', mode) }
+  mode_changed(mode) { this.updateMode(this.mode) }
 
   @HostListener('window:resize', ['$event'])
   window_resize(event: any) {
@@ -428,6 +429,20 @@ export class DatabarComponent implements OnInit, OnChanges {
     else console.debug('unbound key-press:', this.sensor.name, event);
   }
 
+  private updateMode(mode) {
+    let background = this.r_zoom;
+    if (mode === 1) {
+      console.debug('selection mode', mode);
+      background.classed('selection-mode', true);
+      background.classed('click-mode', false);
+    }
+    else if (mode === 2) {
+      console.debug('click mode', mode);
+      background.classed('selection-mode', false);
+      background.classed('click-mode', true);
+    }
+  }
+
   private updateZoom(t) {
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
@@ -439,6 +454,13 @@ export class DatabarComponent implements OnInit, OnChanges {
     // redraw labels
     this.draw_labels();
     this.draw_handles();
+  }
+
+  private initialize_lblstream() {
+    if (!this.labelstream) return;
+    console.debug('INIT LBL STREAM', this.labelstream);
+    this.labelstream.event.subscribe((e) => { this.stream_update(e) })
+    this.init_ls = true;
   }
   // #endregion
 

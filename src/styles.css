@@ -20,3 +20,11 @@ rect.drag-handle {
 rect.drag-handle.warn {
     fill: orange;
 }
+
+rect.zoom.selection-mode {
+    cursor: -webkit-grab;
+}
+
+rect.zoom.click-mode {
+    cursor: pointer;
+}
