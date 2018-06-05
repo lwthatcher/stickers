@@ -73,6 +73,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   @Input() transform;
   @Input() sensor: Sensor;
   @Input() labelstream: LabelStream;
+  @Input() mode;
   // #endregion
 
   // #region [Outputs]
@@ -186,18 +187,10 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   // #region [Lifecycle Hooks]
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    let {transform, labelstream} = changes;
+    let {transform, labelstream, mode} = changes;
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
-    if (labelstream && !labelstream.firstChange) {
-      // when initialized
-      if (labelstream.currentValue && !this.init_ls) {
-        console.log('INIT LBL STREAM', labelstream, this.labelstream);
-        this.labelstream.event.subscribe((e) => { this.stream_update(e) })
-        this.init_ls = true;
-      }
-      // when stream changes
-      this.stream_changed(labelstream);
-    }
+    if (labelstream && !labelstream.firstChange) this.stream_changed(labelstream);
+    if (mode && mode.currentValue) this.mode_changed(mode);
   }
   // #endregion
 
@@ -406,11 +399,19 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.draw_handles();
   }
 
-  stream_changed(e) {
-    console.debug('detected label stream change', e, this.labelstream);
+  stream_changed(labelstream) {
+    // first time initialization
+    if (labelstream.currentValue && !this.init_ls) {
+      console.debug('INIT LBL STREAM', labelstream, this.labelstream);
+      this.labelstream.event.subscribe((e) => { this.stream_update(e) })
+      this.init_ls = true;
+    }
+    // redraw labels/drag-handles
     this.draw_labels();
     this.draw_handles();
   }
+
+  mode_changed(mode) { console.debug('detected label mode change', mode) }
 
   @HostListener('window:resize', ['$event'])
   window_resize(event: any) {

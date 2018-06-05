@@ -6,7 +6,7 @@
                 <li *ngIf="!sensor.hide" class="nav-item"><a class="nav-link active">{{sensor.name}}</a></li>
                 <li *ngIf="sensor.hide" class="nav-item"><a class="nav-link disabled">{{sensor.name}}</a></li>
                 <li class="nav-item" ngbDropdown>
-                    <a class="nav-link btn-primary text-white select-sensor" id="dropdownBasic1" ngbDropdownToggle>...</a>
+                    <a class="nav-link btn-secondary text-white select-sensor" id="dropdownBasic1" ngbDropdownToggle>...</a>
                     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
                         <button *ngFor="let s of sensor_names" (click)="changeSensor(sensor,s)" class="dropdown-item">{{s}}</button>
                     </div>
@@ -62,6 +62,7 @@
         [enable_downsampling]="downsample"
         [data_info]="data_info" 
         [sensor]="sensor"
+        [mode]="mode"
         [transform]="zoom_transform"
         [(labelstream)]="labelStreams[sensor.labelstream]"
         (zoom)="onZoom($event)">

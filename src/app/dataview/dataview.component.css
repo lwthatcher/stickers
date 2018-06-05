@@ -37,7 +37,7 @@ li.nav-item.dropdown > a.select-sensor {
 }
 
 li.nav-item.show.dropdown > a.select-sensor {
-    background-color: #0062cc;  /* bootstrap primary blue */
+    background-color: #6c757d;  /* bootstrap psecondary gray */
 }
 
 a.select-sensor.dropdown-toggle::after {
