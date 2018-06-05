@@ -11,6 +11,10 @@ export interface Label {
     selected?: boolean;
     id?: number;
 }
+
+interface EventMap {
+    [index: number]: string;
+}
 // #endregion
 
 // #region [Label Streams]
@@ -19,12 +23,14 @@ export class LabelStream {
     labels: Label[];
     show: boolean;
     event: EventEmitter<string>;
+    emap: EventMap;
     private _i: number;
 
-    constructor(name:string, labels: Label[]) {
+    constructor(name:string, labels: Label[], emap: EventMap = {}) {
         this.name = name;
         this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl} )
         this._i = this.labels.length;
+        this.emap = emap;
         this.show = true;
         this.event = new EventEmitter<string>();
         this.event.emit('init');
@@ -36,11 +42,11 @@ export class LabelStream {
         this.event.emit('toggle');
     }
 
-    remove(lbl) { 
+    remove(lbl: Label) { 
         this.labels = this.labels.filter((l) => { return l.id !== lbl.id })
     }
 
-    add(lbl) {
+    add(lbl: Label) {
         if (this.exists(lbl)) {console.warn('this label already exists', lbl); return; }
         lbl.id = this._i;
         this._i++;
@@ -138,16 +144,20 @@ export class Labeller {
         this.ls.event.emit('delete');
     }
 
-    add(px, type) {
+    add(px: number, label: number) {
         let dx = this.x.invert(px);
-        let lbl = {start: dx-250, end: dx+250, label: type}
+        let lbl = { start: dx-250, end: dx+250, label: label } as Label
+        if (!this.is_empty(this.ls.emap)) 
+            lbl.type = this.ls.emap[label]
         this.ls.add(lbl);
         this.ls.event.emit('add');
     }
     // #endregion
 
     // #region [Helper Methods]
-
+    private is_empty(emap: EventMap) {
+        return Object.keys(emap).length === 0;
+    }
 
     /**
      * ensures that the new width of the label cannot be less than zero

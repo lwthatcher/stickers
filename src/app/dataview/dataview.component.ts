@@ -107,7 +107,8 @@ export class DataviewComponent implements OnInit {
     // parse labels (when ready)
     if (this.is_labelled) {
       let _labels = this.dataloader.getLabels(this.dataset);
-      this.parse_labels(_labels);
+      this.parse_labels(_labels)
+          .then((labels) => { this.addStream(this.default_stream, labels) })
     }
     this.addStream('user-labels', []);
     // component initialized
@@ -122,7 +123,7 @@ export class DataviewComponent implements OnInit {
 
   // #region [Label Streams]
   addStream(name: string, labels: Label[] = []) {
-    this.labelStreams[name] = new LabelStream(name, labels);
+    this.labelStreams[name] = new LabelStream(name, labels, this.eventMap);
   }
 
   showLabels(sensor: Sensor) {
@@ -152,10 +153,9 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Data Loading]
-  parse_labels(labels: Promise<ArrayLike>) {
-    labels.then((lbls) => {return this.boundaries(lbls)})
-          .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
-          .then((labels) => { this.addStream(this.default_stream, labels) })
+  parse_labels(labels: Promise<ArrayLike>): Promise<Label[]> {
+    return labels.then((lbls) => {return this.boundaries(lbls)})
+                 .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
   }
   // #endregion
 
