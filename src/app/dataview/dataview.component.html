@@ -41,11 +41,11 @@
             <div class='label-modes tools-box'>
                 <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="mode">
                     <label ngbButtonLabel class="btn btn-primary">
-                        <input ngbButton type="radio" [value]="1">
+                        <input ngbButton type="radio" [value]="TOOL_MODE.Selection">
                         <i class="material-icons">pan_tool</i>
                     </label>
                     <label ngbButtonLabel class="btn btn-primary">
-                        <input ngbButton type="radio" [value]="2">
+                        <input ngbButton type="radio" [value]="TOOL_MODE.Click">
                         <i class="material-icons">touch_app</i>
                     </label>
                 </div>

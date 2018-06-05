@@ -15,6 +15,7 @@ import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../dataview.component";
 import { Labeller, Label, LabelStream } from './labeller';
+import { ToolMode } from './tool-mode.enum';
 import * as d3 from "d3";
 // #endregion
 
@@ -73,7 +74,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   @Input() transform;
   @Input() sensor: Sensor;
   @Input() labelstream: LabelStream;
-  @Input() mode;
+  @Input() mode: ToolMode;
   // #endregion
 
   // #region [Outputs]
@@ -382,7 +383,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     if (d3.select(event.target).classed('label')) { return }
     // otherwise deselect any selected labels
     this.labeller.deselect();
-    if (this.mode === 2) {
+    if (this.mode === ToolMode.Click) {
       let px = event.x - this.margin.left;
       let type = 1;   // TODO: don't hard-code!
       this.labeller.add(px, type);
@@ -439,12 +440,12 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #region [Update Methods]
   private updateMode(mode) {
     let background = this.r_zoom;
-    if (mode === 1) {
+    if (mode === ToolMode.Selection) {
       console.debug('selection mode', mode);
       background.classed('selection-mode', true);
       background.classed('click-mode', false);
     }
-    else if (mode === 2) {
+    else if (mode === ToolMode.Click) {
       console.debug('click mode', mode);
       background.classed('selection-mode', false);
       background.classed('click-mode', true);

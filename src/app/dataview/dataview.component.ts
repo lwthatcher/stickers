@@ -5,6 +5,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 import { Label, LabelStream } from './databar/labeller';
+import { ToolMode } from './databar/tool-mode.enum';
 // #endregion
 
 // #region [Interfaces]
@@ -47,6 +48,8 @@ export class DataviewComponent implements OnInit {
     'L': 'Light',
     'B': 'Barometer'
   }
+
+  TOOL_MODE = ToolMode;
   // #endregion
 
   // #region [Accessors]
@@ -86,7 +89,7 @@ export class DataviewComponent implements OnInit {
   zoom_transform;
   labels: Label[];
   labelStreams: LabelStreamMap = {};
-  mode = 1;
+  mode: ToolMode = ToolMode.Selection;
   // #endregion
 
   // #region [Constructors]
