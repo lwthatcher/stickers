@@ -39,6 +39,24 @@ export class LabelStream {
     remove(lbl) { 
         this.labels = this.labels.filter((l) => { return l.id !== lbl.id })
     }
+
+    add(lbl) {
+        if (this.exists(lbl)) {console.warn('this label already exists', lbl); return; }
+        lbl.id = this._i;
+        this._i++;
+        this.labels.push(lbl);
+    }
+
+    /**
+     * Checks whether another label with the same start/end time already exists
+     */
+    private exists(lbl) {
+        let idx = this.labels.findIndex((l) => {
+            return l.start === lbl.start 
+                && l.end   === lbl.end 
+        })
+        return (idx > -1)
+    }
 }
 // #endregion
 
@@ -59,9 +77,7 @@ export class Labeller {
     // #region [Public Methods]
     deselect() {
         for (let l of this.labels) { l.selected = false }
-        this.ls.event.emit('deselect');
-        // this.databar.draw_labels();
-        // this.databar.clear('handles');
+        this.ls.event.emit('deselect');;
     }
     
     select(lbl) {
@@ -121,21 +137,17 @@ export class Labeller {
         this.ls.remove(lbl);
         this.ls.event.emit('delete');
     }
+
+    add(px, type) {
+        let dx = this.x.invert(px);
+        let lbl = {start: dx-250, end: dx+250, label: type}
+        this.ls.add(lbl);
+        this.ls.event.emit('add');
+    }
     // #endregion
 
     // #region [Helper Methods]
-    /**
-     * Returns the index for the specified labels
-     * 
-     * @param lbl the label to find
-     */
-    private find(lbl) {
-        return this.labels.findIndex((l) => {
-            return l.start === lbl.start 
-                && l.end   === lbl.end 
-                && l.label === lbl.label
-        })
-    }
+
 
     /**
      * ensures that the new width of the label cannot be less than zero

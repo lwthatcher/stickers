@@ -382,6 +382,11 @@ export class DatabarComponent implements OnInit, OnChanges {
     if (d3.select(event.target).classed('label')) { return }
     // otherwise deselect any selected labels
     this.labeller.deselect();
+    if (this.mode === 2) {
+      let px = event.x - this.margin.left;
+      let type = 1;   // TODO: don't hard-code!
+      this.labeller.add(px, type);
+    }
   }
 
   zoomed() { this.zoom.emit(d3.event) }
@@ -428,7 +433,9 @@ export class DatabarComponent implements OnInit, OnChanges {
     else if (event.key === 'Delete' && this.selected_label) this.labeller.delete(this.selected_label);
     else console.debug('unbound key-press:', this.sensor.name, event);
   }
+  // #endregion
 
+  // #region [Update Methods]
   private updateMode(mode) {
     let background = this.r_zoom;
     if (mode === 1) {
@@ -458,7 +465,7 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   private initialize_lblstream() {
     if (!this.labelstream) return;
-    console.debug('INIT LBL STREAM', this.labelstream);
+    console.debug('Initializing label stream', this.labelstream);
     this.labelstream.event.subscribe((e) => { this.stream_update(e) })
     this.init_ls = true;
   }
