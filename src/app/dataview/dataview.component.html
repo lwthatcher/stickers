@@ -13,7 +13,7 @@
                 </li>
             </ul>
 
-            <div class='label-selector'>
+            <div class='label-streams tools-box'>
                 <div class="btn-group">
                     <button type="button" 
                     (click)="toggleLabels(sensor.labelstream)" 
@@ -35,6 +35,19 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class='label-modes tools-box'>
+                <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="mode">
+                    <label ngbButtonLabel class="btn btn-primary">
+                        <input ngbButton type="radio" [value]="1">
+                        <i class="material-icons">pan_tool</i>
+                    </label>
+                    <label ngbButtonLabel class="btn btn-primary">
+                        <input ngbButton type="radio" [value]="2">
+                        <i class="material-icons">touch_app</i>
+                    </label>
                 </div>
             </div>
 

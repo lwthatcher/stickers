@@ -86,6 +86,7 @@ export class DataviewComponent implements OnInit {
   zoom_transform;
   labels: Label[];
   labelStreams: LabelStreamMap = {};
+  mode = 1;
   // #endregion
 
   // #region [Constructors]

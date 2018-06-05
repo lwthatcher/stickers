@@ -3,7 +3,7 @@
     padding: 0px;
 }
 
-div.card-header > div.label-selector {
+div.card-header > .tools-box {
     float: left;
     display: inline-flex;
     padding-left: 20px;
