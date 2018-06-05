@@ -164,23 +164,34 @@ export class DataviewComponent implements OnInit {
 
   // #region [Helper Methods]
   private logInfo() {
-    console.groupCollapsed('Dataview');
+    console.groupCollapsed('dataview');
     console.log('name:', this.workspace);
-    console.groupCollapsed('Workspace Info');
+    console.groupCollapsed('workspace info');
       console.log('dataset name:', this.dataset);
       console.log('data info:', this.data_info);
       console.log('workspace info:', this.info);
     console.groupEnd();
-    console.groupCollapsed('Sensors');
+    console.groupCollapsed('sensors');
       console.log('sensors:', this.sensors);
       console.log('sensor names:', this.sensor_names);
     console.groupEnd();
-    console.groupCollapsed('Label Streams');
+    console.groupCollapsed('label streams');
       console.log('label streams:', this.labelStreams);
+      console.log('num observers:', this.getObservers());
+      console.log('event-map:', this.eventMap);
       console.log('default label stream:', this.default_stream);
     console.groupEnd();
     console.log('dataview component', this);
     console.groupEnd();
+  }
+
+  private getObservers() {
+    let result = {}
+    for (let entry of Object.entries(this.labelStreams)) {
+      let [key, value] = entry;
+      result[key] = value.event.observers;
+    }
+    return result;
   }
 
   /**

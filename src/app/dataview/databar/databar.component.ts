@@ -1,13 +1,14 @@
 // #region [Imports]
 import { Component, 
-         OnInit, 
          ElementRef, 
          Input, 
-         EventEmitter, 
-         Output, 
-         OnChanges, 
-         SimpleChange, 
-         HostListener } from '@angular/core';
+         Output,
+         HostListener,
+         EventEmitter,
+         SimpleChange,
+         OnInit, 
+         OnChanges,
+         OnDestroy } from '@angular/core';
 import { SettingsService } from '../../settings/settings.service';
 import { DataloaderService, Dataset } from '../../data-loader/data-loader.service';
 import { DataInfo } from '../../data-loader/workspace-info';
@@ -66,7 +67,7 @@ interface ColorMap {
   styleUrls: ['./databar.component.css']
 })
 // #endregion
-export class DatabarComponent implements OnInit, OnChanges {
+export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Inputs]
   @Input() _height: number;
   @Input() enable_downsampling: boolean;
@@ -113,6 +114,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   // initialization flags
   initialized = false;
   private ls_registered = false;
+  registration;
   // #endregion
 
   // #region [Accessors]
@@ -133,6 +135,8 @@ export class DatabarComponent implements OnInit, OnChanges {
   get labels() { return this.labelstream && this.labelstream.labels || [] }
 
   get show_labels() { return this.labelstream && this.labelstream.show }
+
+  get is_registered() { return !!this.registration }
   // #endregion
 
   // #region [Constructors]
@@ -195,6 +199,10 @@ export class DatabarComponent implements OnInit, OnChanges {
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
     if (labelstream && !labelstream.firstChange) this.stream_changed(labelstream);
     if (mode && !mode.firstChange) this.mode_changed(mode);
+  }
+
+  ngOnDestroy() {
+    if (this.registration) this.registration.unsubscribe();
   }
   // #endregion
 
@@ -409,9 +417,8 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   stream_changed(labelstream) {
-    if (labelstream.currentValue !== undefined) {
+    if (labelstream.currentValue !== undefined)
       this.ls_registered = this.register_lblstream();
-    }
     console.debug('lbl stream changed', this.ls_registered, this.labelstream);
     if (!this.ls_registered) console.warn('label stream not registered!', this);
     // redraw labels/drag-handles
@@ -467,7 +474,8 @@ export class DatabarComponent implements OnInit, OnChanges {
 
   private register_lblstream() {
     if (!this.labelstream) return false;
-    this.labelstream.event.subscribe((e) => { this.stream_update(e) })
+    if (this.registration) this.registration.unsubscribe();
+    this.registration = this.labelstream.event.subscribe((e) => { this.stream_update(e) })
     return true;
   }
   // #endregion
@@ -511,14 +519,21 @@ export class DatabarComponent implements OnInit, OnChanges {
   // #region [Helper Methods]
   private logInfo() {
     console.groupCollapsed('Databar ' + this.sensor.name);
-    console.log('heights/widths:', [this.height, this.width], [this.HEIGHT, this.WIDTH]);
-    console.log('label-stream:', this.labelstream);
-    console.log('labels:', this.labels);
-    console.log('sensor:', this.sensor);
-    console.log('current zoom:', this.transform);
-    console.log('Dataset:', this._dataset);
-    console.log('data info:', this.data_info);
-    console.log('domains/ranges:', this.domains_and_ranges());
+    console.groupCollapsed('svg / drawing');
+      console.log('heights/widths:', [this.height, this.width], [this.HEIGHT, this.WIDTH]);
+      console.log('current zoom:', this.transform);
+      console.log('domains/ranges:', this.domains_and_ranges());
+    console.groupEnd();
+    console.groupCollapsed('labels');
+      console.log('label-stream:', this.labelstream);
+      console.log('registered stream:', this.registration, this.is_registered);
+      console.log('labels:', this.labels);
+    console.groupEnd();
+    console.groupCollapsed('dataset');
+      console.log('Dataset:', this._dataset);
+      console.log('data info:', this.data_info);
+      console.log('sensor:', this.sensor);
+    console.groupEnd();
     console.log('databar component', this);
     console.groupEnd()
   }
