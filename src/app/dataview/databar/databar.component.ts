@@ -15,6 +15,7 @@ import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../dataview.component";
+import { ColorerService } from '../colorer.service';
 import { Labeller, Label, LabelStream } from './labeller';
 import { ToolMode } from './tool-mode.enum';
 import * as d3 from "d3";
@@ -142,7 +143,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Constructors]
   constructor(private el: ElementRef, 
               private dataloader: DataloaderService,
-              private settings: SettingsService) { }
+              private settings: SettingsService,
+              private colorer: ColorerService) { }
 
   ngOnInit() {
     console.groupCollapsed('databar init', this.sensor.name);

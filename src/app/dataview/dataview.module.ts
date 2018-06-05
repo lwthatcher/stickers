@@ -4,6 +4,7 @@ import { DataviewComponent } from './dataview.component';
 import { DatabarComponent } from './databar/databar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { ColorerService } from './colorer.service';
 
 @NgModule({
   imports: [
@@ -11,6 +12,7 @@ import { FormsModule } from '@angular/forms';
     NgbModule,
     FormsModule
   ],
-  declarations: [DataviewComponent, DatabarComponent]
+  declarations: [DataviewComponent, DatabarComponent],
+  providers: [ColorerService]
 })
 export class DataviewModule { }
