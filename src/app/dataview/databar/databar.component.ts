@@ -111,7 +111,7 @@ export class DatabarComponent implements OnInit, OnChanges {
   labeller: Labeller;
   // initialization flags
   initialized = false;
-  private init_ls = false;
+  private ls_registered = false;
   // #endregion
 
   // #region [Accessors]
@@ -180,7 +180,7 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.draw();
     // mode and label-stream initialization
     this.mode_changed(this.mode);
-    if (!this.init_ls && this.labelstream !== undefined) this.initialize_lblstream();
+    if (!this.ls_registered && this.labelstream !== undefined) this.register_lblstream();
     // log when finished
     this.initialized = true;
     console.info('databar initialized', this);
@@ -408,10 +408,11 @@ export class DatabarComponent implements OnInit, OnChanges {
   }
 
   stream_changed(labelstream) {
-    // first time initialization
-    if (labelstream.currentValue && !this.init_ls) {
-      this.initialize_lblstream();
+    if (labelstream.currentValue !== undefined) {
+      this.ls_registered = this.register_lblstream();
     }
+    console.debug('lbl stream changed', this.ls_registered, this.labelstream);
+    if (!this.ls_registered) console.warn('label stream not registered!', this);
     // redraw labels/drag-handles
     this.draw_labels();
     this.draw_handles();
@@ -463,11 +464,10 @@ export class DatabarComponent implements OnInit, OnChanges {
     this.draw_handles();
   }
 
-  private initialize_lblstream() {
-    if (!this.labelstream) return;
-    console.debug('Initializing label stream', this.labelstream);
+  private register_lblstream() {
+    if (!this.labelstream) return false;
     this.labelstream.event.subscribe((e) => { this.stream_update(e) })
-    this.init_ls = true;
+    return true;
   }
   // #endregion
 
