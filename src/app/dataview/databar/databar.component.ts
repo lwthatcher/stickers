@@ -393,7 +393,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.labeller.deselect();
     if (this.mode === ToolMode.Click) {
       let px = event.x - this.margin.left;
-      let type = 1;   // TODO: don't hard-code!
+      let type = parseInt(this.lbl_type);
       this.labeller.add(px, type);
     }
   }
