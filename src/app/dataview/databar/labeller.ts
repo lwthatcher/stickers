@@ -12,7 +12,7 @@ export interface Label {
     id?: number;
 }
 
-interface EventMap {
+export interface EventMap {
     [index: number]: string;
 }
 // #endregion

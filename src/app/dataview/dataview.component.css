@@ -37,7 +37,7 @@ li.nav-item.dropdown > a.select-sensor {
 }
 
 li.nav-item.show.dropdown > a.select-sensor {
-    background-color: #6c757d;  /* bootstrap psecondary gray */
+    background-color: #6c757d;  /* bootstrap secondary gray */
 }
 
 a.select-sensor.dropdown-toggle::after {
@@ -67,5 +67,18 @@ div.dropdown-item.dropdown-button > button.add-stream {
 
 div.dropdown-item.dropdown-button > button.add-stream > i.material-icons {
     vertical-align: middle;
+}
+/*#endregion */
+
+/*#region [Label Types] */
+div.btn-group > label.btn-lbl {
+    border: gray;
+    border-width: 1px;
+}
+
+div.btn-group > label.btn-lbl.active {
+    border: black;
+    border-width: 2px;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
 /*#endregion */

@@ -4,8 +4,9 @@ import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
-import { Label, LabelStream } from './databar/labeller';
+import { Label, LabelStream, EventMap } from './databar/labeller';
 import { ToolMode } from './databar/tool-mode.enum';
+import { ColorerService, ColorMap } from './colorer.service';
 // #endregion
 
 // #region [Interfaces]
@@ -28,7 +29,7 @@ type LabelStreamMap = { [key: string]: LabelStream }
   selector: 'app-dataview',
   templateUrl: 'dataview.component.html',
   styleUrls: ['dataview.component.css'],
-  providers: [DataloaderService]
+  providers: [DataloaderService, ColorerService]
 })
 // #endregion
 export class DataviewComponent implements OnInit {
@@ -57,7 +58,7 @@ export class DataviewComponent implements OnInit {
 
   get is_labelled(): boolean { return !!this.data_info.labelled }
 
-  get eventMap() {
+  get eventMap(): EventMap {
     if (!this.is_labelled) return {}
     const ds = this.data_info.labelled as string;
     return this.info.labels[ds]['event-map'];
@@ -76,6 +77,10 @@ export class DataviewComponent implements OnInit {
     let channels = this.data_info.channels;
     return [...channels].map((c) => { return this.SENSOR_NAMES[c] })
   }
+
+  get event_types(): string[] {
+    return Object.keys(this.eventMap)
+  }
   // #endregion
 
   // #region [Properties]
@@ -90,10 +95,16 @@ export class DataviewComponent implements OnInit {
   labels: Label[];
   labelStreams: LabelStreamMap = {};
   mode: ToolMode = ToolMode.Selection;
+  lbl = "1";
+  label_color: ColorMap;
   // #endregion
 
   // #region [Constructors]
-  constructor(private route: ActivatedRoute, private dataloader: DataloaderService) { }
+  constructor(private route: ActivatedRoute, 
+              private dataloader: DataloaderService,
+              private colorer: ColorerService) {
+                this.label_color = this.colorer.label_color;
+              }
 
   ngOnInit() {
     console.groupCollapsed('dataview init')
@@ -121,6 +132,17 @@ export class DataviewComponent implements OnInit {
   ngAfterViewInit() {
     console.debug('dataview children initialized', this);
     console.groupEnd();
+  }
+  // #endregion
+
+  // #region [Label Types]
+  style_color(label: number) {
+    let c = this.label_color(label);
+    return {"background-color": c};
+  }
+
+  is_active(label: number | string) {
+    return this.lbl == label;
   }
   // #endregion
 
@@ -164,7 +186,7 @@ export class DataviewComponent implements OnInit {
 
   // #region [Helper Methods]
   private logInfo() {
-    console.groupCollapsed('dataview');
+    console.groupCollapsed('Dataview');
     console.log('name:', this.workspace);
     console.groupCollapsed('workspace info');
       console.log('dataset name:', this.dataset);
@@ -185,6 +207,9 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
   }
 
+  /**
+   * Returns a list of observing databars for each label-stream
+   */
   private getObservers() {
     let result = {}
     for (let entry of Object.entries(this.labelStreams)) {
