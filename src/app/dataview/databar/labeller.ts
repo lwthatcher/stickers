@@ -152,6 +152,13 @@ export class Labeller {
         this.ls.add(lbl);
         this.ls.event.emit('add');
     }
+
+    change_label(lbl: Label, new_label: number) {
+        lbl.label = new_label;
+        if (!this.is_empty(this.ls.emap)) 
+            lbl.type = this.ls.emap[new_label]
+        this.ls.event.emit('change-label');
+    }
     // #endregion
 
     // #region [Helper Methods]

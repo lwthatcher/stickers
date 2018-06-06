@@ -429,7 +429,9 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   mode_changed(mode) { this.updateMode(this.mode) }
 
   type_changed(lbl_type) { 
-    console.log('label type changed', lbl_type)
+    console.log('label type changed', lbl_type);
+    if (this.selected_label) 
+        this.labeller.change_label(this.selected_label, this.lbl_type);
    }
 
   @HostListener('window:resize', ['$event'])
