@@ -53,10 +53,11 @@ export class LabelStream {
         this.labels.push(lbl);
     }
 
-    sort() {
-        let compare = (a,b) => { return a.start - b.start }
-        this.labels.sort(compare);
-        return this.labels;
+    toJSON() {
+        let simplify = (lbl) => {return {start: lbl.start, end: lbl.end, label: lbl.label} }
+        let lbls = this.labels.map(simplify);
+        lbls = this.sort(lbls);
+        return JSON.stringify(lbls);
     }
 
     /**
@@ -68,6 +69,15 @@ export class LabelStream {
                 && l.end   === lbl.end 
         })
         return (idx > -1)
+    }
+
+    /**
+     * Sorts the labels by their start time
+     */
+    private sort(labels) {
+        let compare = (a,b) => { return a.start - b.start }
+        labels.sort(compare);
+        return labels;
     }
 }
 // #endregion

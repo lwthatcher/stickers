@@ -125,7 +125,9 @@ export class DataviewComponent implements OnInit {
       this.parse_labels(_labels)
           .then((labels) => { this.addStream(this.default_stream, labels) })
     }
+    // add user-labels stream, setup default save-lbls stream
     this.addStream('user-labels', []);
+    this.print_ls = this.default_stream;
     // component initialized
     console.info('dataview initialized', this);
   }
@@ -175,7 +177,7 @@ export class DataviewComponent implements OnInit {
   change_ls(stream) {console.log('changing print label-stream', stream); this.print_ls = stream;}
 
   save_labels() {
-    console.info('saving label-stream', this.print_ls, this.labelStreams[this.print_ls].sort())
+    console.info('saving label-stream', this.print_ls, this.labelStreams[this.print_ls].toJSON())
   }
 
   @HostListener('document:keypress', ['$event'])
