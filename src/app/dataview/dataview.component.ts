@@ -97,6 +97,7 @@ export class DataviewComponent implements OnInit {
   mode: ToolMode = ToolMode.Selection;
   lbl = "1";
   label_color: ColorMap;
+  print_ls: string;
   // #endregion
 
   // #region [Constructors]
@@ -170,6 +171,12 @@ export class DataviewComponent implements OnInit {
   toggleLabels(stream) { this.labelStreams[stream].toggle() }
 
   newStream() { console.log('lets make another stream!') }
+
+  change_ls(stream) {console.log('changing print label-stream', stream); this.print_ls = stream;}
+
+  save_labels() {
+    console.info('saving label-stream', this.print_ls, this.labelStreams[this.print_ls].sort())
+  }
 
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {

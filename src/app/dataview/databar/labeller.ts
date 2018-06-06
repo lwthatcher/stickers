@@ -53,6 +53,12 @@ export class LabelStream {
         this.labels.push(lbl);
     }
 
+    sort() {
+        let compare = (a,b) => { return a.start - b.start }
+        this.labels.sort(compare);
+        return this.labels;
+    }
+
     /**
      * Checks whether another label with the same start/end time already exists
      */
