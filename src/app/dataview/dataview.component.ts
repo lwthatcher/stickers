@@ -20,6 +20,10 @@ export interface Sensor {
   labelstream: string;
   channel?: string;
 }
+interface SensorInfo {
+  name: string;
+  index: number;
+}
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
 
@@ -78,9 +82,9 @@ export class DataviewComponent implements OnInit {
     return Object.keys(this.labelStreams)
   }
 
-  get sensor_names() {
+  get known_sensors(): SensorInfo[] {
     let channels = this.data_info.channels;
-    return [...channels].map((c) => { return this.SENSOR_NAMES[c] })
+    return [...channels].map((c,i) => { return {name: this.SENSOR_NAMES[c], index: i} })
   }
 
   get event_types(): string[] {
@@ -181,8 +185,14 @@ export class DataviewComponent implements OnInit {
 
   selectStream(sensor, stream) { sensor.labelstream = stream }
 
-  // TODO: implement
-  changeSensor(sensor, to) { console.log('changing sensor type:', sensor, to) }
+  changeSensor(sensor: Sensor, to: SensorInfo) { 
+    console.log('changing sensor type:', sensor, to);
+    let channel = this.data_info.channels[to.index];
+    sensor.name = to.name;
+    sensor.dims = this.SENSOR_DIMS[to.index];
+    sensor.idxs = this.idx_map.get(to.index);
+    
+  }
 
   toggleLabels(stream) { this.labelStreams[stream].toggle() }
 
@@ -223,7 +233,7 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
     console.groupCollapsed('sensors');
       console.log('sensors:', this.sensors);
-      console.log('sensor names:', this.sensor_names);
+      console.log('sensor names:', this.known_sensors);
     console.groupEnd();
     console.groupCollapsed('label streams');
       console.log('label streams:', this.labelStreams);
@@ -273,6 +283,10 @@ export class DataviewComponent implements OnInit {
     return result;
   }
 
+  /**
+   * Creates the idx-map Map object.
+   * Should only be run once.
+   */
   private gen_idx_map(channels: string): IndexMap {
     // some helper closures
     let len = (c) => this.SENSOR_DIMS[c].length  // map -> # of sensors for given channel

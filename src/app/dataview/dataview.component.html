@@ -8,7 +8,7 @@
                 <li class="nav-item" ngbDropdown>
                     <a class="nav-link btn-secondary text-white select-sensor" id="dropdownBasic1" ngbDropdownToggle>...</a>
                     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                        <button *ngFor="let s of sensor_names" (click)="changeSensor(sensor,s)" class="dropdown-item">{{s}}</button>
+                        <button *ngFor="let s of known_sensors" (click)="changeSensor(sensor,s)" class="dropdown-item">{{s.name}}</button>
                     </div>
                 </li>
             </ul>

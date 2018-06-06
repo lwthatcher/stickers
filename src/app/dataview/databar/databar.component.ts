@@ -194,11 +194,12 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Lifecycle Hooks]
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    let {transform, labelstream, mode, lbl_type} = changes;
+    let {transform, labelstream, mode, lbl_type, sensor} = changes;
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
     if (labelstream && !labelstream.firstChange) this.stream_changed(labelstream);
     if (mode && !mode.firstChange) this.mode_changed(mode);
     if (lbl_type && !lbl_type.firstChange) this.type_changed(lbl_type);
+    if (sensor && !sensor.firstChange)
   }
 
   ngOnDestroy() {
@@ -432,6 +433,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     console.log('label type changed', lbl_type);
     if (this.selected_label) 
         this.labeller.change_label(this.selected_label, this.lbl_type);
+   }
+
+   sensor_changed(sensor) {
+     console.log('detected sensor change!', sensor);
    }
 
   @HostListener('window:resize', ['$event'])
