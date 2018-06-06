@@ -18,11 +18,17 @@ export interface Sensor {
   dims: string[];
   hide: boolean;
   labelstream: string;
+  channel?: string;
 }
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
 
 type LabelStreamMap = { [key: string]: LabelStream }
+
+type IdxEntries = [number, number[]][]
+type IndexMap = Map<number,number[]>
+
+type LabelKey = number | string
 // #endregion
 
 // #region [Metadata]
@@ -55,8 +61,6 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Accessors]
-  get visibleSensors() { return this.sensors.filter((s) => !s.hide) }
-
   get is_labelled(): boolean { return !!this.data_info.labelled }
 
   get eventMap(): EventMap {
@@ -82,6 +86,12 @@ export class DataviewComponent implements OnInit {
   get event_types(): string[] {
     return Object.keys(this.eventMap)
   }
+
+  get idx_map(): IndexMap {
+    if (!this._idx_map) 
+      this._idx_map = this.gen_idx_map(this.data_info.channels);
+    return this._idx_map;
+  }
   // #endregion
 
   // #region [Properties]
@@ -93,12 +103,12 @@ export class DataviewComponent implements OnInit {
   data_info: DataInfo;
   sensors: Sensor[];
   zoom_transform;
-  labels: Label[];
   labelStreams: LabelStreamMap = {};
   mode: ToolMode = ToolMode.Selection;
-  lbl = "1";
+  lbl: LabelKey;
   label_color: ColorMap;
   print_ls: string;
+  private _idx_map: Map<number,number[]>;
   // #endregion
 
   // #region [Constructors]
@@ -126,6 +136,8 @@ export class DataviewComponent implements OnInit {
       this.parse_labels(_labels)
           .then((labels) => { this.addStream(this.default_stream, labels) })
     }
+    // initial selected label-type
+    this.lbl = this.event_types[0];
     // add user-labels stream, setup default save-lbls stream
     this.addStream('user-labels', []);
     this.print_ls = this.default_stream;
@@ -145,7 +157,7 @@ export class DataviewComponent implements OnInit {
     return {"background-color": c};
   }
 
-  is_active(label: number | string) {
+  is_active(label: LabelKey) {
     return this.lbl == label;
   }
   // #endregion
@@ -261,6 +273,21 @@ export class DataviewComponent implements OnInit {
     return result;
   }
 
+  private gen_idx_map(channels: string): IndexMap {
+    // some helper closures
+    let len = (c) => this.SENSOR_DIMS[c].length  // map -> # of sensors for given channel
+    let sum = (acc, cur) => acc + cur           // reduce -> sum over array
+    let getIdxs = (c,i,arr) => { 
+      let so_far = arr.slice(0,i).map(len).reduce(sum, 0)
+      let idx = this.SENSOR_DIMS[c].map((_,i) => so_far+i);
+      return [i, idx]
+    }
+    // apply map to get entries
+    let entries = [...channels].map(getIdxs) as IdxEntries
+    // convert entries to Map
+    return new Map<number,number[]>(entries);
+  }
+
   /**
    * Takes the channel string and returns an ordered list of Sensor objects,
    * including their corresponding dimensions and indices 
@@ -269,22 +296,16 @@ export class DataviewComponent implements OnInit {
    * @param channels a string where each character specifies a sensor channel
    */
   private setupSensors(channels: string): Sensor[] {
-    // takes the channel and creates the name and dims aspects of the object
-    let toSensor = (channel: string, i: number) => {
+    // creates the Sensor object for each channel provided
+    let toSensor = (channel: string, id: number): Sensor => {
       const name = this.SENSOR_NAMES[channel];
       const dims = this.SENSOR_DIMS[channel];
-      return {name, channel, dims, hide:false, id:i, labelstream: this.default_stream}
+      const idxs = this.idx_map.get(id);
+      const hide = false;
+      const labelstream = this.default_stream;
+      return {name, channel, dims, idxs, hide, id, labelstream}
     }
-    let len = (sensor) => sensor.dims.length  // map -> # of sensors
-    let sum = (acc, cur) => acc + cur         // reduce -> sum over array
-    // takes the (mostly) complete Sensor ojbect from toSensor and adds the idxs field
-    let getIdxs = (sensor,i,arr) => {
-      let so_far = arr.slice(0,i).map(len).reduce(sum, 0)
-      let idx = sensor.dims.map((_,i) => so_far+i);
-      sensor.idxs = idx;
-      return sensor as Sensor;
-    }
-    return [...channels].map(toSensor).map(getIdxs)
+    return [...channels].map(toSensor)
   }
   // #endregion
 }
