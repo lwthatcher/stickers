@@ -15,7 +15,7 @@ import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../dataview.component";
-import { ColorerService } from '../colorer.service';
+import { ColorerService, ColorMap } from '../colorer.service';
 import { Labeller, Label, LabelStream } from './labeller';
 import { ToolMode } from './tool-mode.enum';
 import * as d3 from "d3";
@@ -54,10 +54,6 @@ interface Selection {
 
 interface SelectionTransition extends Selection {
   duration(length: number)
-}
-
-interface ColorMap {
-  (i:number): any
 }
 // #endregion
 
@@ -171,8 +167,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
                       .attr('width', this.width)
                       .attr('height', this.height);
     // color maps
-    this.line_color = d3.scaleOrdinal(d3.schemeAccent);
-    this.label_color = d3.scaleOrdinal(d3.schemePaired);
+    this.line_color = this.colorer.line_color;
+    this.label_color = this.colorer.label_color;
     // setup helpers
     this.labeller = new Labeller(this);
     // setup zoom behaviour

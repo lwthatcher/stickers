@@ -2,8 +2,22 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient } from '@angular/common/http';
 
+export enum ColorScheme {
+  Category10,
+  Accent,
+  Dark2,
+  Paired,
+  Pastel1,
+  Pastel2
+}
+
 @Injectable()
 export class SettingsService {
+  // #region [Constructor]
+  constructor(private http: HttpClient) { }
+  // #endregion
+
+  // #region [Private Properties]
   _spinner_options = {
     lines: 13, // The number of lines to draw
     length: 40, // The length of each line
@@ -24,12 +38,20 @@ export class SettingsService {
     shadow: '0 0 1px transparent', // Box-shadow for the lines
     position: 'absolute' // Element positioning
   }
+  // #endregion
 
-  constructor(private http: HttpClient) { }
+  // #region [Properties]
+  line_scheme = ColorScheme.Accent;
+  label_scheme = ColorScheme.Paired;
+  // #endregion
 
+  // #region [Accessors]
   get spinner_options() { return this._spinner_options }
+  // #endregion
 
+  // #region [Public Methods]
   version(): Observable<string> {
     return this.http.get('/api/version', {responseType: 'text'});
   }
+  // #endregion
 }
