@@ -2,6 +2,7 @@
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
+import { saveAs } from 'file-saver/FileSaver';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 import { Label, LabelStream, EventMap } from './databar/labeller';
@@ -168,16 +169,22 @@ export class DataviewComponent implements OnInit {
 
   selectStream(sensor, stream) { sensor.labelstream = stream }
 
+  // TODO: implement
   changeSensor(sensor, to) { console.log('changing sensor type:', sensor, to) }
 
   toggleLabels(stream) { this.labelStreams[stream].toggle() }
 
+  // TODO: implement
   newStream() { console.log('lets make another stream!') }
 
-  change_ls(stream) {console.log('changing print label-stream', stream); this.print_ls = stream;}
+  change_ls(stream) {console.debug('changing print label-stream:', stream); this.print_ls = stream;}
 
   save_labels() {
-    console.info('saving label-stream', this.print_ls, this.labelStreams[this.print_ls].toJSON())
+    let json = this.labelStreams[this.print_ls].toJSON();
+    let name = this.print_ls + '.labels.json'
+    console.info('saving label-stream:', this.print_ls, name, json);
+    let blob = new Blob([json], {type: 'application/json;charset=utf-8'})
+    saveAs(blob, name);
   }
 
   @HostListener('document:keypress', ['$event'])
