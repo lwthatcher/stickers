@@ -176,6 +176,23 @@ export class DataviewComponent implements OnInit {
   }
   // #endregion
 
+  // #region [Sensors]
+  getSensor(id) {
+    return this.sensors.find((s) => s.id === id);
+  }
+
+  private update_sensor(sensor: Sensor, to: SensorInfo) {
+    let channel = this.data_info.channels[to.index];
+    sensor.name = to.name;
+    sensor.dims = this.SENSOR_DIMS[to.index];
+    sensor.idxs = this.idx_map.get(to.index);
+  }
+
+  private remove_sensor(sensor: Sensor) {
+    console.log('remove-sensor stub:', sensor);
+  }
+  // #endregion
+
   // #region [Event Handlers]
   onZoom(event) { this.zoom_transform = event.transform }
 
@@ -186,12 +203,9 @@ export class DataviewComponent implements OnInit {
   selectStream(sensor, stream) { sensor.labelstream = stream }
 
   changeSensor(sensor: Sensor, to: SensorInfo) { 
-    console.log('changing sensor type:', sensor, to);
-    let channel = this.data_info.channels[to.index];
-    sensor.name = to.name;
-    sensor.dims = this.SENSOR_DIMS[to.index];
-    sensor.idxs = this.idx_map.get(to.index);
-    
+    // change sensor information
+    this.update_sensor(sensor, to);
+    console.log('changed sensor:', sensor);
   }
 
   toggleLabels(stream) { this.labelStreams[stream].toggle() }

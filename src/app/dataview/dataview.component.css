@@ -36,6 +36,12 @@ li.nav-item.dropdown > a.select-sensor {
     cursor: pointer;
 }
 
+li.nav-item.dropdown.disabled > a.select-sensor,
+li.nav-item.dropdown.disabled {
+    cursor: default;
+    color: #6c757d;
+}
+
 li.nav-item.show.dropdown > a.select-sensor {
     background-color: #6c757d;  /* bootstrap secondary gray */
 }

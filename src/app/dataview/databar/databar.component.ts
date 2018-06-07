@@ -199,7 +199,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     if (labelstream && !labelstream.firstChange) this.stream_changed(labelstream);
     if (mode && !mode.firstChange) this.mode_changed(mode);
     if (lbl_type && !lbl_type.firstChange) this.type_changed(lbl_type);
-    if (sensor && !sensor.firstChange)
+    if (sensor && !sensor.firstChange) this.sensor_changed(sensor);
   }
 
   ngOnDestroy() {
