@@ -17,6 +17,8 @@ import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../dataview.component";
 import { ColorerService, ColorMap } from '../colorer.service';
 import { Labeller, Label, LabelStream } from './labeller';
+import { Drawer } from './drawer';
+import { Selection, SelectionTransition } from './selection';
 import { ToolMode } from './tool-mode.enum';
 import * as d3 from "d3";
 // #endregion
@@ -25,35 +27,6 @@ import * as d3 from "d3";
 interface datum {
   d: number;
   i: number;
-}
-
-interface Selection {
-  select(selector: string): Selection
-  selectAll(selector: string): Selection
-  attr(attribute: string): any
-  attr(attribue: string, value: any): Selection
-  classed(attribute: string): Selection
-  classed(attribue: string, value: any): Selection
-  style(attribute: string, value: any): Selection
-  append(element: string): Selection
-  data(data: any): Selection
-  data(data: any, key: any): Selection
-  datum(data: any): Selection
-  enter(): Selection
-  exit(): Selection
-  on(event: string): any
-  on(event: string, callback): Selection
-  on(event: string, callback, capture: boolean): Selection
-  text(value): Selection
-  call(value: any): Selection
-  filter(filter: any): Selection
-  merge(selection: Selection): Selection
-  transition(): SelectionTransition
-  remove()
-}
-
-interface SelectionTransition extends Selection {
-  duration(length: number)
 }
 // #endregion
 
@@ -78,7 +51,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Outputs]
   @Output() zoom = new EventEmitter<any>();
-  @Output() labelsChange = new EventEmitter<Label[]>();
   // #endregion
 
   // #region [Variables]
@@ -109,6 +81,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   spinner: Spinner;
   // helpers
   labeller: Labeller;
+  drawer: Drawer;
   // initialization flags
   initialized = false;
   private ls_registered = false;
@@ -131,8 +104,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   get selected_label() { return this.labels && this.labels.find((lbl) => lbl.selected) || false }
 
   get labels() { return this.labelstream && this.labelstream.labels || [] }
-
-  get show_labels() { return this.labelstream && this.labelstream.show }
 
   get is_registered() { return !!this.registration }
   // #endregion
@@ -172,6 +143,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.label_color = this.colorer.label_color;
     // setup helpers
     this.labeller = new Labeller(this);
+    this.drawer = new Drawer(this);
     // setup zoom behaviour
     this._zoom = d3.zoom()
                   .scaleExtent([1, 50])
@@ -181,7 +153,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.r_zoom.call(this._zoom);
     // draw data (when it loads)
     this.start_spinner();
-    this.draw();
+    this.drawer.draw();
     // mode and label-stream initialization
     this.mode_changed(this.mode);
     if (!this.ls_registered && this.labelstream !== undefined) this.register_lblstream();
@@ -204,165 +176,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy() {
     if (this.registration) this.registration.unsubscribe();
-  }
-  // #endregion
-
-  // #region [Plotting Methods]
-  async draw() {
-    // set the respective ranges for x/y
-    this.set_ranges();
-    // wait for data to load
-    let data = await this._data;
-    // stop loading-spinner once the domains are updated
-    this.set_domains(data);
-    this.stop_spinner();
-    // draw axes
-    this.draw_xAxis();
-    this.draw_yAxis();
-    // draw each signal
-    this.plot_signals(data);
-    // draw labels
-    if (this.labels) 
-      this.draw_labels();
-    // draw handles if label selected
-    if (this.selected_label)
-      this.draw_handles();
-  }
-
-  draw_labels() {
-    // erase labels if show-labels is false
-    if (!this.show_labels) { this.clear('labels'); return; }
-    // helper functions
-    let key = (d,i) => { return d ? d.id : i }
-    let middle = (d) => { return this.x(d.start + (d.end-d.start)/2) }
-    let width = (d) => { return this.x(d.end) - this.x(d.start) }
-    // updated elements
-    let rects = this.g_lbls.selectAll('rect.label')
-                    .data(this.labels, key)
-                    .classed('updated', true)
-                    .attr('x', (d) => { return this.x(d.start) })
-                    .attr('width', width)
-                    .attr('fill', (d) => { return this.label_color(d.label) })
-                    .classed('selected', (d) => d.selected )
-    // exit (remove) elements
-    rects.exit()
-         .transition()
-         .duration(250)
-         .attr('width', 0)
-         .attr('x', middle)
-         .remove();
-    // entering (new) elements
-    let enter = rects.enter()
-                     .append('rect')
-                     .attr('y', 0)
-                     .attr('height', this.height)
-                     .attr("clip-path", "url(#clip)")
-                     .classed('label', true)
-                     .on('click', (d) => { this.lbl_clicked(d) }, false)
-                     .call(d3.drag().on('drag', (...d) => { this.lbl_dragged(d) }))
-                     .attr('x', middle)
-                     .attr('width', 0)
-                     .classed('selected', (d) => d.selected )
-                     .attr('fill', (d) => { return this.label_color(d.label) })
-    // add title pop-over
-    enter.append('svg:title')
-         .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
-    // transition for creation
-    enter.transition()
-         .duration(250)
-         .attr('x', (d) => { return this.x(d.start) })
-         .attr('width', width)
-  }
-
-  draw_handles(lbl?: Label) {
-    // erase handles if show-labels is false
-    if (!this.show_labels) { this.clear('handles'); return; }
-    // if no label is selected, clear the handles and return
-    if (!lbl) { lbl = this.selected_label as Label }
-    if (!lbl) { this.clear('handles'); return; }
-    // selections
-    let left = this.g_hand.selectAll('rect.drag-handle.left').data([lbl]);
-    let right = this.g_hand.selectAll('rect.drag-handle.right').data([lbl]);
-    // draw left/right handles
-    left = this._add_handle(left, 'left');
-    right = this._add_handle(right, 'right');
-    // conditionally format if width == 0
-    if (lbl.start === lbl.end) {
-      left.classed('warn', true);
-      right.classed('warn', true);
-    }
-    else {
-      left.classed('warn', false);
-      right.classed('warn', false);
-    }
-  }
-
-  clear(...layers) {
-    // if no parameters given, clear everything
-    if (layers.length === 0) {
-      this.g_sigs.selectAll("*").remove();
-      this.g_axes.selectAll("*").remove();
-      this.g_lbls.selectAll("*").remove();
-      this.g_hand.selectAll("*").remove();
-      return;
-    }
-    // otherwise clear specified layers
-    if (layers.includes('signals')) this.g_sigs.selectAll("*").remove();
-    if (layers.includes('axes')) this.g_axes.selectAll("*").remove();
-    if (layers.includes('labels')) this.g_lbls.selectAll("*").remove();
-    if (layers.includes('handles')) this.g_hand.selectAll("*").remove();
-    if (layers.includes('x-axis')) this.g_axes.selectAll("g.x-axis").remove();
-    if (layers.includes('y-axis')) this.g_axes.selectAll("g.y-axis").remove();
-  }
-
-  private draw_xAxis() {
-    this.g_axes.append('g')
-        .attr('class', 'x-axis')
-        .attr('transform', 'translate(0,' + this.height + ')')
-        .call(d3.axisBottom(this.x));
-  }
-
-  private draw_yAxis() {
-    this.g_axes.append('g')
-        .attr('class', 'y-axis')
-        .call(d3.axisLeft(this.y));
-  }
-
-  private async plot_signals(_data) {
-    // downsample first
-    _data = await Promise.resolve(_data);
-    let data = this.downsample(_data);
-    // draw each signal
-    for (let j = 0; j < data.length; j++) {
-      this.plot_signal(data[j], j);
-    }
-  }
-
-  private plot_signal(signal, j) {
-    this.g_sigs.append("path")
-        .datum(signal)
-        .attr("fill", "none")
-        .attr("clip-path", "url(#clip)")
-        .attr("class", "line line-" + j.toString())
-        .attr("stroke", this.line_color(j))
-        .attr("stroke-width", 1.5)
-        .attr("stroke-opacity", 0.7)
-        .attr("d", this.line);
-  }
-
-  private _add_handle(selection: Selection, side: 'left' | 'right') {
-    let callback;
-    if (side === 'left') callback = (d) => { return this.x(d.start) - 5 }
-    else callback = (d) => { return this.x(d.end) - 5 }
-    return selection.enter().append('rect')
-                    .attr('width', 10)
-                    .classed('drag-handle', true)
-                    .classed(side, true)
-                    .attr('y', 0)
-                    .attr('height', this.height)
-                    .call(d3.drag().on('drag', (d) => { this.lbl_resize(d, side) }))
-                    .merge(selection)
-                    .attr('x', callback)
   }
   // #endregion
 
@@ -413,8 +226,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   stream_update(event) {
     console.debug('label stream update:', event);
-    this.draw_labels();
-    this.draw_handles();
+    this.drawer.draw_labels();
+    this.drawer.draw_handles();
   }
 
   stream_changed(labelstream) {
@@ -423,8 +236,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     console.debug('lbl stream changed', this.ls_registered, this.labelstream);
     if (!this.ls_registered) console.warn('label stream not registered!', this);
     // redraw labels/drag-handles
-    this.draw_labels();
-    this.draw_handles();
+    this.drawer.draw_labels();
+    this.drawer.draw_handles();
   }
 
   mode_changed(mode) { this.updateMode(this.mode) }
@@ -442,8 +255,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @HostListener('window:resize', ['$event'])
   window_resize(event: any) {
     console.debug('window resize', this.width, this.height);
-    this.clear();
-    this.draw();
+    this.drawer.clear();
+    this.drawer.draw();
     this.r_clip.attr('width', this.width);
   }
 
@@ -476,11 +289,11 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     // redraw signals
     this.host.selectAll('g.signals > path.line').attr("d", this.line);
     // redraw x-axis
-    this.clear('x-axis');
-    this.draw_xAxis();
+    this.drawer.clear('x-axis');
+    this.drawer.draw_xAxis();
     // redraw labels
-    this.draw_labels();
-    this.draw_handles();
+    this.drawer.draw_labels();
+    this.drawer.draw_handles();
   }
 
   private register_lblstream() {
@@ -501,17 +314,17 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
         .then((axes) => {return axes.map(toArray)})
   }
 
-  private start_spinner(): void {
+  start_spinner(): void {
     const opts = this.settings.spinner_options;
     let target = this.el.nativeElement;
     this.spinner = new Spinner(opts).spin(target);
   }
 
-  private stop_spinner() {
+  stop_spinner() {
     this.spinner.stop();
   }
 
-  private downsample(data) {
+  downsample(data) {
     // only downsample if enabled
     if (!this.enable_downsampling) return data;
     // setup sampler

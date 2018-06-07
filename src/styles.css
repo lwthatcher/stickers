@@ -21,6 +21,11 @@ rect.drag-handle.warn {
     fill: orange;
 }
 
+rect.zoom {
+    fill: none;
+    pointer-events: all;
+}
+
 rect.zoom.selection-mode {
     cursor: -webkit-grab;
 }
