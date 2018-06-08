@@ -18,7 +18,6 @@ import { Sensor } from "../dataview.component";
 import { ColorerService, ColorMap } from '../colorer.service';
 import { Labeller, Label, LabelStream } from './labeller';
 import { Drawer } from './drawer';
-import { Selection, SelectionTransition } from './selection';
 import { ToolMode } from './tool-mode.enum';
 import * as d3 from "d3";
 // #endregion
@@ -55,17 +54,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Variables]
   margin = {top: 5, right: 20, bottom: 20, left: 50}
-  
-  // element selectors
-  host: Selection;
-  svg: Selection; 
-  g: Selection; 
-  g_sigs: Selection; 
-  g_axes: Selection;
-  g_lbls: Selection; 
-  g_hand: Selection;
-  r_zoom: Selection;
-  r_clip: Selection;
   container: Element;
   // line drawing functions
   x; y; line; x0;
@@ -106,6 +94,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   get labels() { return this.labelstream && this.labelstream.labels || [] }
 
   get is_registered() { return !!this.registration }
+
+  get element() { return this.el }
   // #endregion
 
   // #region [Constructors]
@@ -121,36 +111,21 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     // selectors
     this.container = document.querySelector('div.card');
     console.log('container', this.container);
-    console.debug('width/height', this.width, this.height);
-    let host = d3.select(this.el.nativeElement);
-    this.host = host;
-    this.svg = host.select("div > svg")
-                   .attr('height', this._height);
-    this.g = host.select("svg > g.transform")
-                 .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-    this.g_sigs = host.select("g.transform > g.signals");
-    this.g_axes = host.select("g.transform > g.axes");
-    this.g_lbls = host.select("g.transform > g.labels");
-    this.g_hand = host.select("g.transform > g.handles");
-    this.r_zoom = host.select("g.transform > rect.zoom")
-                      .attr('width', this.width)
-                      .attr('height', this.height);
-    this.r_clip = host.select('#clip > rect.clip-rect')
-                      .attr('width', this.width)
-                      .attr('height', this.height);
-    // color maps
-    this.line_color = this.colorer.line_color;
-    this.label_color = this.colorer.label_color;
     // setup helpers
     this.labeller = new Labeller(this);
     this.drawer = new Drawer(this);
+    console.debug('width/height', this.width, this.height);
+    // color maps
+    this.line_color = this.colorer.line_color;
+    this.label_color = this.colorer.label_color;
+    
     // setup zoom behaviour
     this._zoom = d3.zoom()
                   .scaleExtent([1, 50])
                   .translateExtent([[0, 0], [this.width, this.height]])
                   .extent([[0, 0], [this.width, this.height]])
                   .on('zoom', () => this.zoomed());
-    this.r_zoom.call(this._zoom);
+    this.drawer.layers['zoom'].call(this._zoom);
     // draw data (when it loads)
     this.start_spinner();
     this.drawer.draw();
@@ -257,7 +232,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     console.debug('window resize', this.width, this.height);
     this.drawer.clear();
     this.drawer.draw();
-    this.r_clip.attr('width', this.width);
+    this.drawer.layers['clip'].attr('width', this.width);
   }
 
   @HostListener('document:keypress', ['$event'])
@@ -270,7 +245,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Update Methods]
   private updateMode(mode) {
-    let background = this.r_zoom;
+    let background = this.drawer.layers['zoom'];
     if (mode === ToolMode.Selection) {
       console.debug('selection mode', mode);
       background.classed('selection-mode', true);
@@ -287,7 +262,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
-    this.host.selectAll('g.signals > path.line').attr("d", this.line);
+    this.drawer.signals.attr("d", this.line);
     // redraw x-axis
     this.drawer.clear('x-axis');
     this.drawer.draw_xAxis();

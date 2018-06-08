@@ -3,10 +3,49 @@ import { Label } from './labeller';
 import { Selection, SelectionTransition } from './selection';
 import * as d3 from "d3";
 
+// #region [Interfaces]
+enum Layer {
+  Host = 'host',
+  SVG = 'svg',
+  Transform = 'transform',
+  Clip = 'clip',
+  Signals = 'signals',
+  Axes = 'axes',
+  XAxis = 'x-axis',
+  YAxis = 'y-axis',
+  Labels = 'labels',
+  DragHandles = 'handles',
+  Zoom = 'zoom'
+}
+
+type LayerMap = {[layer: string]: Selection}
+// #endregion
+
 export class Drawer {
-  // #region [Constructor]
+  // #region [Variables]
   databar: DatabarComponent;
-  constructor(databar: DatabarComponent) { this.databar = databar }
+  layers: LayerMap = {}
+  // #endregion
+
+  // #region [Constructor]
+  constructor(databar: DatabarComponent) { 
+    this.databar = databar;
+    let host = d3.select(databar.element.nativeElement);
+    this.layers[Layer.Host] = host;
+    this.layers[Layer.SVG] = host.select("div > svg").attr('height', databar._height);
+    this.layers[Layer.Transform] = host.select("svg > g.transform")
+        .attr("transform", "translate(" + databar.margin.left + "," + databar.margin.top + ")");
+    this.layers[Layer.Signals] = host.select("g.transform > g.signals");
+    this.layers[Layer.Axes] = host.select("g.transform > g.axes");
+    this.layers[Layer.Labels] = host.select("g.transform > g.labels");
+    this.layers[Layer.DragHandles] = host.select("g.transform > g.handles");
+    this.layers[Layer.Zoom] = host.select("g.transform > rect.zoom")
+        .attr('width', databar.width)
+        .attr('height', databar.height);
+    this.layers[Layer.Clip] = host.select('#clip > rect.clip-rect')
+        .attr('width', databar.width)
+        .attr('height', databar.height);
+  }
   // #endregion
 
   // #region [Accessors]
@@ -14,11 +53,14 @@ export class Drawer {
 
   get selected_label() { return this.databar.selected_label }
 
+  // TODO: move to signal instead of labelstream
   get show_labels() { return this.databar.labelstream && this.databar.labelstream.show }
 
   get x() { return this.databar.x }
 
   get y() { return this.databar.y }
+
+  get signals() { return this.layers[Layer.Host].selectAll('g.signals > path.line') }
   // #endregion
 
   // #region [Public Methods]
@@ -51,7 +93,7 @@ export class Drawer {
     let middle = (d) => { return this.x(d.start + (d.end-d.start)/2) }
     let width = (d) => { return this.x(d.end) - this.x(d.start) }
     // updated elements
-    let rects = this.databar.g_lbls.selectAll('rect.label')
+    let rects = this.layers[Layer.Labels].selectAll('rect.label')
                     .data(this.labels, key)
                     .classed('updated', true)
                     .attr('x', (d) => { return this.x(d.start) })
@@ -95,8 +137,8 @@ export class Drawer {
     if (!lbl) { lbl = this.selected_label as Label }
     if (!lbl) { this.clear('handles'); return; }
     // selections
-    let left = this.databar.g_hand.selectAll('rect.drag-handle.left').data([lbl]);
-    let right = this.databar.g_hand.selectAll('rect.drag-handle.right').data([lbl]);
+    let left = this.layers[Layer.DragHandles].selectAll('rect.drag-handle.left').data([lbl]);
+    let right = this.layers[Layer.DragHandles].selectAll('rect.drag-handle.right').data([lbl]);
     // draw left/right handles
     left = this._add_handle(left, 'left');
     right = this._add_handle(right, 'right');
@@ -114,30 +156,30 @@ export class Drawer {
   clear(...layers) {
     // if no parameters given, clear everything
     if (layers.length === 0) {
-      this.databar.g_sigs.selectAll("*").remove();
-      this.databar.g_axes.selectAll("*").remove();
-      this.databar.g_lbls.selectAll("*").remove();
-      this.databar.g_hand.selectAll("*").remove();
+      this.layers[Layer.Signals].selectAll("*").remove();
+      this.layers[Layer.Axes].selectAll("*").remove();
+      this.layers[Layer.Labels].selectAll("*").remove();
+      this.layers[Layer.DragHandles].selectAll("*").remove();
       return;
     }
     // otherwise clear specified layers
-    if (layers.includes('signals')) this.databar.g_sigs.selectAll("*").remove();
-    if (layers.includes('axes')) this.databar.g_axes.selectAll("*").remove();
-    if (layers.includes('labels')) this.databar.g_lbls.selectAll("*").remove();
-    if (layers.includes('handles')) this.databar.g_hand.selectAll("*").remove();
-    if (layers.includes('x-axis')) this.databar.g_axes.selectAll("g.x-axis").remove();
-    if (layers.includes('y-axis')) this.databar.g_axes.selectAll("g.y-axis").remove();
+    if (layers.includes('signals')) this.layers[Layer.Signals].selectAll("*").remove();
+    if (layers.includes('axes')) this.layers[Layer.Axes].selectAll("*").remove();
+    if (layers.includes('labels')) this.layers[Layer.Labels].selectAll("*").remove();
+    if (layers.includes('handles')) this.layers[Layer.DragHandles].selectAll("*").remove();
+    if (layers.includes('x-axis')) this.layers[Layer.Axes].selectAll("g.x-axis").remove();
+    if (layers.includes('y-axis')) this.layers[Layer.Axes].selectAll("g.y-axis").remove();
   }
   
   draw_xAxis() {
-    this.databar.g_axes.append('g')
+    this.layers[Layer.Axes].append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + this.databar.height + ')')
         .call(d3.axisBottom(this.x));
   }
 
   draw_yAxis() {
-    this.databar.g_axes.append('g')
+    this.layers[Layer.Axes].append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this.y));
   }
@@ -155,7 +197,7 @@ export class Drawer {
   }
   
   private plot_signal(signal, j) {
-    this.databar.g_sigs.append("path")
+    this.layers[Layer.Signals].append("path")
         .datum(signal)
         .attr("fill", "none")
         .attr("clip-path", "url(#clip)")
