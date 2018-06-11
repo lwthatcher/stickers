@@ -5,8 +5,10 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { saveAs } from 'file-saver/FileSaver';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
+import { SettingsService } from '../settings/settings.service'
 import { Label, LabelStream, EventMap } from './databar/labeller';
 import { ToolMode } from './databar/tool-mode.enum';
+import { Colorer } from './colorer';
 import { ColorerService, ColorMap } from './colorer.service';
 // #endregion
 
@@ -96,6 +98,10 @@ export class DataviewComponent implements OnInit {
       this._idx_map = this.gen_idx_map(this.data_info.channels);
     return this._idx_map;
   }
+
+  get settings() {
+    return this._settings;
+  }
   // #endregion
 
   // #region [Properties]
@@ -110,6 +116,7 @@ export class DataviewComponent implements OnInit {
   labelStreams: LabelStreamMap = {};
   mode: ToolMode = ToolMode.Selection;
   lbl: LabelKey;
+  colorer: Colorer;
   label_color: ColorMap;
   print_ls: string;
   private _idx_map: Map<number,number[]>;
@@ -118,8 +125,9 @@ export class DataviewComponent implements OnInit {
   // #region [Constructors]
   constructor(private route: ActivatedRoute, 
               private dataloader: DataloaderService,
-              private colorer: ColorerService) {
-                this.label_color = this.colorer.label_color;
+              private _settings: SettingsService,
+              private _colorer: ColorerService) {
+                this.label_color = this._colorer.label_color;
               }
 
   ngOnInit() {
@@ -130,6 +138,8 @@ export class DataviewComponent implements OnInit {
     // get resolved data
     this.info = this.route.snapshot.data.workspace[0];
     this.data_info = this.info.getDataInfo(this.dataset);
+    // setup helper class(es)
+    this.colorer = new Colorer(this);
     // create list of Sensor objects
     this.sensors = this.setupSensors(this.data_info.channels);
     // specify which data to load
