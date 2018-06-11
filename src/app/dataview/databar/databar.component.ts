@@ -16,7 +16,6 @@ import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../dataview.component";
 import { Colorer} from '../colorer';
-import { ColorerService, ColorMap } from '../colorer.service';
 import { Labeller, Label, LabelStream } from './labeller';
 import { Drawer } from './drawer';
 import { ToolMode } from './tool-mode.enum';
@@ -113,10 +112,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.labeller = new Labeller(this);
     this.drawer = new Drawer(this);
     console.debug('width/height', this.width, this.height);
-    // color maps
-    // this.line_color = this.colorer.line_color;
-    // this.label_color = this.colorer.label_color;
-    
     // setup zoom behaviour
     this._zoom = d3.zoom()
                   .scaleExtent([1, 50])
