@@ -21,6 +21,7 @@ export interface Selection {
     filter(filter: any): Selection
     merge(selection: Selection): Selection
     transition(): SelectionTransition
+    node(): any
     remove()
 }
 

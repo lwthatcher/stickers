@@ -124,8 +124,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
                   .scaleExtent([1, 50])
                   .translateExtent([[0, 0], [this.width, this.height]])
                   .extent([[0, 0], [this.width, this.height]])
-                  .on('zoom', () => this.zoomed());
-    this.drawer.layers['zoom'].call(this._zoom);
+                  .on('zoom', () => this.zoomed2());
+    this.drawer.layers['svg'].call(this._zoom);
     // draw data (when it loads)
     this.start_spinner();
     this.drawer.draw();
@@ -188,6 +188,16 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   zoomed() { this.zoom.emit(d3.event) }
+
+  zoomed2() {
+    let bg = this.drawer.layers['zoom'];
+    let [x,y] = d3.mouse(bg.node());
+    let w = bg.attr('width');
+    let h = bg.attr('height');
+    let in_rect = (x > 0 && x < w && y > 0 && y < h);
+    console.debug('zoom',  d3.event);
+    if (in_rect) this.zoom.emit(d3.event);
+  }
 
   lbl_resize(d, side) { this.labeller.resize(d, side) }
 
