@@ -102,6 +102,12 @@ export class DataviewComponent implements OnInit {
   get settings() {
     return this._settings;
   }
+
+  get colors() {
+    if (this._colors === undefined) 
+      this._colors = this.colorer.labels.entries.map((entry) => entry.key)
+    return this._colors;
+  }
   // #endregion
 
   // #region [Properties]
@@ -120,6 +126,7 @@ export class DataviewComponent implements OnInit {
   label_color: ColorMap;
   print_ls: string;
   private _idx_map: Map<number,number[]>;
+  private _colors = undefined;
   // #endregion
 
   // #region [Constructors]
@@ -167,7 +174,7 @@ export class DataviewComponent implements OnInit {
 
   // #region [Label Types]
   style_color(label: number) {
-    let c = this.label_color(label);
+    let c = this.colorer.labels.get(label);
     return {"background-color": c};
   }
 
