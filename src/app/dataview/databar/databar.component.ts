@@ -15,6 +15,7 @@ import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../dataview.component";
+import { Colorer} from '../colorer';
 import { ColorerService, ColorMap } from '../colorer.service';
 import { Labeller, Label, LabelStream } from './labeller';
 import { Drawer } from './drawer';
@@ -46,6 +47,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() labelstream: LabelStream;
   @Input() mode: ToolMode;
   @Input() lbl_type;
+  @Input() colorer: Colorer;
   // #endregion
 
   // #region [Outputs]
@@ -57,9 +59,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   container: Element;
   // line drawing functions
   x; y; line; x0;
-  // color maps
-  line_color: ColorMap;
-  label_color: ColorMap;
   // zoom handler
   _zoom;
   // data references
@@ -101,8 +100,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Constructors]
   constructor(private el: ElementRef, 
               private dataloader: DataloaderService,
-              private settings: SettingsService,
-              private colorer: ColorerService) { }
+              private settings: SettingsService) { }
 
   ngOnInit() {
     console.groupCollapsed('databar init', this.sensor.name);
@@ -116,8 +114,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.drawer = new Drawer(this);
     console.debug('width/height', this.width, this.height);
     // color maps
-    this.line_color = this.colorer.line_color;
-    this.label_color = this.colorer.label_color;
+    // this.line_color = this.colorer.line_color;
+    // this.label_color = this.colorer.label_color;
     
     // setup zoom behaviour
     this._zoom = d3.zoom()

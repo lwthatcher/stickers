@@ -9,7 +9,6 @@ import { SettingsService } from '../settings/settings.service'
 import { Label, LabelStream, EventMap } from './databar/labeller';
 import { ToolMode } from './databar/tool-mode.enum';
 import { Colorer } from './colorer';
-import { ColorerService, ColorMap } from './colorer.service';
 // #endregion
 
 // #region [Interfaces]
@@ -42,7 +41,7 @@ type LabelKey = number | string
   selector: 'app-dataview',
   templateUrl: 'dataview.component.html',
   styleUrls: ['dataview.component.css'],
-  providers: [DataloaderService, ColorerService]
+  providers: [DataloaderService]
 })
 // #endregion
 export class DataviewComponent implements OnInit {
@@ -123,7 +122,6 @@ export class DataviewComponent implements OnInit {
   mode: ToolMode = ToolMode.Selection;
   lbl: LabelKey;
   colorer: Colorer;
-  label_color: ColorMap;
   print_ls: string;
   private _idx_map: Map<number,number[]>;
   private _colors = undefined;
@@ -132,10 +130,7 @@ export class DataviewComponent implements OnInit {
   // #region [Constructors]
   constructor(private route: ActivatedRoute, 
               private dataloader: DataloaderService,
-              private _settings: SettingsService,
-              private _colorer: ColorerService) {
-                this.label_color = this._colorer.label_color;
-              }
+              private _settings: SettingsService) { }
 
   ngOnInit() {
     console.groupCollapsed('dataview init')

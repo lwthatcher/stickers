@@ -98,7 +98,7 @@ export class Drawer {
                     .classed('updated', true)
                     .attr('x', (d) => { return this.x(d.start) })
                     .attr('width', width)
-                    .attr('fill', (d) => { return this.databar.label_color(d.label) })
+                    .attr('fill', (d) => { return this.databar.colorer.labels.get(d.label) })
                     .classed('selected', (d) => d.selected )
     // exit (remove) elements
     rects.exit()
@@ -119,7 +119,7 @@ export class Drawer {
                       .attr('x', middle)
                       .attr('width', 0)
                       .classed('selected', (d) => d.selected )
-                      .attr('fill', (d) => { return this.databar.label_color(d.label) })
+                      .attr('fill', (d) => { return this.databar.colorer.labels.get(d.label) })
     // add title pop-over
     enter.append('svg:title')
           .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
@@ -202,7 +202,7 @@ export class Drawer {
         .attr("fill", "none")
         .attr("clip-path", "url(#clip)")
         .attr("class", "line line-" + j.toString())
-        .attr("stroke", this.databar.line_color(j))
+        .attr("stroke", this.databar.colorer.lines.get(j+1))
         .attr("stroke-width", 1.5)
         .attr("stroke-opacity", 0.7)
         .attr("d", this.databar.line);

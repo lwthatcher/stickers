@@ -48,14 +48,13 @@ class CMap {
         this.colors = {};
         this.colors[this.null_lbl] = this.NULL_COLOR;
         for (let e of events) {
-            let c = this.scale(e);
-            console.log('color', e, c);
-            this.colors[e] = c;
+            this.colors[e] =this.scale(e.toString());
         }
     }
 
     get(lbl) {
-        if (lbl === this.null_lbl) return this.NULL_COLOR;
+        lbl = lbl.toString();
+        if (lbl == this.null_lbl) return this.NULL_COLOR;
         if (!this.colors[lbl] !== undefined) 
             this.colors[lbl] = this.scale(lbl)
         return this.colors[lbl]
