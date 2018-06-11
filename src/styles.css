@@ -33,3 +33,7 @@ rect.zoom.selection-mode {
 rect.zoom.click-mode {
     cursor: pointer;
 }
+
+g.axes > g.x-axis {
+    cursor: -webkit-grab;
+}
