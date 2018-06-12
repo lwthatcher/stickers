@@ -16,6 +16,7 @@ import { Sensor } from './sensor';
 interface SensorInfo {
   name: string;
   index: number;
+  channel?: string;
 }
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
@@ -57,7 +58,7 @@ export class DataviewComponent implements OnInit {
 
   get known_sensors(): SensorInfo[] {
     let channels = this.data_info.channels;
-    return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i} })
+    return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i, channel: c} })
   }
 
   get event_types(): string[] {
@@ -161,37 +162,16 @@ export class DataviewComponent implements OnInit {
   }
   // #endregion
 
-  // #region [Sensors]
-  getSensor(id) {
-    return this.sensors.find((s) => s.id === id);
-  }
-
-  private update_sensor(sensor: Sensor, to: SensorInfo) {
-    let channel = this.data_info.channels[to.index];
-    sensor.name = to.name;
-    sensor.dims = Sensor.SENSOR_DIMS[to.index];
-    sensor.idxs = this.idx_map.get(to.index);
-  }
-
-  private remove_sensor(sensor: Sensor) {
-    console.log('remove-sensor stub:', sensor);
-  }
-  // #endregion
-
   // #region [Event Handlers]
   onZoom(event) { this.zoom_transform = event.transform }
 
-  hide(sensor: Sensor) { this.sensors[sensor.id].hide = true }
+  hide(sensor: Sensor) { sensor.hide() }
 
-  show(sensor: Sensor) { this.sensors[sensor.id].hide = false }
+  show(sensor: Sensor) { sensor.show() }
 
   selectStream(sensor, stream) { sensor.labelstream = stream }
 
-  changeSensor(sensor: Sensor, to: SensorInfo) { 
-    // change sensor information
-    this.update_sensor(sensor, to);
-    console.log('changed sensor:', sensor);
-  }
+  changeSensor(sensor: Sensor, to: SensorInfo) { sensor.update(to) }
 
   toggleLabels(stream) { this.labelStreams[stream].toggle() }
 

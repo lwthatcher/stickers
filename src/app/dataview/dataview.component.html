@@ -4,9 +4,9 @@
             
             <ul  class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
-                    <a class="nav-link" [ngClass]="{'active': !sensor.hide, 'disabled': sensor.hide}">{{sensor.name}}</a>
+                    <a class="nav-link" [ngClass]="{'active': !sensor.hidden, 'disabled': sensor.hidden}">{{sensor.name}}</a>
                 </li>
-                <li class="nav-item" ngbDropdown *ngIf="sensor.hide">
+                <li class="nav-item" ngbDropdown>
                     <a class="nav-link btn-secondary text-white select-sensor" id="dropdownBasic1" ngbDropdownToggle>...</a>
                     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
                         <button *ngFor="let s of known_sensors" (click)="changeSensor(sensor,s)" class="dropdown-item">{{s.name}}</button>
@@ -19,7 +19,7 @@
                     <button type="button" 
                     (click)="toggleLabels(sensor.labelstream)" 
                     class="btn btn-outline-secondary"
-                    [disabled]="sensor.hide" 
+                    [disabled]="sensor.hidden" 
                     title="toggle labels on/off">
                         <span>
                             <i *ngIf="showLabels(sensor)" class="material-icons">label</i>
@@ -27,7 +27,7 @@
                         </span>
                     </button>
                     <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
-                        <button class="btn btn-outline-secondary" title="current label stream" [ngClass]="{'disabled': sensor.hide}" ngbDropdownToggle>{{sensor.labelstream}}</button>
+                        <button class="btn btn-outline-secondary" title="current label stream" [ngClass]="{'disabled': sensor.hidden}" ngbDropdownToggle>{{sensor.labelstream}}</button>
                         <div class="dropdown-menu" ngbDropdownMenu>
                             <div *ngFor="let stream of streams" (click)="selectStream(sensor, stream)" class="dropdown-item">{{stream}}</div>
                             <div class="dropdown-item dropdown-button">
@@ -43,11 +43,11 @@
             <div class='tool-modes tools-box'>
                 <div class="btn-group btn-group-toggle" ngbRadioGroup name="radiotool" [(ngModel)]="mode">
                     <label ngbButtonLabel class="btn btn-primary" title="selection mode">
-                        <input ngbButton type="radio" [value]="TOOL_MODE.Selection" [disabled]="sensor.hide">
+                        <input ngbButton type="radio" [value]="TOOL_MODE.Selection" [disabled]="sensor.hidden">
                         <i class="material-icons">pan_tool</i>
                     </label>
                     <label ngbButtonLabel class="btn btn-primary" title="label creation mode">
-                        <input ngbButton type="radio" [value]="TOOL_MODE.Click" [disabled]="sensor.hide">
+                        <input ngbButton type="radio" [value]="TOOL_MODE.Click" [disabled]="sensor.hidden">
                         <i class="material-icons">touch_app</i>
                     </label>
                 </div>
@@ -56,18 +56,18 @@
             <div class="label-types tools-box">
                 <div class="btn-group btn-group-toggle" ngbRadioGroup name="radiolbl" [(ngModel)]="lbl">
                     <label *ngFor="let c of colors" ngbButtonLabel [ngStyle]="style_color(c)" class="btn btn-lbl" [title]="eventMap[c]">
-                        <input ngbButton type="radio" [value]=c [disabled]="sensor.hide">
+                        <input ngbButton type="radio" [value]=c [disabled]="sensor.hidden">
                     </label>
                 </div>
             </div>
 
             <div class='right'>
-                <i *ngIf="!sensor.hide" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">close</i>
-                <i *ngIf="sensor.hide" (click)="show(sensor)" class="material-icons icon" title='show' aria-label="show">add</i>
+                <i *ngIf="!sensor.hidden" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">close</i>
+                <i *ngIf="sensor.hidden" (click)="show(sensor)" class="material-icons icon" title='show' aria-label="show">add</i>
             </div>
             
         </div>
-        <app-databar  *ngIf="!sensor.hide"
+        <app-databar  *ngIf="!sensor.hidden"
         [_height]="databarHeight"
         [enable_downsampling]="downsample"
         [data_info]="data_info" 

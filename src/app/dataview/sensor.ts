@@ -28,21 +28,38 @@ export class Sensor {
     name: string;
     dims: string[];
     idxs: number[];
-    hide: boolean;
+    hidden: boolean;
+    channel: string;
     labelstream: string;
-    channel?: string;
+    private idxmap: IndexMap;
     // #endregion
 
     // #region [Constructor]
     constructor(channel: string, id: number, ls: string, idxmap: IndexMap) {
         this.channel = channel;
         this.id = id;
+        this.idxmap = idxmap;
         this.name = Sensor.SENSOR_NAMES[channel];
         this.dims = Sensor.SENSOR_DIMS[channel];
         this.idxs = idxmap.get(id);
         this.labelstream = ls;
-        this.hide = false;
+        this.hidden = false;
     }
+    // #endregion
+
+    // #region [Public Methods]
+    update(info) {
+        let {name, channel, index} = info;
+        this.name = name;
+        this.channel = channel;
+        this.dims = Sensor.SENSOR_DIMS[channel];
+        this.idxs = this.idxmap[index];
+        console.debug('updated sensor:', this.id, this);
+    }
+
+    hide() { this.hidden = true }
+
+    show() { this.hidden = false }
     // #endregion
 
     // #region [Static Methods]
