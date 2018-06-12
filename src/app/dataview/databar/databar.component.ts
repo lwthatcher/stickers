@@ -14,7 +14,7 @@ import { DataloaderService, Dataset } from '../../data-loader/data-loader.servic
 import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
-import { Sensor } from "../dataview.component";
+import { Sensor } from "../sensor";
 import { Colorer} from '../colorer';
 import { Labeller, Label, LabelStream } from './labeller';
 import { Drawer } from './drawer';

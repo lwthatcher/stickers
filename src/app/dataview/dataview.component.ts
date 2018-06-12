@@ -9,18 +9,19 @@ import { SettingsService } from '../settings/settings.service'
 import { Label, LabelStream, EventMap } from './databar/labeller';
 import { ToolMode } from './databar/tool-mode.enum';
 import { Colorer } from './colorer';
+import { Sensor } from './sensor';
 // #endregion
 
 // #region [Interfaces]
-export interface Sensor {
-  id: number;
-  name: string;
-  idxs: number[];
-  dims: string[];
-  hide: boolean;
-  labelstream: string;
-  channel?: string;
-}
+// export interface Sensor {
+//   id: number;
+//   name: string;
+//   idxs: number[];
+//   dims: string[];
+//   hide: boolean;
+//   labelstream: string;
+//   channel?: string;
+// }
 interface SensorInfo {
   name: string;
   index: number;
@@ -343,7 +344,7 @@ export class DataviewComponent implements OnInit {
       const idxs = this.idx_map.get(id);
       const hide = false;
       const labelstream = this.default_stream;
-      return {name, channel, dims, idxs, hide, id, labelstream}
+      return new Sensor(id, name, dims, idxs, hide, labelstream, channel);
     }
     return [...channels].map(toSensor)
   }
