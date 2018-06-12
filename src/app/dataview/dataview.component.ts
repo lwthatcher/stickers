@@ -176,6 +176,8 @@ export class DataviewComponent implements OnInit {
   // TODO: implement
   newStream() { console.log('lets make another stream!') }
 
+  newSensor() { console.log('lets add another sensor!') }
+
   change_ls(stream) {console.debug('changing print label-stream:', stream); this.print_ls = stream;}
 
   save_labels() {
