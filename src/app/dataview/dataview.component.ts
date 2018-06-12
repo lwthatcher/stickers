@@ -173,7 +173,7 @@ export class DataviewComponent implements OnInit {
 
   changeSensor(sensor: Sensor, to: SensorInfo) { sensor.update(to) }
 
-  toggleLabels(stream) { this.labelStreams[stream].toggle() }
+  toggleLabels(sensor: Sensor) { sensor.toggle_labels() }
 
   // TODO: implement
   newStream() { console.log('lets make another stream!') }

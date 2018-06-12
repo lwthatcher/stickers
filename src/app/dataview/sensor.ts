@@ -32,6 +32,7 @@ export class Sensor {
     _index: number;
     hidden: boolean;
     channel: string;
+    show_labels: boolean;
     labelstream: string;
     event: EventEmitter<string>;
     private idxmap: IndexMap;
@@ -39,15 +40,20 @@ export class Sensor {
 
     // #region [Constructor]
     constructor(channel: string, id: number, ls: string, idxmap: IndexMap) {
+        // passed-in values
         this.channel = channel;
         this.id = id;
         this._index = id;
         this.idxmap = idxmap;
+        this.labelstream = ls;
+        // derived values
         this.name = Sensor.SENSOR_NAMES[channel];
         this.dims = Sensor.SENSOR_DIMS[channel];
         this.idxs = idxmap.get(id);
-        this.labelstream = ls;
+        // default values
         this.hidden = false;
+        this.show_labels = true;
+        // setup event-emitter
         this.event = new EventEmitter<string>();
     }
     // #endregion
@@ -67,6 +73,8 @@ export class Sensor {
     hide() { this.hidden = true }
 
     show() { this.hidden = false }
+
+    toggle_labels() { this.show_labels = !this.show_labels }
     // #endregion
 
     // #region [Static Methods]
