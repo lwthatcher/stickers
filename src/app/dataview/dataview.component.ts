@@ -13,15 +13,6 @@ import { Sensor } from './sensor';
 // #endregion
 
 // #region [Interfaces]
-// export interface Sensor {
-//   id: number;
-//   name: string;
-//   idxs: number[];
-//   dims: string[];
-//   hide: boolean;
-//   labelstream: string;
-//   channel?: string;
-// }
 interface SensorInfo {
   name: string;
   index: number;
@@ -330,21 +321,14 @@ export class DataviewComponent implements OnInit {
   }
 
   /**
-   * Takes the channel string and returns an ordered list of Sensor objects,
-   * including their corresponding dimensions and indices 
-   * to be passed to the data-bar components.
+   * Takes the channel string and returns an ordered list of Sensor objects
    * 
    * @param channels a string where each character specifies a sensor channel
    */
   private setupSensors(channels: string): Sensor[] {
     // creates the Sensor object for each channel provided
     let toSensor = (channel: string, id: number): Sensor => {
-      const name = this.SENSOR_NAMES[channel];
-      const dims = this.SENSOR_DIMS[channel];
-      const idxs = this.idx_map.get(id);
-      const hide = false;
-      const labelstream = this.default_stream;
-      return new Sensor(id, name, dims, idxs, hide, labelstream, channel);
+      return new Sensor(channel, id, this.default_stream, this.idx_map);
     }
     return [...channels].map(toSensor)
   }
