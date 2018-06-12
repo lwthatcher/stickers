@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient } from '@angular/common/http';
 
+// #region [Interfaces]
 export enum ColorScheme {
   Category10,
   Accent,
@@ -10,6 +11,9 @@ export enum ColorScheme {
   Pastel1,
   Pastel2
 }
+
+export type DownsamplingMethod = 'dynamic' | 'off'
+// #endregion
 
 @Injectable()
 export class SettingsService {
@@ -41,9 +45,10 @@ export class SettingsService {
   // #endregion
 
   // #region [Properties]
-  line_scheme = ColorScheme.Accent;
-  label_scheme = ColorScheme.Paired;
-  databar_height = 200;
+  line_scheme: ColorScheme = ColorScheme.Accent;
+  label_scheme: ColorScheme = ColorScheme.Paired;
+  databar_height: number = 200;
+  downsampling: DownsamplingMethod = 'dynamic';
   // #endregion
 
   // #region [Accessors]

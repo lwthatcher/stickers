@@ -9,7 +9,7 @@ import { Component,
          OnInit, 
          OnChanges,
          OnDestroy } from '@angular/core';
-import { SettingsService } from '../../settings/settings.service';
+import { SettingsService, DownsamplingMethod } from '../../settings/settings.service';
 import { DataloaderService, Dataset } from '../../data-loader/data-loader.service';
 import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
@@ -38,7 +38,6 @@ interface datum {
 // #endregion
 export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Inputs]
-  @Input() enable_downsampling: boolean;
   @Input() data_info: DataInfo;
   @Input() transform;
   @Input() sensor: Sensor;
@@ -70,8 +69,9 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // initialization flags
   initialized = false;
   registration;
-  // private variables
+  // settings variables
   _height: number;
+  downsampling: DownsamplingMethod;
   // #endregion
 
   // #region [Accessors]
@@ -101,6 +101,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
               private dataloader: DataloaderService,
               private settings: SettingsService) {
     this._height = this.settings.databar_height;
+    this.downsampling = this.settings.downsampling;
   }
 
   ngOnInit() {
@@ -315,7 +316,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   downsample(data) {
     // only downsample if enabled
-    if (!this.enable_downsampling) return data;
+    if (this.downsampling === 'off') return data;
     // setup sampler
     const sampler = largestTriangleThreeBucket();
     sampler.x((d) => {return d.d})

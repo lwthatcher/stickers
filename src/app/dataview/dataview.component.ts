@@ -84,7 +84,6 @@ export class DataviewComponent implements OnInit {
 
   // #region [Properties]
   TOOL_MODE = ToolMode;
-  downsample = true;
   dataset: string;
   workspace: string;
   info: WorkspaceInfo;
