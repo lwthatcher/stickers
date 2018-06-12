@@ -38,7 +38,6 @@ interface datum {
 // #endregion
 export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Inputs]
-  @Input() _height: number;
   @Input() enable_downsampling: boolean;
   @Input() data_info: DataInfo;
   @Input() transform;
@@ -71,6 +70,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // initialization flags
   initialized = false;
   registration;
+  // private variables
+  _height: number;
   // #endregion
 
   // #region [Accessors]
@@ -98,7 +99,9 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Constructors]
   constructor(private el: ElementRef, 
               private dataloader: DataloaderService,
-              private settings: SettingsService) { }
+              private settings: SettingsService) {
+    this._height = this.settings.databar_height;
+  }
 
   ngOnInit() {
     console.groupCollapsed('databar init', this.sensor.name);
@@ -216,12 +219,13 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   mode_changed(change) { this.updateMode(this.mode) }
 
   type_changed(change) {
+    // TODO: we want to find some other functionality than this...
     if (this.selected_label) 
         this.labeller.change_label(this.selected_label, this.lbl_type);
   }
 
   sensor_update(event) {
-    console.log('sensor update detected:', event, this.sensor);
+    console.debug('sensor update detected:', event, this.sensor);
     if (event === 'redraw') {
       this._data = this.load_data();
       this.drawer.clear();

@@ -84,7 +84,6 @@ export class DataviewComponent implements OnInit {
 
   // #region [Properties]
   TOOL_MODE = ToolMode;
-  databarHeight = 200;
   downsample = true;
   dataset: string;
   workspace: string;

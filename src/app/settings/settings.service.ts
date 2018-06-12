@@ -43,6 +43,7 @@ export class SettingsService {
   // #region [Properties]
   line_scheme = ColorScheme.Accent;
   label_scheme = ColorScheme.Paired;
+  databar_height = 200;
   // #endregion
 
   // #region [Accessors]
