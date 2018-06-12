@@ -49,6 +49,7 @@ export class SettingsService {
   label_scheme: ColorScheme = ColorScheme.Paired;
   databar_height: number = 200;
   downsampling: DownsamplingMethod = 'dynamic';
+  max_sensors: number = 3;
   // #endregion
 
   // #region [Accessors]
