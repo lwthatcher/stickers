@@ -74,7 +74,10 @@ export class Sensor {
 
     show() { this.hidden = false }
 
-    toggle_labels() { this.show_labels = !this.show_labels }
+    toggle_labels() { 
+        this.show_labels = !this.show_labels;
+        this.event.emit('toggle-labels');
+    }
     // #endregion
 
     // #region [Static Methods]

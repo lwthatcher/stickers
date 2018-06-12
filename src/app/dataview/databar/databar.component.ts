@@ -227,6 +227,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
       this.drawer.clear();
       this.drawer.draw();
     }
+    else if (event === 'toggle-labels') {
+      this.drawer.draw_labels();
+      this.drawer.draw_handles();
+    }
   }
 
   @HostListener('window:resize', ['$event'])

@@ -53,8 +53,7 @@ export class Drawer {
 
   get selected_label() { return this.databar.selected_label }
 
-  // TODO: move to signal instead of labelstream
-  get show_labels() { return this.databar.labelstream && this.databar.labelstream.show }
+  get show_labels() { return this.databar.sensor.show_labels }
 
   get x() { return this.databar.x }
 

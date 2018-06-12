@@ -21,7 +21,6 @@ export interface EventMap {
 export class LabelStream {
     name: string;
     labels: Label[];
-    show: boolean;
     event: EventEmitter<string>;
     emap: EventMap;
     private _i: number;
@@ -31,15 +30,8 @@ export class LabelStream {
         this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl} )
         this._i = this.labels.length;
         this.emap = emap;
-        this.show = true;
         this.event = new EventEmitter<string>();
         this.event.emit('init');
-    }
-
-    // TODO: move to sensor, instead of label-stream
-    toggle() {
-        this.show = !this.show;
-        this.event.emit('toggle');
     }
 
     remove(lbl: Label) { 
