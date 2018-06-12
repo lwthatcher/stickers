@@ -123,7 +123,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.drawer.draw();
     // mode and label-stream initialization
     this.mode_changed(this.mode);
-    if (this.labelstream !== undefined) this.register_lblstream();
+    this.register_lblstream();
     // log when finished
     this.initialized = true;
     console.info('databar initialized', this);
