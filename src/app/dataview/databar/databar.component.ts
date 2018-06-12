@@ -70,7 +70,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   drawer: Drawer;
   // initialization flags
   initialized = false;
-  private ls_registered = false;
   registration;
   // #endregion
 
@@ -124,7 +123,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.drawer.draw();
     // mode and label-stream initialization
     this.mode_changed(this.mode);
-    if (!this.ls_registered && this.labelstream !== undefined) this.register_lblstream();
+    if (!this.is_registered && this.labelstream !== undefined) this.register_lblstream();
     // log when finished
     this.initialized = true;
     console.info('databar initialized', this);
@@ -205,25 +204,25 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.drawer.draw_handles();
   }
 
-  stream_changed(labelstream) {
-    if (labelstream.currentValue !== undefined)
-      this.ls_registered = this.register_lblstream();
-    console.debug('lbl stream changed', this.ls_registered, this.labelstream);
-    if (!this.ls_registered) console.warn('label stream not registered!', this);
+  stream_changed(change) {
+    if (change.currentValue !== undefined)
+      this.register_lblstream();
+    console.debug('lbl stream changed', this.is_registered, this.labelstream);
+    if (!this.is_registered) console.warn('label stream not registered!', this);
     // redraw labels/drag-handles
     this.drawer.draw_labels();
     this.drawer.draw_handles();
   }
 
-  mode_changed(mode) { this.updateMode(this.mode) }
+  mode_changed(change) { this.updateMode(this.mode) }
 
-  type_changed(lbl_type) {
+  type_changed(change) {
     if (this.selected_label) 
         this.labeller.change_label(this.selected_label, this.lbl_type);
    }
 
-   sensor_changed(sensor) {
-     console.log('detected sensor change!', sensor);
+   sensor_changed(change) {
+     console.log('detected sensor change!', change);
    }
 
   @HostListener('window:resize', ['$event'])
