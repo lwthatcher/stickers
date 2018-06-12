@@ -205,8 +205,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   stream_changed(change) {
-    if (change.currentValue !== undefined)
-      this.register_lblstream();
+    this.register_lblstream();
     console.debug('lbl stream changed', this.is_registered, this.labelstream);
     if (!this.is_registered) console.warn('label stream not registered!', this);
     // redraw labels/drag-handles
