@@ -37,26 +37,6 @@ type LabelKey = number | string
 })
 // #endregion
 export class DataviewComponent implements OnInit {
-  // #region [Constants]
-  SENSOR_DIMS = {
-    'A': ['x', 'y', 'z'],
-    'G': ['x', 'y', 'z'],
-    'C': ['x', 'y', 'z'],
-    'L': ['both', 'infrared'],
-    'B': ['altitude', 'temperature']
-  }
-
-  SENSOR_NAMES = {
-    'A': 'Accelerometer',
-    'G': 'Gyroscope',
-    'C': 'Compass',
-    'L': 'Light',
-    'B': 'Barometer'
-  }
-
-  TOOL_MODE = ToolMode;
-  // #endregion
-
   // #region [Accessors]
   get is_labelled(): boolean { return !!this.data_info.labelled }
 
@@ -77,7 +57,7 @@ export class DataviewComponent implements OnInit {
 
   get known_sensors(): SensorInfo[] {
     let channels = this.data_info.channels;
-    return [...channels].map((c,i) => { return {name: this.SENSOR_NAMES[c], index: i} })
+    return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i} })
   }
 
   get event_types(): string[] {
@@ -102,6 +82,7 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Properties]
+  TOOL_MODE = ToolMode;
   databarHeight = 200;
   downsample = true;
   dataset: string;
@@ -188,7 +169,7 @@ export class DataviewComponent implements OnInit {
   private update_sensor(sensor: Sensor, to: SensorInfo) {
     let channel = this.data_info.channels[to.index];
     sensor.name = to.name;
-    sensor.dims = this.SENSOR_DIMS[to.index];
+    sensor.dims = Sensor.SENSOR_DIMS[to.index];
     sensor.idxs = this.idx_map.get(to.index);
   }
 
@@ -307,11 +288,11 @@ export class DataviewComponent implements OnInit {
    */
   private gen_idx_map(channels: string): IndexMap {
     // some helper closures
-    let len = (c) => this.SENSOR_DIMS[c].length  // map -> # of sensors for given channel
-    let sum = (acc, cur) => acc + cur           // reduce -> sum over array
+    let len = (c) => Sensor.SENSOR_DIMS[c].length  // map -> # of sensors for given channel
+    let sum = (acc, cur) => acc + cur             // reduce -> sum over array
     let getIdxs = (c,i,arr) => { 
       let so_far = arr.slice(0,i).map(len).reduce(sum, 0)
-      let idx = this.SENSOR_DIMS[c].map((_,i) => so_far+i);
+      let idx = Sensor.SENSOR_DIMS[c].map((_,i) => so_far+i);
       return [i, idx]
     }
     // apply map to get entries
