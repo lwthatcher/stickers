@@ -1,3 +1,4 @@
+import { EventEmitter } from '@angular/core';
 
 // #region [Interfaces]
 type IdxEntries = [number, number[]][]
@@ -31,6 +32,7 @@ export class Sensor {
     hidden: boolean;
     channel: string;
     labelstream: string;
+    event: EventEmitter<string>;
     private idxmap: IndexMap;
     // #endregion
 
