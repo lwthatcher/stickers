@@ -29,6 +29,7 @@ export class Sensor {
     name: string;
     dims: string[];
     idxs: number[];
+    _index: number;
     hidden: boolean;
     channel: string;
     labelstream: string;
@@ -40,6 +41,7 @@ export class Sensor {
     constructor(channel: string, id: number, ls: string, idxmap: IndexMap) {
         this.channel = channel;
         this.id = id;
+        this._index = id;
         this.idxmap = idxmap;
         this.name = Sensor.SENSOR_NAMES[channel];
         this.dims = Sensor.SENSOR_DIMS[channel];
@@ -55,10 +57,11 @@ export class Sensor {
         let {name, channel, index} = info;
         this.name = name;
         this.channel = channel;
+        this._index = index;
         this.dims = Sensor.SENSOR_DIMS[channel];
-        this.idxs = this.idxmap[index];
+        this.idxs = this.idxmap.get(index);
         console.debug('updated sensor:', this.id, this);
-        this.event.emit('updated: ' + channel);
+        this.event.emit('redraw');
     }
 
     hide() { this.hidden = true }
