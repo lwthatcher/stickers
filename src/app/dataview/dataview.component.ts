@@ -66,7 +66,7 @@ export class DataviewComponent implements OnInit {
 
   get idx_map(): IndexMap {
     if (!this._idx_map) 
-      this._idx_map = this.gen_idx_map(this.data_info.channels);
+      this._idx_map = Sensor.gen_idx_map(this.data_info.channels);
     return this._idx_map;
   }
 
@@ -280,25 +280,6 @@ export class DataviewComponent implements OnInit {
     // converts to list of Label objects
     let result = boundaries.map(convert)
     return result;
-  }
-
-  /**
-   * Creates the idx-map Map object.
-   * Should only be run once.
-   */
-  private gen_idx_map(channels: string): IndexMap {
-    // some helper closures
-    let len = (c) => Sensor.SENSOR_DIMS[c].length  // map -> # of sensors for given channel
-    let sum = (acc, cur) => acc + cur             // reduce -> sum over array
-    let getIdxs = (c,i,arr) => { 
-      let so_far = arr.slice(0,i).map(len).reduce(sum, 0)
-      let idx = Sensor.SENSOR_DIMS[c].map((_,i) => so_far+i);
-      return [i, idx]
-    }
-    // apply map to get entries
-    let entries = [...channels].map(getIdxs) as IdxEntries
-    // convert entries to Map
-    return new Map<number,number[]>(entries);
   }
 
   /**
