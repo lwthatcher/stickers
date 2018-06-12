@@ -62,7 +62,8 @@
             </div>
 
             <div class='right'>
-                <i *ngIf="!sensor.hidden" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">close</i>
+                <i *ngIf="!sensor.hidden" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">remove</i>
+                <i *ngIf="!sensor.hidden" (click)="remove(sensor)" class="material-icons icon" title='close' aria-label="hide">close</i>
                 <i *ngIf="sensor.hidden" (click)="show(sensor)" class="material-icons icon" title='show' aria-label="show">add</i>
             </div>
             

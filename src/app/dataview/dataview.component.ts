@@ -160,12 +160,18 @@ export class DataviewComponent implements OnInit {
   }
   // #endregion
 
+  // #region [Sensors]
+
+  // #endregion
+
   // #region [Event Handlers]
   onZoom(event) { this.zoom_transform = event.transform }
 
   hide(sensor: Sensor) { sensor.hide() }
 
   show(sensor: Sensor) { sensor.show() }
+
+  remove(sensor: Sensor) { console.log('REMOVING SENSOR', sensor) }
 
   selectStream(sensor, stream) { sensor.labelstream = stream }
 
