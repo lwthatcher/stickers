@@ -122,8 +122,9 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.start_spinner();
     this.drawer.draw();
     // mode and label-stream initialization
-    this.mode_changed(this.mode);
+    this.updateMode(this.mode);
     this.register_lblstream();
+    this.register_sensor();
     // log when finished
     this.initialized = true;
     console.info('databar initialized', this);
@@ -218,11 +219,15 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   type_changed(change) {
     if (this.selected_label) 
         this.labeller.change_label(this.selected_label, this.lbl_type);
-   }
+  }
 
-   sensor_changed(change) {
-     console.log('detected sensor change!', change);
-   }
+  sensor_changed(change) {
+    console.log('detected sensor change!', change);
+  }
+
+   sensor_update(event) {
+    console.log('sensor update detected!', event);
+  }
 
   @HostListener('window:resize', ['$event'])
   window_resize(event: any) {
@@ -273,6 +278,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     if (this.registration) this.registration.unsubscribe();
     this.registration = this.labelstream.event.subscribe((e) => { this.stream_update(e) })
     return true;
+  }
+
+  private register_sensor() {
+    this.sensor.event.subscribe((e) => { this.sensor_update(e) })
   }
   // #endregion
 

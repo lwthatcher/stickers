@@ -46,6 +46,7 @@ export class Sensor {
         this.idxs = idxmap.get(id);
         this.labelstream = ls;
         this.hidden = false;
+        this.event = new EventEmitter<string>();
     }
     // #endregion
 
@@ -57,6 +58,7 @@ export class Sensor {
         this.dims = Sensor.SENSOR_DIMS[channel];
         this.idxs = this.idxmap[index];
         console.debug('updated sensor:', this.id, this);
+        this.event.emit('updated: ' + channel);
     }
 
     hide() { this.hidden = true }
