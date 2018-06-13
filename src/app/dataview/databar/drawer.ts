@@ -26,6 +26,7 @@ type side = 'left' | 'right'
 
 type ZoomBehavior = any
 type DragBehavior = any | {[side: string]: DragBehavior}
+type MouseBehavior = any
 // #endregion
 
 export class Drawer {
@@ -35,7 +36,7 @@ export class Drawer {
   zoom: ZoomBehavior;
   move: DragBehavior;
   resize: DragBehavior = {};
-
+  mouse: MouseBehavior
   // #endregion
 
   // #region [Private Variables]
@@ -68,10 +69,12 @@ export class Drawer {
     // setup behaviors
     this.zoom = this.setup_zoom();
     this.move = this.setup_move();
+    this.mouse = this.setup_mouse();
     this.resize.left = this.setup_resize('left');
     this.resize.right = this.setup_resize('right');
     // register non-local behaviors
     this.layers[Layer.SVG].call(this.zoom);
+    this.layers[Layer.SVG].call(this.mouse);
   }
   // #endregion
 
@@ -269,6 +272,30 @@ export class Drawer {
     this.r_start = undefined;
     console.debug('resize end:', Δt, d, side);
   }
+  // #endregion
+
+  // #region [Mouse Behaviors]
+  setup_mouse() {
+    let behavior = (selection) => {
+      selection.on('mousemove', () => {this.mouse_move()})
+      selection.on('mouseenter', () => {this.mouse_enter()})
+      selection.on('mouseover', () => {this.mouse_over()})
+      selection.on('mouseout', () => {this.mouse_out()})
+      selection.on('mouseleave', () => {this.mouse_leave()})
+    }
+    return behavior;
+  }
+
+  private mouse_move() { console.debug('mouse move') }
+
+  private mouse_enter() { console.debug('mouse enter') }
+
+  private mouse_over() { console.debug('mouse over') }
+
+  private mouse_out() { console.debug('mouse out') }
+
+  private mouse_leave() { console.debug('mouse leave') }
+
   // #endregion
 
   // #region [Helper Methods]
