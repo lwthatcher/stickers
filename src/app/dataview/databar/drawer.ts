@@ -30,7 +30,7 @@ type MouseBehavior = any
 // #endregion
 
 // #region [Constants]
-const CURSOR = 'M10,2A2,2 0 0,1 12,4V8.5C12,8.5 14,8.25 14,9.25C14,9.25 16,9 16,10C16,10 18,9.75 18,10.75C18,10.75 20,10.5 20,11.5V15C20,16 17,21 17,22H9C9,22 7,15 4,13C4,13 3,7 8,12V4A2,2 0 0,1 10,2Z'
+const POINTER = 'M10,2A2,2 0 0,1 12,4V8.5C12,8.5 14,8.25 14,9.25C14,9.25 16,9 16,10C16,10 18,9.75 18,10.75C18,10.75 20,10.5 20,11.5V15C20,16 17,21 17,22H9C9,22 7,15 4,13C4,13 3,7 8,12V4A2,2 0 0,1 10,2Z'
 // #endregion
 
 export class Drawer {
@@ -101,7 +101,7 @@ export class Drawer {
   get height() { return this.databar.height }
   // #endregion
 
-  // #region [Public Methods]
+  // #region [Public Plotting Methods]
   async draw() {
     // set the respective ranges for x/y
     this.databar.set_ranges();
@@ -225,6 +225,73 @@ export class Drawer {
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this.y));
   }
+
+  draw_cursor(cursor) {
+    let [x,y] = this.gxy();
+    let selection = this.layers[Layer.Cursor]
+    let vbox = () => x.toString() + " " + y.toString() + " 24 24"
+    selection.append('svg')
+             .attr('width', 24)
+             .attr('height', 24)
+             .attr('x', x)
+             .attr('y', y)
+             .attr('viewBox', "0 0 24 24")
+             .append('path')
+             .attr('d', cursor)
+    console.log('drawing cursor', [x,y], selection)
+  }
+  // #endregion
+
+  // #region [Helper Plotting Methods]
+  private async plot_signals(_data) {
+    // downsample first
+    _data = await Promise.resolve(_data);
+    let data = this.databar.downsample(_data);
+    // draw each signal
+    for (let j = 0; j < data.length; j++) {
+      this.plot_signal(data[j], j);
+    }
+  }
+  
+  private plot_signal(signal, j) {
+    this.layers[Layer.Signals].append("path")
+        .datum(signal)
+        .attr("fill", "none")
+        .attr("clip-path", "url(#clip)")
+        .attr("class", "line line-" + j.toString())
+        .attr("stroke", this.databar.colorer.lines.get(j+1))
+        .attr("stroke-width", 1.5)
+        .attr("stroke-opacity", 0.7)
+        .attr("d", this.databar.line);
+  }
+  
+  private _add_handle(selection: Selection, side: 'left' | 'right') {
+    let callback;
+    if (side === 'left') callback = (d) => { return this.x(d.start) - 5 }
+    else callback = (d) => { return this.x(d.end) - 5 }
+    return selection.enter().append('rect')
+                    .attr('width', 10)
+                    .classed('drag-handle', true)
+                    .classed(side, true)
+                    .attr('y', 0)
+                    .attr('height', this.databar.height)
+                    .call(this.resize[side])
+                    .merge(selection)
+                    .attr('x', callback)
+  }
+  // #endregion
+
+  // #region [Utility Methods]
+  region() {
+    // get x,y
+    let [x,y] = this.xy();
+    // return region based on precedence
+    if (x < 0) return 'y-axis';
+    if (y < 0) return 'margin-top';
+    if (x > this.width) return 'margin-right';
+    if (y > this.height) return 'x-axis';
+    return 'frame';
+  }
   // #endregion
 
   // #region [Zoom Behaviors]
@@ -294,9 +361,8 @@ export class Drawer {
   }
 
   private mouse_move() {
-    let region = this.region(this.xy());
-    let e = d3.event;
-    console.debug('mouse move', region, [e.x, e.y], this.gxy());
+    this.draw_cursor(POINTER);
+    console.debug('mouse move', this.region());
   }
 
   private mouse_enter() { console.debug('mouse enter') }
@@ -304,47 +370,12 @@ export class Drawer {
   private mouse_leave() { console.debug('mouse leave') }
 
   private add_cursor() {
-    let [x,y] = this.gxy();
+    
   }
   // #endregion
 
   // #region [Helper Methods]
-  private async plot_signals(_data) {
-    // downsample first
-    _data = await Promise.resolve(_data);
-    let data = this.databar.downsample(_data);
-    // draw each signal
-    for (let j = 0; j < data.length; j++) {
-      this.plot_signal(data[j], j);
-    }
-  }
-  
-  private plot_signal(signal, j) {
-    this.layers[Layer.Signals].append("path")
-        .datum(signal)
-        .attr("fill", "none")
-        .attr("clip-path", "url(#clip)")
-        .attr("class", "line line-" + j.toString())
-        .attr("stroke", this.databar.colorer.lines.get(j+1))
-        .attr("stroke-width", 1.5)
-        .attr("stroke-opacity", 0.7)
-        .attr("d", this.databar.line);
-  }
-  
-  private _add_handle(selection: Selection, side: 'left' | 'right') {
-    let callback;
-    if (side === 'left') callback = (d) => { return this.x(d.start) - 5 }
-    else callback = (d) => { return this.x(d.end) - 5 }
-    return selection.enter().append('rect')
-                    .attr('width', 10)
-                    .classed('drag-handle', true)
-                    .classed(side, true)
-                    .attr('y', 0)
-                    .attr('height', this.databar.height)
-                    .call(this.resize[side])
-                    .merge(selection)
-                    .attr('x', callback)
-  }
+
 
   private xy(): number[] {
     return d3.mouse(this.layers[Layer.Zoom].node());
@@ -352,21 +383,6 @@ export class Drawer {
 
   private gxy(): number[] {
     return d3.mouse(this.layers[Layer.SVG].node());
-  }
-
-  region()
-  region(xy: number[])
-  region(x: number, y:number)
-  region(x?, y?) {
-    // get x,y
-    if (!x) [x,y] = this.xy()
-    else if (!y) [x,y] = x as number[];
-    // return region based on precedence
-    if (x < 0) return 'y-axis';
-    if (y < 0) return 'margin-top';
-    if (x > this.width) return 'margin-right';
-    if (y > this.height) return 'x-axis';
-    return 'frame';
   }
   // #endregion
 }
