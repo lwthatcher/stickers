@@ -197,8 +197,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   lbl_clicked(d) { this.labeller.select(d) }
 
   lbl_dragged(_d) {
-    let [d,i,arr] = _d;
-    if (!d.selected) { return }                   // only drag if selected
+    if (this.mode !== ToolMode.Selection) return;   // can only drag in edit mode
+    let [d,i,arr] = _d;               
     this.labeller.move(d, d3.select(arr[i]))       // otherwise move label
   }
 
