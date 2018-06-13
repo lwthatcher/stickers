@@ -5,6 +5,12 @@ rect.label {
     cursor: pointer;
 }
 
+rect.label:hover {
+    opacity: 0.6;
+    stroke-width: 2px;
+    stroke: #ffffd7;
+}
+
 rect.label.selected {
     opacity: 0.75;
     stroke: slateblue;
