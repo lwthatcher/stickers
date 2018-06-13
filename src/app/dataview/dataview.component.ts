@@ -287,10 +287,8 @@ export class DataviewComponent implements OnInit {
    * @param channels a string where each character specifies a sensor channel
    */
   private setupSensors(channels: string): Sensor[] {
-    // limit number of sensors shown at once
-    let topSensors = (_, i) => { return i < this.settings.max_sensors }
-    // creates the Sensor object for each channel provided
-    let toSensor = (channel: string, id: number): Sensor => {
+    let topSensors = (_, i) => { return i < this.settings.max_sensors }   // limit number of sensors shown at once
+    let toSensor = (channel: string, id: number): Sensor => {             // creates the Sensor object for each channel provided
       return new Sensor(channel, id, this.default_stream, this.idx_map);
     }
     return [...channels].filter(topSensors).map(toSensor)
