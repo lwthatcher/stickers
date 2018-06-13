@@ -115,13 +115,13 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.labeller = new Labeller(this);
     this.drawer = new Drawer(this);
     console.debug('width/height', this.width, this.height);
-    // setup zoom behaviour
-    this._zoom = d3.zoom()
-                  .scaleExtent([1, 50])
-                  .translateExtent([[0, 0], [this.width, this.height]])
-                  .extent([[0, 0], [this.width, this.height]])
-                  .on('zoom', () => this.zoomed());
-    this.drawer.layers['svg'].call(this._zoom);
+    // setup zoom behavior
+    // this._zoom = d3.zoom()
+    //               .scaleExtent([1, 50])
+    //               .translateExtent([[0, 0], [this.width, this.height]])
+    //               .extent([[0, 0], [this.width, this.height]])
+    //               .on('zoom', () => this.zoomed());
+    // this.drawer.layers['svg'].call(this._zoom);
     // draw data (when it loads)
     this.start_spinner();
     this.drawer.draw();

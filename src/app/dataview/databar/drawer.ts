@@ -21,17 +21,21 @@ enum Layer {
 }
 
 type LayerMap = {[layer: string]: Selection}
+
+type ZoomBehavior = any
 // #endregion
 
 export class Drawer {
   // #region [Variables]
   databar: DatabarComponent;
-  layers: LayerMap = {}
+  layers: LayerMap = {};
+  zoom: ZoomBehavior
   // #endregion
 
   // #region [Constructor]
   constructor(databar: DatabarComponent) { 
     this.databar = databar;
+    // setup selection layers
     let host = d3.select(databar.element.nativeElement);
     this.layers[Layer.Host] = host;
     this.layers[Layer.SVG] = host.select("div > svg").attr('height', databar._height);
@@ -49,6 +53,13 @@ export class Drawer {
     this.layers[Layer.Clip] = host.select('#clip > rect.clip-rect')
         .attr('width', databar.width)
         .attr('height', databar.height);
+    // setup zoom behavior
+    this.zoom = d3.zoom()
+                  .scaleExtent([1, 50])
+                  .translateExtent([[0, 0], [databar.width, databar.height]])
+                  .extent([[0, 0], [databar.width, databar.height]])
+                  .on('zoom', () => databar.zoomed());
+    this.layers[Layer.SVG].call(this.zoom);
   }
   // #endregion
 
