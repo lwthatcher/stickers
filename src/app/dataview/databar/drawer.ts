@@ -23,13 +23,21 @@ enum Layer {
 type LayerMap = {[layer: string]: Selection}
 
 type ZoomBehavior = any
+type DragBehavior = any
 // #endregion
 
 export class Drawer {
   // #region [Variables]
   databar: DatabarComponent;
   layers: LayerMap = {};
-  zoom: ZoomBehavior
+  zoom: ZoomBehavior;
+  move: DragBehavior;
+  resize: DragBehavior;
+  // #endregion
+
+  // #region [Private Variables]
+  private m_start;
+  private r_start;
   // #endregion
 
   // #region [Constructor]
@@ -54,12 +62,10 @@ export class Drawer {
         .attr('width', databar.width)
         .attr('height', databar.height);
     // setup zoom behavior
-    this.zoom = d3.zoom()
-                  .scaleExtent([1, 50])
-                  .translateExtent([[0, 0], [databar.width, databar.height]])
-                  .extent([[0, 0], [databar.width, databar.height]])
-                  .on('zoom', () => databar.zoomed());
+    this.zoom = this.setup_zoom()
     this.layers[Layer.SVG].call(this.zoom);
+    // declare drag behaviors
+    this.move = this._drag_move();
   }
   // #endregion
 
@@ -129,7 +135,7 @@ export class Drawer {
                       .attr("clip-path", "url(#clip)")
                       .classed('label', true)
                       .on('click', (d) => { this.databar.lbl_clicked(d) }, false)
-                      .call(d3.drag().on('drag', (...d) => { this.databar.lbl_dragged(d) }))
+                      .call(this.move)
                       .attr('x', middle)
                       .attr('width', 0)
                       .classed('selected', (d) => d.selected )
@@ -196,6 +202,45 @@ export class Drawer {
     this.layers[Layer.Axes].append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this.y));
+  }
+  // #endregion
+
+  // #region [Zoom Behaviors]
+  setup_zoom() {
+    return  d3.zoom()
+              .scaleExtent([1, 50])
+              .translateExtent([[0, 0], [this.databar.width, this.databar.height]])
+              .extent([[0, 0], [this.databar.width, this.databar.height]])
+              .on('zoom', () => this.databar.zoomed())
+              .on('start', () => this.zoom_start())
+              .on('end', () => this.zoom_end())
+  }
+
+  private zoom_start() {
+    console.debug('zoom start!')
+  }
+
+  private zoom_end() {
+    console.debug('zoom end!')
+  }
+  // #endregion
+
+  // #region [Drag Behaviors]
+  private _drag_move() {
+    return  d3.drag()
+              .on('drag', (...d) => { this.databar.lbl_dragged(d) })
+              .on('start', (...d) => { this.move_start(d) })
+              .on('end', (...d) => { this.move_end(d) })
+  }
+
+  private move_start(d) {
+    this.m_start = Date.now();
+  }
+
+  private move_end(_d) {
+    let [d,i,arr] = _d;
+    let Δt = Date.now() - this.m_start;
+    console.debug('move end:', Δt, [d,i,arr], d3.event)
   }
   // #endregion
 
