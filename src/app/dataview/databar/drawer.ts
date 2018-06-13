@@ -22,8 +22,10 @@ enum Layer {
 
 type LayerMap = {[layer: string]: Selection}
 
+type side = 'left' | 'right'
+
 type ZoomBehavior = any
-type DragBehavior = any
+type DragBehavior = any | {[side: string]: DragBehavior}
 // #endregion
 
 export class Drawer {
@@ -32,12 +34,14 @@ export class Drawer {
   layers: LayerMap = {};
   zoom: ZoomBehavior;
   move: DragBehavior;
-  resize: DragBehavior;
+  resize: DragBehavior = {};
+
   // #endregion
 
   // #region [Private Variables]
   private m_start;
   private r_start;
+  private z_start;
   // #endregion
 
   // #region [Constructor]
@@ -61,11 +65,13 @@ export class Drawer {
     this.layers[Layer.Clip] = host.select('#clip > rect.clip-rect')
         .attr('width', databar.width)
         .attr('height', databar.height);
-    // setup zoom behavior
-    this.zoom = this.setup_zoom()
+    // setup behaviors
+    this.zoom = this.setup_zoom();
+    this.move = this.setup_move();
+    this.resize.left = this.setup_resize('left');
+    this.resize.right = this.setup_resize('right');
+    // register non-local behaviors
     this.layers[Layer.SVG].call(this.zoom);
-    // declare drag behaviors
-    this.move = this._drag_move();
   }
   // #endregion
 
@@ -207,30 +213,36 @@ export class Drawer {
 
   // #region [Zoom Behaviors]
   setup_zoom() {
-    return  d3.zoom()
-              .scaleExtent([1, 50])
-              .translateExtent([[0, 0], [this.databar.width, this.databar.height]])
-              .extent([[0, 0], [this.databar.width, this.databar.height]])
-              .on('zoom', () => this.databar.zoomed())
-              .on('start', () => this.zoom_start())
-              .on('end', () => this.zoom_end())
+    return d3.zoom().scaleExtent([1, 50])
+                    .translateExtent([[0, 0], [this.databar.width, this.databar.height]])
+                    .extent([[0, 0], [this.databar.width, this.databar.height]])
+                    .on('zoom', () => this.databar.zoomed())
+                    .on('start', () => this.zoom_start())
+                    .on('end', () => this.zoom_end())
   }
 
   private zoom_start() {
-    console.debug('zoom start!')
+    this.z_start = Date.now();
   }
 
   private zoom_end() {
-    console.debug('zoom end!')
+    let Δt = Date.now() - this.z_start;
+    this.z_start = undefined;
+    console.debug('zoom end:', Δt);
   }
   // #endregion
 
   // #region [Drag Behaviors]
-  private _drag_move() {
-    return  d3.drag()
-              .on('drag', (...d) => { this.databar.lbl_dragged(d) })
-              .on('start', (...d) => { this.move_start(d) })
-              .on('end', (...d) => { this.move_end(d) })
+  setup_move() {
+    return d3.drag().on('drag', (...d) => { this.databar.lbl_dragged(d) })
+                    .on('start', (...d) => { this.move_start(d) })
+                    .on('end', (...d) => { this.move_end(d) })
+  }
+
+  setup_resize(side: side) {
+    return d3.drag().on('drag', (d) => { this.databar.lbl_resize(d, side) })
+                    .on('start', (...d) => { this.resize_start(d, side) })
+                    .on('end', (...d) => { this.resize_end(d, side) })
   }
 
   private move_start(d) {
@@ -240,7 +252,18 @@ export class Drawer {
   private move_end(_d) {
     let [d,i,arr] = _d;
     let Δt = Date.now() - this.m_start;
-    console.debug('move end:', Δt, [d,i,arr], d3.event)
+    this.m_start = undefined;
+    console.debug('move end:', Δt, [d,i,arr], d3.event);
+  }
+
+  private resize_start(d, side) {
+    this.r_start = Date.now();
+  }
+
+  private resize_end(d, side) {
+    let Δt = Date.now() - this.r_start;
+    this.r_start = undefined;
+    console.debug('resize end:', Δt, d, side);
   }
   // #endregion
 
@@ -277,7 +300,7 @@ export class Drawer {
                     .classed(side, true)
                     .attr('y', 0)
                     .attr('height', this.databar.height)
-                    .call(d3.drag().on('drag', (d) => { this.databar.lbl_resize(d, side) }))
+                    .call(this.resize[side])
                     .merge(selection)
                     .attr('x', callback)
   }
