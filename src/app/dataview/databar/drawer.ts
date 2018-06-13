@@ -2,6 +2,7 @@ import { DatabarComponent } from './databar.component';
 import { Label } from './labeller';
 import { Selection, SelectionTransition } from './selection';
 import * as d3 from "d3";
+import { ToolMode } from './tool-mode.enum';
 
 // #region [Interfaces]
 enum Layer {
@@ -99,6 +100,8 @@ export class Drawer {
   get width() { return this.databar.width }
 
   get height() { return this.databar.height }
+
+  get mode() { return this.databar.mode }
   // #endregion
 
   // #region [Public Plotting Methods]
@@ -238,8 +241,7 @@ export class Drawer {
              .attr('y', y-12)
              .attr('viewBox', "0 0 24 24")
              .append('path')
-             .attr('d', cursor)
-    console.log('drawing cursor', [x,y], selection)
+             .attr('d', cursor);
   }
   // #endregion
 
@@ -298,8 +300,8 @@ export class Drawer {
   // #region [Zoom Behaviors]
   setup_zoom() {
     return d3.zoom().scaleExtent([1, 50])
-                    .translateExtent([[0, 0], [this.databar.width, this.databar.height]])
-                    .extent([[0, 0], [this.databar.width, this.databar.height]])
+                    .translateExtent([[0, 0], [this.width, this.height]])
+                    .extent([[0, 0], [this.width, this.height]])
                     .on('zoom', () => this.databar.zoomed())
                     .on('start', () => this.zoom_start())
                     .on('end', () => this.zoom_end())
@@ -362,17 +364,24 @@ export class Drawer {
   }
 
   private mouse_move() {
-    this.draw_cursor(POINTER);
+    if (this.region() === 'frame' && this.mode === ToolMode.Click) {
+      this.layers[Layer.SVG].classed('custom-cursor', true);
+      this.draw_cursor(POINTER);
+    }
+    else {
+      this.layers[Layer.SVG].classed('custom-cursor', false);
+      this.clear('cursor');
+    }
     console.debug('mouse move', this.region());
   }
 
   private mouse_enter() { console.debug('mouse enter') }
 
-  private mouse_leave() { console.debug('mouse leave') }
-
-  private add_cursor() {
-    
-  }
+  private mouse_leave() {
+    this.layers[Layer.SVG].classed('custom-cursor', false);
+    this.clear('cursor');
+    console.debug('mouse leave');
+}
   // #endregion
 
   // #region [Helper Methods]

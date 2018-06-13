@@ -187,7 +187,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   lbl_resize(d, side) { this.labeller.resize(d, side) }
 
-  lbl_clicked(d) { this.labeller.select(d) }
+  lbl_clicked(d) {
+    if (this.mode === ToolMode.Selection)
+      this.labeller.select(d)
+  }
 
   lbl_dragged(_d) {
     if (this.mode !== ToolMode.Selection) return;   // can only drag in edit mode
