@@ -43,13 +43,15 @@ export class Sensor {
         // passed-in values
         this.channel = channel;
         this.id = id;
-        this._index = id;
         this.idxmap = idxmap;
         this.labelstream = ls;
+        // internal index
+        if (id < idxmap.size) this._index = id;
+        else this._index = 0;
         // derived values
         this.name = Sensor.SENSOR_NAMES[channel];
         this.dims = Sensor.SENSOR_DIMS[channel];
-        this.idxs = idxmap.get(id);
+        this.idxs = idxmap.get(this._index);
         // default values
         this.hidden = false;
         this.show_labels = true;

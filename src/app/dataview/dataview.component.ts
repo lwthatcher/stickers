@@ -52,18 +52,16 @@ export class DataviewComponent implements OnInit {
     return this.data_info.labelled as string;
   }
 
-  get streams(): string[] {
-    return Object.keys(this.labelStreams)
-  }
+  get streams(): string[] { return Object.keys(this.labelStreams) }
+
+  get channels() { return this.data_info.channels }
 
   get known_sensors(): SensorInfo[] {
     let channels = this.data_info.channels;
     return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i, channel: c} })
   }
 
-  get event_types(): string[] {
-    return Object.keys(this.eventMap)
-  }
+  get event_types(): string[] { return Object.keys(this.eventMap) }
 
   get idx_map(): IndexMap {
     if (!this._idx_map) 
@@ -71,9 +69,7 @@ export class DataviewComponent implements OnInit {
     return this._idx_map;
   }
 
-  get settings() {
-    return this._settings;
-  }
+  get settings() { return this._settings; }
 
   get colors() {
     if (this._colors === undefined) 
@@ -151,17 +147,25 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Label Streams]
-  addStream(name: string, labels: Label[] = []) {
+  private addStream(name: string, labels: Label[] = []) {
     this.labelStreams[name] = new LabelStream(name, labels, this.eventMap);
-  }
-
-  showLabels(sensor: Sensor) {
-    return this.labelStreams[sensor.labelstream] && this.labelStreams[sensor.labelstream].show;
   }
   // #endregion
 
   // #region [Sensors]
+  private get_channel(id) {
+    if (id >= this.channels.length) id = 0;
+    return [...this.channels][id] 
+  }
 
+  private next_id() {
+    let toID = (s: Sensor) => s.id;
+    let maxID = (max, cur) => Math.max(max, cur);
+    let nxt_id = this.sensors.map(toID).reduce(maxID, -1) + 1;
+    return nxt_id;
+  }
+
+  
   // #endregion
 
   // #region [Event Handlers]
@@ -171,7 +175,10 @@ export class DataviewComponent implements OnInit {
 
   show(sensor: Sensor) { sensor.show() }
 
-  remove(sensor: Sensor) { console.log('REMOVING SENSOR', sensor) }
+  remove(sensor: Sensor) { 
+    console.debug('REMOVING SENSOR', sensor);
+    this.sensors = this.sensors.filter((s) => { return s.id !== sensor.id })
+  }
 
   selectStream(sensor, stream) { sensor.labelstream = stream }
 
@@ -182,7 +189,13 @@ export class DataviewComponent implements OnInit {
   // TODO: implement
   newStream() { console.log('lets make another stream!') }
 
-  newSensor() { console.log('lets add another sensor!') }
+  newSensor() {
+    let id = this.next_id();
+    let c = this.get_channel(id);
+    let sensor = new Sensor(c, id, this.default_stream, this.idx_map);
+    console.debug('Adding new sensor:', sensor);
+    this.sensors.push(sensor);
+  }
 
   change_ls(stream) {console.debug('changing print label-stream:', stream); this.print_ls = stream;}
 
