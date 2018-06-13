@@ -227,14 +227,15 @@ export class Drawer {
   }
 
   draw_cursor(cursor) {
-    let [x,y] = this.gxy();
-    let selection = this.layers[Layer.Cursor]
-    let vbox = () => x.toString() + " " + y.toString() + " 24 24"
+    let [x,y] = this.xy();
+    this.clear('cursor');
+    let selection = this.layers[Layer.Cursor];
     selection.append('svg')
+             .attr('class', 'cursor')
              .attr('width', 24)
              .attr('height', 24)
-             .attr('x', x)
-             .attr('y', y)
+             .attr('x', x-12)
+             .attr('y', y-12)
              .attr('viewBox', "0 0 24 24")
              .append('path')
              .attr('d', cursor)

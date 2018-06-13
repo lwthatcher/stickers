@@ -43,3 +43,7 @@ rect.zoom.click-mode {
 g.axes > g.x-axis {
     cursor: -webkit-grab;
 }
+
+g.cursor > svg.cursor {
+    pointer-events: none;
+}
