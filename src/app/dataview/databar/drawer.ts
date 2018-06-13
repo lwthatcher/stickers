@@ -186,6 +186,8 @@ export class Drawer {
       this.layers[Layer.Axes].selectAll("*").remove();
       this.layers[Layer.Labels].selectAll("*").remove();
       this.layers[Layer.DragHandles].selectAll("*").remove();
+      this.layers[Layer.Ghost].selectAll("*").remove();
+      this.layers[Layer.Cursor].selectAll("*").remove();
       return;
     }
     // otherwise clear specified layers
@@ -195,6 +197,8 @@ export class Drawer {
     if (layers.includes('handles')) this.layers[Layer.DragHandles].selectAll("*").remove();
     if (layers.includes('x-axis')) this.layers[Layer.Axes].selectAll("g.x-axis").remove();
     if (layers.includes('y-axis')) this.layers[Layer.Axes].selectAll("g.y-axis").remove();
+    if (layers.includes('ghost')) this.layers[Layer.Ghost].selectAll("*").remove();
+    if (layers.includes('cursor')) this.layers[Layer.Cursor].selectAll("*").remove();
   }
   
   draw_xAxis() {
