@@ -29,6 +29,10 @@ type DragBehavior = any | {[side: string]: DragBehavior}
 type MouseBehavior = any
 // #endregion
 
+// #region [Constants]
+const CURSOR = 'M10,2A2,2 0 0,1 12,4V8.5C12,8.5 14,8.25 14,9.25C14,9.25 16,9 16,10C16,10 18,9.75 18,10.75C18,10.75 20,10.5 20,11.5V15C20,16 17,21 17,22H9C9,22 7,15 4,13C4,13 3,7 8,12V4A2,2 0 0,1 10,2Z'
+// #endregion
+
 export class Drawer {
   // #region [Variables]
   databar: DatabarComponent;
@@ -43,6 +47,7 @@ export class Drawer {
   private m_start;
   private r_start;
   private z_start;
+  private cursor;
   // #endregion
 
   // #region [Constructor]
@@ -90,6 +95,10 @@ export class Drawer {
   get y() { return this.databar.y }
 
   get signals() { return this.layers[Layer.Host].selectAll('g.signals > path.line') }
+
+  get width() { return this.databar.width }
+
+  get height() { return this.databar.height }
   // #endregion
 
   // #region [Public Methods]
@@ -279,23 +288,24 @@ export class Drawer {
     let behavior = (selection) => {
       selection.on('mousemove', () => {this.mouse_move()})
       selection.on('mouseenter', () => {this.mouse_enter()})
-      selection.on('mouseover', () => {this.mouse_over()})
-      selection.on('mouseout', () => {this.mouse_out()})
       selection.on('mouseleave', () => {this.mouse_leave()})
     }
     return behavior;
   }
 
-  private mouse_move() { console.debug('mouse move') }
+  private mouse_move() {
+    let region = this.region(this.xy());
+    let e = d3.event;
+    console.debug('mouse move', region, [e.x, e.y], this.gxy());
+  }
 
   private mouse_enter() { console.debug('mouse enter') }
 
-  private mouse_over() { console.debug('mouse over') }
-
-  private mouse_out() { console.debug('mouse out') }
-
   private mouse_leave() { console.debug('mouse leave') }
 
+  private add_cursor() {
+    let [x,y] = this.gxy();
+  }
   // #endregion
 
   // #region [Helper Methods]
@@ -334,6 +344,29 @@ export class Drawer {
                     .call(this.resize[side])
                     .merge(selection)
                     .attr('x', callback)
+  }
+
+  private xy(): number[] {
+    return d3.mouse(this.layers[Layer.Zoom].node());
+  }
+
+  private gxy(): number[] {
+    return d3.mouse(this.layers[Layer.SVG].node());
+  }
+
+  region()
+  region(xy: number[])
+  region(x: number, y:number)
+  region(x?, y?) {
+    // get x,y
+    if (!x) [x,y] = this.xy()
+    else if (!y) [x,y] = x as number[];
+    // return region based on precedence
+    if (x < 0) return 'y-axis';
+    if (y < 0) return 'margin-top';
+    if (x > this.width) return 'margin-right';
+    if (y > this.height) return 'x-axis';
+    return 'frame';
   }
   // #endregion
 }
