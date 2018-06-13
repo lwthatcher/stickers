@@ -75,6 +75,10 @@ export class LabelStream {
 // #endregion
 
 export class Labeller {
+    // #region [Constants]
+    NEW_LABEL_WIDTH = 50;
+    // #endregion
+
     // #region [Constructor]
     databar: DatabarComponent
     constructor(databar: DatabarComponent) { this.databar = databar }
@@ -154,10 +158,18 @@ export class Labeller {
 
     add(px: number, label: number) {
         let dx = this.x.invert(px);
-        let lbl = { start: dx-250, end: dx+250, label: label } as Label
-        if (!this.is_empty(this.ls.emap)) 
-            lbl.type = this.ls.emap[label]
+        // initial start/end times
+        let start = this.x.invert(px - this.NEW_LABEL_WIDTH/2);
+        let end = this.x.invert(px + this.NEW_LABEL_WIDTH/2);
+        // adjust start/end times for overlap
+        let temp = {label, start:dx, end:dx}
+        start = this.overlaps(start, temp, "left");
+        end = this.overlaps(end, temp, "right");
+        // add label
+        let lbl = { start, end, label } as Label
+        if (!this.is_empty(this.ls.emap)) lbl.type = this.ls.emap[label]
         this.ls.add(lbl);
+        // notify observers
         this.ls.event.emit('add');
     }
 

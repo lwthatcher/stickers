@@ -47,6 +47,7 @@ g.axes > g.x-axis {
 g.cursor > svg.cursor {
     pointer-events: none;
     fill: darkslategrey;
+    stroke: black;
 }
 
 svg.databar.custom-cursor * {

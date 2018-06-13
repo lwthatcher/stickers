@@ -262,6 +262,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
       console.debug('click mode', mode);
       background.classed('selection-mode', false);
       background.classed('click-mode', true);
+      this.labeller.deselect();
     }
   }
 
