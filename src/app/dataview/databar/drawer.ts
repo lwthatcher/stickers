@@ -15,7 +15,9 @@ enum Layer {
   YAxis = 'y-axis',
   Labels = 'labels',
   DragHandles = 'handles',
-  Zoom = 'zoom'
+  Zoom = 'zoom',
+  Ghost = 'ghost',
+  Cursor = 'cursor'
 }
 
 type LayerMap = {[layer: string]: Selection}
@@ -39,6 +41,8 @@ export class Drawer {
     this.layers[Layer.Axes] = host.select("g.transform > g.axes");
     this.layers[Layer.Labels] = host.select("g.transform > g.labels");
     this.layers[Layer.DragHandles] = host.select("g.transform > g.handles");
+    this.layers[Layer.Ghost] = host.select("g.transform > g.ghost");
+    this.layers[Layer.Cursor] = host.select("g.transform > g.cursor");
     this.layers[Layer.Zoom] = host.select("g.transform > rect.zoom")
         .attr('width', databar.width)
         .attr('height', databar.height);
