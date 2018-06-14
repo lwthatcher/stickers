@@ -7,7 +7,7 @@ import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service'
 import { Label, LabelStream, EventMap } from './databar/labeller';
-import { ToolMode } from './databar/tool-mode.enum';
+import { ToolMode, ModeTracker } from './databar/tool-mode.enum';
 import { Colorer } from './colorer';
 import { Sensor } from './sensor';
 // #endregion
@@ -88,6 +88,7 @@ export class DataviewComponent implements OnInit {
   zoom_transform;
   labelStreams: LabelStreamMap = {};
   mode: ToolMode = ToolMode.Selection;
+  MODE: ModeTracker;
   lbl: LabelKey;
   colorer: Colorer;
   print_ls: string;
@@ -98,7 +99,9 @@ export class DataviewComponent implements OnInit {
   // #region [Constructors]
   constructor(private route: ActivatedRoute, 
               private dataloader: DataloaderService,
-              private _settings: SettingsService) { }
+              private _settings: SettingsService) { 
+    this.MODE = new ModeTracker();
+  }
 
   ngOnInit() {
     console.groupCollapsed('dataview init')
