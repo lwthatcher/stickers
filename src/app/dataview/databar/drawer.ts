@@ -79,8 +79,10 @@ export class Drawer {
     this.resize.left = this.setup_resize('left');
     this.resize.right = this.setup_resize('right');
     // register non-local behaviors
-    this.layers[Layer.SVG].call(this.zoom);
     this.layers[Layer.SVG].call(this.mouse);
+    this.layers[Layer.SVG].call(this.zoom)
+                          .on("dblclick.zoom", null)
+                          
   }
   // #endregion
 
@@ -240,6 +242,7 @@ export class Drawer {
              .attr('x', x-12)
              .attr('y', y-12)
              .attr('viewBox', "0 0 24 24")
+             .on('mousedown', () => {this.mouse_down()})
              .append('path')
              .attr('d', cursor);
   }
@@ -302,10 +305,29 @@ export class Drawer {
     return d3.zoom().scaleExtent([1, 50])
                     .translateExtent([[0, 0], [this.width, this.height]])
                     .extent([[0, 0], [this.width, this.height]])
-                    .on('zoom', () => this.databar.zoomed())
+                    .on('zoom', () => this.zoomed())
                     .on('start', () => this.zoom_start())
                     .on('end', () => this.zoom_end())
   }
+
+  zoomed() {
+    let region = this.region()
+    let type = d3.event.sourceEvent.type;
+    let mode = this.mode;
+    // always allow scroll-wheel zooming
+    if (type === 'wheel' && region === 'frame') this.emit_zoom()
+    else if (type === 'mousemove') {
+      // always allow panning on the x-axis
+      if (region === 'x-axis') this.emit_zoom();
+      else if (region === 'frame') {
+        if (mode === ToolMode.Selection) this.emit_zoom();
+        if (mode === ToolMode.Click) this.mouse_move2('zoom');
+      }
+    }
+    else { console.warn('unexpected zoom-event type:', type, 'region:', region, 'tool mode:', mode) }
+  }
+
+  private emit_zoom() { this.databar.zoom.emit(d3.event) }
 
   private zoom_start() {
     this.z_start = Date.now();
@@ -374,6 +396,10 @@ export class Drawer {
       this.clear('cursor');
     }
     console.debug('mouse move', this.region());
+  }
+
+  private mouse_move2(source?) {
+    console.log('MOUSE MOVE', source);
   }
 
   private mouse_enter() { console.debug('mouse enter') }

@@ -176,15 +176,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  zoomed() {
-    let bg = this.drawer.layers['zoom'];
-    let [x,y] = d3.mouse(bg.node());
-    let w = bg.attr('width');
-    let h = bg.attr('height');
-    let in_rect = (x > 0 && x < w && y > 0);
-    if (in_rect) this.zoom.emit(d3.event);
-  }
-
   lbl_resize(d, side) { this.labeller.resize(d, side) }
 
   lbl_clicked(d) {
