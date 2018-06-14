@@ -176,11 +176,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  lbl_clicked(d) {
-    if (this.mode === ToolMode.Selection)
-      this.labeller.select(d)
-  }
-
   stream_update(event) {
     console.debug('label stream update:', event);
     this.drawer.draw_labels();

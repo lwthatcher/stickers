@@ -159,7 +159,7 @@ export class Drawer {
                       .attr('height', this.databar.height)
                       .attr("clip-path", "url(#clip)")
                       .classed('label', true)
-                      .on('click', (d) => { this.databar.lbl_clicked(d) }, false)
+                      .on('click', (d) => { this.lbl_clicked(d) })
                       .call(this.move)
                       .attr('x', middle)
                       .attr('width', 0)
@@ -399,18 +399,24 @@ export class Drawer {
   }
 
   private mouse_move() {
-    let cursor = this.get_cursor(this.region(), this.mode);
+    let cursor = this.custom_cursor(this.region(), this.mode);     // cursor will be null if not a custom cursor
     this.layers[Layer.SVG].classed('custom-cursor', !!cursor);
     this.draw_cursor(cursor);
     console.debug('mouse move', this.region(), this.buttons());
   }
 
-  private mouse_enter() { console.debug('mouse enter') }
+  private mouse_enter() { }
 
   private mouse_leave() {
     this.layers[Layer.SVG].classed('custom-cursor', false);
     this.clear('cursor');
-    console.debug('mouse leave');
+  }
+  // #endregion
+
+  // #region [Click Handlers]
+  lbl_clicked(d) {
+    if (this.mode === ToolMode.Selection)
+      this.labeller.select(d)
   }
   // #endregion
 
@@ -425,7 +431,7 @@ export class Drawer {
     return buttons-1;
   }
 
-  private get_cursor(region, mode) {
+  private custom_cursor(region, mode) {
     if (region === 'frame' && mode === ToolMode.Click) return POINTER;
     else return null;
   }
