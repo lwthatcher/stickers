@@ -50,6 +50,10 @@ g.cursor > svg.cursor {
     stroke: rgb(29, 48, 48);
 }
 
+svg.databar.custom-cursor {
+    pointer-events: all;
+}
+
 svg.databar.custom-cursor * {
     cursor: none;
 }

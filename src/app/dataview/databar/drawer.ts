@@ -357,6 +357,7 @@ export class Drawer {
   setup_mouse() {
     let behavior = (selection) => {
       selection.on('mousemove', () => {this.mouse_move()})
+      selection.on('mousedown', () => {this.mouse_down()})
       selection.on('mouseenter', () => {this.mouse_enter()})
       selection.on('mouseleave', () => {this.mouse_leave()})
     }
@@ -376,6 +377,8 @@ export class Drawer {
   }
 
   private mouse_enter() { console.debug('mouse enter') }
+
+  private mouse_down() { console.debug('mouse down') }
 
   private mouse_leave() {
     this.layers[Layer.SVG].classed('custom-cursor', false);
