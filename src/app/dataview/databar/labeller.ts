@@ -90,12 +90,18 @@ export class Labeller {
     get labels() { return this.databar.labels }
 
     get x() { return this.databar.x }
+
+    get selected_label() { return this.databar.selected_label }
     // #endregion
 
     // #region [Public Methods]
     deselect() {
+        // check first if deselected-label has a width of zero
+        let selected = this.selected_label;
+        if (selected && this.zero_width(selected)) this.delete(selected);
+        // set all labels to deselected
         for (let l of this.labels) { l.selected = false }
-        this.ls.event.emit('deselect');;
+        this.ls.event.emit('deselect');
     }
     
     select(lbl) {
@@ -184,6 +190,10 @@ export class Labeller {
     // #region [Helper Methods]
     private is_empty(emap: EventMap) {
         return Object.keys(emap).length === 0;
+    }
+
+    private zero_width(lbl: Label) {
+        return lbl.start === lbl.end;
     }
 
     /**
