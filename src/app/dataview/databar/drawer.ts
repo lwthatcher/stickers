@@ -403,13 +403,15 @@ export class Drawer {
     let behavior = (selection) => {
       selection.on('mousemove', () => {this.mouse_move()})
       selection.on('mouseleave', () => {this.mouse_leave()})
+      selection.on('mousedown', () => {this.mouse_down()})
+      selection.on('mouseup', () => {this.mouse_up()})
     }
     return behavior;
   }
 
   private mouse_move() {
     // get the custom cursor path, or null if no custom cursor applies to this setting
-    let overlaps = this.overlaps()
+    let overlaps = this.overlaps();
     let cursor = this.custom_cursor(this.region(), this.mode, overlaps);
     this.layers[Layer.SVG].classed('custom-cursor', !!cursor);
     this.draw_cursor(cursor);
@@ -419,6 +421,20 @@ export class Drawer {
   private mouse_leave() {
     this.layers[Layer.SVG].classed('custom-cursor', false);
     this.clear('cursor');
+  }
+
+  private mouse_down() {
+    let buttons = this.mouse_event.buttons
+    console.debug('mouse down', buttons);
+    if ((buttons & 16) === 16) {
+      let newmode = this.mode === ToolMode.Selection ? ToolMode.Click : ToolMode.Selection;
+      console.debug('mouse-forward btn', this.mode, newmode);
+      this.databar.mode = newmode;
+    }
+  }
+
+  private mouse_up() {
+    console.debug('mouse up', this.mouse_event.buttons);
   }
   // #endregion
 
