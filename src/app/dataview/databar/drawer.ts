@@ -321,7 +321,7 @@ export class Drawer {
       if (region === 'x-axis') this.emit_zoom();
       else if (region === 'frame') {
         if (mode === ToolMode.Selection) this.emit_zoom();
-        if (mode === ToolMode.Click) this.mouse_move2('zoom');
+        if (mode === ToolMode.Click) this.mouse_move();
       }
     }
     else { console.warn('unexpected zoom-event type:', type, 'region:', region, 'tool mode:', mode) }
@@ -379,7 +379,6 @@ export class Drawer {
   setup_mouse() {
     let behavior = (selection) => {
       selection.on('mousemove', () => {this.mouse_move()})
-      selection.on('mousedown', () => {this.mouse_down()})
       selection.on('mouseenter', () => {this.mouse_enter()})
       selection.on('mouseleave', () => {this.mouse_leave()})
     }
@@ -395,16 +394,10 @@ export class Drawer {
       this.layers[Layer.SVG].classed('custom-cursor', false);
       this.clear('cursor');
     }
-    console.debug('mouse move', this.region());
-  }
-
-  private mouse_move2(source?) {
-    console.log('MOUSE MOVE', source);
+    console.debug('mouse move', this.region(), this.buttons());
   }
 
   private mouse_enter() { console.debug('mouse enter') }
-
-  private mouse_down() { console.debug('mouse down') }
 
   private mouse_leave() {
     this.layers[Layer.SVG].classed('custom-cursor', false);
@@ -414,14 +407,18 @@ export class Drawer {
   // #endregion
 
   // #region [Helper Methods]
-
-
   private xy(): number[] {
     return d3.mouse(this.layers[Layer.Zoom].node());
   }
 
   private gxy(): number[] {
     return d3.mouse(this.layers[Layer.SVG].node());
+  }
+
+  private buttons() {
+    // add the +1 so 0 does not trigger the OR condition
+    let buttons = d3.event.buttons+1 || d3.event.sourceEvent.buttons+1;
+    return buttons-1;
   }
   // #endregion
 }
