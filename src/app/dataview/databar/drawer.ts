@@ -104,6 +104,8 @@ export class Drawer {
   get height() { return this.databar.height }
 
   get mode() { return this.databar.mode }
+
+  get labeller() { return this.databar.labeller }
   // #endregion
 
   // #region [Public Plotting Methods]
@@ -344,18 +346,27 @@ export class Drawer {
 
   // #region [Drag Behaviors]
   setup_move() {
-    return d3.drag().on('drag', (...d) => { this.databar.lbl_dragged(d) })
+    return d3.drag().on('drag', (...d) => { this.lbl_move(d) })
                     .on('start', (...d) => { this.move_start(d) })
                     .on('end', (...d) => { this.move_end(d) })
   }
 
   setup_resize(side: side) {
-    return d3.drag().on('drag', (d) => { this.databar.lbl_resize(d, side) })
+    return d3.drag().on('drag', (d) => { this.lbl_resize(d, side) })
                     .on('start', (...d) => { this.resize_start(d, side) })
                     .on('end', (...d) => { this.resize_end(d, side) })
   }
 
-  private move_start(d) {
+  lbl_resize(d, side) { this.labeller.resize(d, side) }
+
+  lbl_move(_d) {
+    // can only drag in selection mode
+    if (this.mode !== ToolMode.Selection) return;   
+    let [d,i,arr] = _d;               
+    this.labeller.move(d, d3.select(arr[i]));
+  }
+
+  private move_start(_d) {
     this.m_start = Date.now();
   }
 
