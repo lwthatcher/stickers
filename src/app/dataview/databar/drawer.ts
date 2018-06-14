@@ -232,8 +232,10 @@ export class Drawer {
   }
 
   draw_cursor(cursor) {
-    let [x,y] = this.xy();
     this.clear('cursor');
+    if (!cursor) { return }
+    // only draws cursor
+    let [x,y] = this.xy();
     let selection = this.layers[Layer.Cursor];
     selection.append('svg')
              .attr('class', 'cursor')
@@ -242,7 +244,6 @@ export class Drawer {
              .attr('x', x-12)
              .attr('y', y-12)
              .attr('viewBox', "0 0 24 24")
-             .on('mousedown', () => {this.mouse_down()})
              .append('path')
              .attr('d', cursor);
   }
@@ -320,8 +321,9 @@ export class Drawer {
       // always allow panning on the x-axis
       if (region === 'x-axis') this.emit_zoom();
       else if (region === 'frame') {
-        if (mode === ToolMode.Selection) this.emit_zoom();
-        if (mode === ToolMode.Click) this.mouse_move();
+        
+        if (mode === ToolMode.Selection) this.emit_zoom();    // allow frame-panning in selection mode
+        if (mode === ToolMode.Click) this.mouse_move();       // otherwise treat as a mouse-move
       }
     }
     else { console.warn('unexpected zoom-event type:', type, 'region:', region, 'tool mode:', mode) }
@@ -386,14 +388,9 @@ export class Drawer {
   }
 
   private mouse_move() {
-    if (this.region() === 'frame' && this.mode === ToolMode.Click) {
-      this.layers[Layer.SVG].classed('custom-cursor', true);
-      this.draw_cursor(POINTER);
-    }
-    else {
-      this.layers[Layer.SVG].classed('custom-cursor', false);
-      this.clear('cursor');
-    }
+    let cursor = this.get_cursor(this.region(), this.mode);
+    this.layers[Layer.SVG].classed('custom-cursor', !!cursor);
+    this.draw_cursor(cursor);
     console.debug('mouse move', this.region(), this.buttons());
   }
 
@@ -403,7 +400,7 @@ export class Drawer {
     this.layers[Layer.SVG].classed('custom-cursor', false);
     this.clear('cursor');
     console.debug('mouse leave');
-}
+  }
   // #endregion
 
   // #region [Helper Methods]
@@ -411,14 +408,15 @@ export class Drawer {
     return d3.mouse(this.layers[Layer.Zoom].node());
   }
 
-  private gxy(): number[] {
-    return d3.mouse(this.layers[Layer.SVG].node());
-  }
-
-  private buttons() {
+  private buttons(): number {
     // add the +1 so 0 does not trigger the OR condition
     let buttons = d3.event.buttons+1 || d3.event.sourceEvent.buttons+1;
     return buttons-1;
+  }
+
+  private get_cursor(region, mode) {
+    if (region === 'frame' && mode === ToolMode.Click) return POINTER;
+    else return null;
   }
   // #endregion
 }
