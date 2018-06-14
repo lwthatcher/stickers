@@ -18,7 +18,7 @@ import { Sensor } from "../sensor";
 import { Colorer} from '../colorer';
 import { Labeller, Label, LabelStream } from './labeller';
 import { Drawer } from './drawer';
-import { ToolMode } from './tool-mode.enum';
+import { ToolMode, ModeTracker } from './tool-mode.enum';
 import * as d3 from "d3";
 // #endregion
 
@@ -42,7 +42,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() transform;
   @Input() sensor: Sensor;
   @Input() labelstream: LabelStream;
-  @Input() mode: ToolMode;
+  @Input() mode: ModeTracker;
   @Input() lbl_type;
   @Input() colorer: Colorer;
   // #endregion
@@ -131,10 +131,9 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Lifecycle Hooks]
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    let {transform, labelstream, mode, lbl_type} = changes;
+    let {transform, labelstream, lbl_type} = changes;
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
     if (labelstream && !labelstream.firstChange) this.stream_changed(labelstream);
-    if (mode && !mode.firstChange) this.mode_changed(mode);
     if (lbl_type && !lbl_type.firstChange) this.type_changed(lbl_type);
   }
 
@@ -217,14 +216,15 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #endregion
 
   // #region [Update Methods]
-  private updateMode(mode) {
+  private updateMode(mode?: ModeTracker) {
+    mode = mode || this.mode;
     let background = this.drawer.layers['zoom'];
-    if (mode === ToolMode.Selection) {
+    if (mode.selection) {
       console.debug('selection mode', mode);
       background.classed('selection-mode', true);
       background.classed('click-mode', false);
     }
-    else if (mode === ToolMode.Click) {
+    else if (mode.click) {
       console.debug('click mode', mode);
       background.classed('selection-mode', false);
       background.classed('click-mode', true);
@@ -254,6 +254,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   private register_sensor() {
     this.sensor.event.subscribe((e) => { this.sensor_update(e) })
+  }
+
+  private register_mode() {
+    this.mode.event.subscribe((mode) => { this.mode_changed(mode) })
   }
   // #endregion
 

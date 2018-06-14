@@ -334,11 +334,11 @@ export class Drawer {
       // always allow panning on the x-axis
       if (region === 'x-axis') this.emit_zoom();
       else if (region === 'frame') {
-        if (mode === ToolMode.Selection) this.emit_zoom();    // allow frame-panning in selection mode
-        if (mode === ToolMode.Click) this.mouse_move();       // otherwise treat as a mouse-move
+        if (mode.selection) this.emit_zoom();    // allow frame-panning in selection mode
+        if (mode.click) this.mouse_move();       // otherwise treat as a mouse-move
       }
     }
-    else { console.warn('unexpected zoom-event type:', type, 'region:', region, 'tool mode:', mode) }
+    else { console.warn('unexpected zoom-event type:', type, 'region:', region, 'mode:', mode.current) }
   }
 
   private emit_zoom() { this.databar.zoom.emit(d3.event) }
@@ -371,7 +371,7 @@ export class Drawer {
 
   lbl_move(_d) {
     // can only drag in selection mode
-    if (this.mode !== ToolMode.Selection) return;   
+    if (!this.mode.selection) return;   
     let [d,i,arr] = _d;               
     this.labeller.move(d, d3.select(arr[i]));
   }
@@ -426,8 +426,7 @@ export class Drawer {
     let buttons = this.mouse_event.buttons
     console.debug('mouse down', buttons);
     if ((buttons & 16) === 16) {
-      let newmode = this.mode === ToolMode.Selection ? ToolMode.Click : ToolMode.Selection;
-      console.debug('mouse-forward btn', this.mode, newmode);
+      console.debug('mouse-forward btn', this.mode);
     }
   }
   // #endregion
@@ -439,7 +438,7 @@ export class Drawer {
     if (this.overlaps(event)) { return }    // ignore clicks on labels
     this.labeller.deselect();               // deselect any selected labels
     // if label-creation mode, add an event
-    if (this.mode === ToolMode.Click) {
+    if (this.mode.click) {
       let [x,y] = this.xy(event);
       this.labeller.add(x, this.label_type);
     }
@@ -447,8 +446,8 @@ export class Drawer {
 
   /** click call-back for when a label has been clicked */
   lbl_clicked(lbl) {
-    if (this.mode === ToolMode.Selection) this.labeller.select(lbl)
-    if (this.mode === ToolMode.Click)     this.labeller.change_label(lbl, this.label_type)
+    if (this.mode.selection) this.labeller.select(lbl)
+    if (this.mode.click)     this.labeller.change_label(lbl, this.label_type)
   }
   // #endregion
 
@@ -464,8 +463,8 @@ export class Drawer {
   }
 
   private custom_cursor(region, mode, overlaps) {
-    if (region === 'frame' && mode === ToolMode.Click && !overlaps) return POINTER;
-    if (region === 'frame' && mode === ToolMode.Click && overlaps) return BRUSH;
+    if (region === 'frame' && mode.click && !overlaps) return POINTER;
+    if (region === 'frame' && mode.click && overlaps) return BRUSH;
     else return null;
   }
   // #endregion
