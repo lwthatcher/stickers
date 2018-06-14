@@ -4,7 +4,7 @@ import { DataviewComponent } from './dataview.component';
 import { DatabarComponent } from './databar/databar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
-import { ModesToolboxComponent } from './modes-toolbox/modes-toolbox.component';
+import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 
 @NgModule({
   imports: [

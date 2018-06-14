@@ -5,7 +5,7 @@ import { Sensor } from '../sensor';
 @Component({
   selector: 'toolbox-modes',
   templateUrl: 'modes-toolbox.component.html',
-  styles: []
+  styles: [':host { padding-left: 20px; }']
 })
 export class ModesToolboxComponent implements OnInit {
 

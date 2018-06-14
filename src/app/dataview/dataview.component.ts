@@ -87,7 +87,6 @@ export class DataviewComponent implements OnInit {
   sensors: Sensor[];
   zoom_transform;
   labelStreams: LabelStreamMap = {};
-  mode: ToolMode = ToolMode.Selection;
   MODE: ModeTracker;
   lbl: LabelKey;
   colorer: Colorer;
