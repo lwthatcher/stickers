@@ -334,7 +334,6 @@ export class Drawer {
       // always allow panning on the x-axis
       if (region === 'x-axis') this.emit_zoom();
       else if (region === 'frame') {
-        
         if (mode === ToolMode.Selection) this.emit_zoom();    // allow frame-panning in selection mode
         if (mode === ToolMode.Click) this.mouse_move();       // otherwise treat as a mouse-move
       }
@@ -403,7 +402,6 @@ export class Drawer {
   setup_mouse() {
     let behavior = (selection) => {
       selection.on('mousemove', () => {this.mouse_move()})
-      selection.on('mouseenter', () => {this.mouse_enter()})
       selection.on('mouseleave', () => {this.mouse_leave()})
     }
     return behavior;
@@ -417,8 +415,6 @@ export class Drawer {
     this.draw_cursor(cursor);
     console.debug('mouse move', this.region(), this.mouse_event.buttons, overlaps);
   }
-
-  private mouse_enter() { }
 
   private mouse_leave() {
     this.layers[Layer.SVG].classed('custom-cursor', false);
@@ -440,9 +436,9 @@ export class Drawer {
   }
 
   /** click call-back for when a label has been clicked */
-  lbl_clicked(d) {
-    if (this.mode === ToolMode.Selection)
-      this.labeller.select(d)
+  lbl_clicked(lbl) {
+    if (this.mode === ToolMode.Selection) this.labeller.select(lbl)
+    if (this.mode === ToolMode.Click)     this.labeller.change_label(lbl, this.label_type)
   }
   // #endregion
 
