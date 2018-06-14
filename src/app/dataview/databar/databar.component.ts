@@ -220,17 +220,9 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   private updateMode(mode?: ModeTracker) {
     mode = mode || this.mode;
     let background = this.drawer.layers['zoom'];
-    if (mode.selection) {
-      console.debug('selection mode', mode);
-      background.classed('selection-mode', true);
-      background.classed('click-mode', false);
-    }
-    else if (mode.click) {
-      console.debug('click mode', mode);
-      background.classed('selection-mode', false);
-      background.classed('click-mode', true);
-      this.labeller.deselect();
-    }
+    background.classed('selection-mode', mode.selection);
+    background.classed('click-mode', mode.click);
+    if (mode.click) { this.labeller.deselect() }
   }
 
   private updateZoom(t) {

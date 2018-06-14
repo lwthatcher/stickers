@@ -46,7 +46,7 @@ export class ModeTracker {
                 console.warn('unexpected state in cycle:', this.current);
                 break;
         }
-        if (next) this.update(next);
+        if (next !== undefined) this.update(next);
     }
     // #endregion
 }

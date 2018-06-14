@@ -2,7 +2,6 @@ import { DatabarComponent } from './databar.component';
 import { Label } from './labeller';
 import { Selection, SelectionTransition } from './selection';
 import * as d3 from "d3";
-import { ToolMode } from './tool-mode.enum';
 
 // #region [Interfaces]
 enum Layer {
@@ -425,6 +424,7 @@ export class Drawer {
     let buttons = this.mouse_event.buttons
     console.debug('mouse down', buttons);
     if ((buttons & 16) === 16) {
+      this.mode.cycle()
       console.debug('mouse-forward btn', this.mode);
     }
   }
