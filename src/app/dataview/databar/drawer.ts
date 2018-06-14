@@ -404,7 +404,6 @@ export class Drawer {
       selection.on('mousemove', () => {this.mouse_move()})
       selection.on('mouseleave', () => {this.mouse_leave()})
       selection.on('mousedown', () => {this.mouse_down()})
-      selection.on('mouseup', () => {this.mouse_up()})
     }
     return behavior;
   }
@@ -429,12 +428,7 @@ export class Drawer {
     if ((buttons & 16) === 16) {
       let newmode = this.mode === ToolMode.Selection ? ToolMode.Click : ToolMode.Selection;
       console.debug('mouse-forward btn', this.mode, newmode);
-      this.databar.mode = newmode;
     }
-  }
-
-  private mouse_up() {
-    console.debug('mouse up', this.mouse_event.buttons);
   }
   // #endregion
 
