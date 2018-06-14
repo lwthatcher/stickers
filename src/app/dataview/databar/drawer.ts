@@ -414,6 +414,19 @@ export class Drawer {
   // #endregion
 
   // #region [Click Handlers]
+  clicked(event: MouseEvent) {
+    // ignore clicks on labels
+    if (d3.select(event.target).classed('label')) { return }
+    // otherwise deselect any selected labels
+    this.labeller.deselect();
+    if (this.mode === ToolMode.Click) {
+      let px = event.x - this.databar.margin.left;
+      let type = parseInt(this.databar.lbl_type);
+      console.debug('click', px, this.xy(event))
+      this.labeller.add(px, type);
+    }
+  }
+
   lbl_clicked(d) {
     if (this.mode === ToolMode.Selection)
       this.labeller.select(d)
@@ -421,8 +434,9 @@ export class Drawer {
   // #endregion
 
   // #region [Helper Methods]
-  private xy(): number[] {
-    return d3.mouse(this.layers[Layer.Zoom].node());
+  private xy(event?): number[] {
+    if (event) return d3.clientPoint(this.layers[Layer.Zoom].node(), event);
+    else return d3.mouse(this.layers[Layer.Zoom].node());
   }
 
   private buttons(): number {

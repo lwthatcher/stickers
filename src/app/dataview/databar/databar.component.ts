@@ -164,18 +164,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #endregion
 
   // #region [Event Handlers]
-  clicked(event: any) {
-    // ignore clicks on labels
-    if (d3.select(event.target).classed('label')) { return }
-    // otherwise deselect any selected labels
-    this.labeller.deselect();
-    if (this.mode === ToolMode.Click) {
-      let px = event.x - this.margin.left;
-      let type = parseInt(this.lbl_type);
-      this.labeller.add(px, type);
-    }
-  }
-
   stream_update(event) {
     console.debug('label stream update:', event);
     this.drawer.draw_labels();
