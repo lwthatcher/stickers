@@ -40,19 +40,6 @@
                 </div>
             </div>
 
-            <div class='tool-modes tools-box'>
-                <div class="btn-group btn-group-toggle" ngbRadioGroup name="radiotool" [(ngModel)]="mode">
-                    <label ngbButtonLabel class="btn btn-primary" title="selection mode">
-                        <input ngbButton type="radio" [value]="TOOL_MODE.Selection" [disabled]="sensor.hidden">
-                        <i class="material-icons">pan_tool</i>
-                    </label>
-                    <label ngbButtonLabel class="btn btn-primary" title="label creation mode">
-                        <input ngbButton type="radio" [value]="TOOL_MODE.Click" [disabled]="sensor.hidden">
-                        <i class="material-icons">touch_app</i>
-                    </label>
-                </div>
-            </div>
-
             <toolbox-modes [sensor]="sensor" [tracker]="MODE"></toolbox-modes>
 
             <div class="label-types tools-box">

@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ToolMode, ModeTracker } from '../databar/tool-mode.enum';
 import { Sensor } from '../sensor';
-import { mod } from '@tensorflow/tfjs-core';
 
 @Component({
   selector: 'toolbox-modes',
@@ -24,21 +23,17 @@ export class ModesToolboxComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log('modes-toolbox init!', this);
+    console.groupCollapsed('modes-toolbox init', this.sensor.name);
     this.mode = this.tracker.current;
     this.tracker.event.subscribe((mode) => this.tracked(mode))
+    console.info('modes-toolbox initialized', this);
+    console.groupEnd();
   }
   // #endregion
 
   // #region [Event Handlers]
-  changed(mode: ToolMode) {
-    console.log('mode change:', mode);
-    this.tracker.update(mode);
-  }
+  changed(mode: ToolMode) { this.tracker.update(mode) }
 
-  tracked(mode: ToolMode) {
-    console.log('tracked mode change:', mode, this.mode);
-    this.mode = mode;
-  }
+  tracked(mode: ToolMode) { this.mode = mode }
   // #endregion
 }

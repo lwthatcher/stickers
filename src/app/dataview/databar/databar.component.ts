@@ -121,6 +121,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.updateMode(this.mode);
     this.register_lblstream();
     this.register_sensor();
+    this.register_mode();
     // log when finished
     this.initialized = true;
     console.debug('width/height', this.width, this.height);
@@ -164,7 +165,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Event Handlers]
   stream_update(event) {
-    console.debug('label stream update:', event);
+    // console.debug('label stream update:', event);
     this.drawer.draw_labels();
     this.drawer.draw_handles();
   }

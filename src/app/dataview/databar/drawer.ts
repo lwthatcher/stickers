@@ -414,7 +414,6 @@ export class Drawer {
     let cursor = this.custom_cursor(this.region(), this.mode, overlaps);
     this.layers[Layer.SVG].classed('custom-cursor', !!cursor);
     this.draw_cursor(cursor);
-    console.debug('mouse move', this.region(), this.mouse_event.buttons, overlaps);
   }
 
   private mouse_leave() {
