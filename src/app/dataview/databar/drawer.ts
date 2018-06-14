@@ -32,6 +32,9 @@ type MouseBehavior = any
 
 // #region [Constants]
 const POINTER = 'M10,2A2,2 0 0,1 12,4V8.5C12,8.5 14,8.25 14,9.25C14,9.25 16,9 16,10C16,10 18,9.75 18,10.75C18,10.75 20,10.5 20,11.5V15C20,16 17,21 17,22H9C9,22 7,15 4,13C4,13 3,7 8,12V4A2,2 0 0,1 10,2Z'
+const BRUSH = 'M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z'
+
+const D3_EVENTS = ['zoom', 'drag', 'start', 'end']
 // #endregion
 
 export class Drawer {
@@ -81,7 +84,7 @@ export class Drawer {
     // register non-local behaviors
     this.layers[Layer.SVG].call(this.mouse);
     this.layers[Layer.SVG].call(this.zoom)
-                          .on("dblclick.zoom", null)
+                          .on("dblclick.zoom", null);
                           
   }
   // #endregion
@@ -106,6 +109,14 @@ export class Drawer {
   get mode() { return this.databar.mode }
 
   get labeller() { return this.databar.labeller }
+
+  get label_type() { return parseInt(this.databar.lbl_type) }
+
+  get mouse_event(): MouseEvent {
+    let event = d3.event;
+    if (D3_EVENTS.includes(event.type)) return event.sourceEvent;
+    else return event;
+  }
   // #endregion
 
   // #region [Public Plotting Methods]
@@ -399,10 +410,12 @@ export class Drawer {
   }
 
   private mouse_move() {
-    let cursor = this.custom_cursor(this.region(), this.mode);     // cursor will be null if not a custom cursor
+    // get the custom cursor path, or null if no custom cursor applies to this setting
+    let overlaps = this.overlaps()
+    let cursor = this.custom_cursor(this.region(), this.mode, overlaps);
     this.layers[Layer.SVG].classed('custom-cursor', !!cursor);
     this.draw_cursor(cursor);
-    console.debug('mouse move', this.region(), this.buttons());
+    console.debug('mouse move', this.region(), this.mouse_event.buttons, overlaps);
   }
 
   private mouse_enter() { }
@@ -414,19 +427,19 @@ export class Drawer {
   // #endregion
 
   // #region [Click Handlers]
+
+  /** general click call-back bound to the SVG */
   clicked(event: MouseEvent) {
-    // ignore clicks on labels
-    if (d3.select(event.target).classed('label')) { return }
-    // otherwise deselect any selected labels
-    this.labeller.deselect();
+    if (this.overlaps(event)) { return }    // ignore clicks on labels
+    this.labeller.deselect();               // deselect any selected labels
+    // if label-creation mode, add an event
     if (this.mode === ToolMode.Click) {
-      let px = event.x - this.databar.margin.left;
-      let type = parseInt(this.databar.lbl_type);
-      console.debug('click', px, this.xy(event))
-      this.labeller.add(px, type);
+      let [x,y] = this.xy(event);
+      this.labeller.add(x, this.label_type);
     }
   }
 
+  /** click call-back for when a label has been clicked */
   lbl_clicked(d) {
     if (this.mode === ToolMode.Selection)
       this.labeller.select(d)
@@ -439,14 +452,14 @@ export class Drawer {
     else return d3.mouse(this.layers[Layer.Zoom].node());
   }
 
-  private buttons(): number {
-    // add the +1 so 0 does not trigger the OR condition
-    let buttons = d3.event.buttons+1 || d3.event.sourceEvent.buttons+1;
-    return buttons-1;
+  private overlaps(event?: MouseEvent): boolean {
+    event = event || this.mouse_event;
+    return d3.select(event.target).classed('label');
   }
 
-  private custom_cursor(region, mode) {
-    if (region === 'frame' && mode === ToolMode.Click) return POINTER;
+  private custom_cursor(region, mode, overlaps) {
+    if (region === 'frame' && mode === ToolMode.Click && !overlaps) return POINTER;
+    if (region === 'frame' && mode === ToolMode.Click && overlaps) return BRUSH;
     else return null;
   }
   // #endregion
