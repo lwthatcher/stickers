@@ -40,7 +40,7 @@
                 </div>
             </div>
 
-            <toolbox-modes [sensor]="sensor" [tracker]="MODE"></toolbox-modes>
+            <toolbox-modes [sensor]="sensor" [tracker]="mode"></toolbox-modes>
 
             <div class="label-types tools-box">
                 <div class="btn-group btn-group-toggle" ngbRadioGroup name="radiolbl" [(ngModel)]="lbl">
@@ -62,7 +62,7 @@
         <app-databar  *ngIf="!sensor.hidden"
         [data_info]="data_info" 
         [sensor]="sensor"
-        [mode]="MODE"
+        [mode]="mode"
         [lbl_type]="lbl"
         [transform]="zoom_transform"
         [colorer]="colorer"

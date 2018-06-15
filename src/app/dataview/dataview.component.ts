@@ -87,7 +87,7 @@ export class DataviewComponent implements OnInit {
   sensors: Sensor[];
   zoom_transform;
   labelStreams: LabelStreamMap = {};
-  MODE: ModeTracker;
+  mode: ModeTracker;
   lbl: LabelKey;
   colorer: Colorer;
   print_ls: string;
@@ -99,7 +99,7 @@ export class DataviewComponent implements OnInit {
   constructor(private route: ActivatedRoute, 
               private dataloader: DataloaderService,
               private _settings: SettingsService) { 
-    this.MODE = new ModeTracker();
+    this.mode = new ModeTracker();
   }
 
   ngOnInit() {
