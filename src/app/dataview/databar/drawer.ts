@@ -425,8 +425,8 @@ export class Drawer {
     let buttons = this.mouse_event.buttons
     console.debug('mouse down', buttons);
     if ((buttons & 16) === 16) {
-      this.mode.cycle()
-      console.debug('mouse-forward btn', this.mode);
+      this.mode.cycle()   // update mode
+      this.mouse_move()   // redraw mouse
     }
   }
 
