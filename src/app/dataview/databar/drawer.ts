@@ -1,5 +1,5 @@
 import { DatabarComponent } from './databar.component';
-import { Label } from './labeller';
+import { Label } from '../labelstream';
 import { Selection, SelectionTransition } from './selection';
 import * as d3 from "d3";
 
