@@ -1,0 +1,7 @@
+<div class="label-types tools-box">
+    <div class="btn-group btn-group-toggle" ngbRadioGroup name="radiolbl" [(ngModel)]="lbl">
+        <label *ngFor="let c of colors" ngbButtonLabel [ngStyle]="style_color(c)" class="btn btn-lbl" [title]="eventMap[c]">
+            <input ngbButton type="radio" [value]=c [disabled]="sensor.hidden">
+        </label>
+    </div>
+</div>
