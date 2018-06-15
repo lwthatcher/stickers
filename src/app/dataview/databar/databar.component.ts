@@ -222,6 +222,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     let background = this.drawer.layers['zoom'];
     background.classed('selection-mode', mode.selection);
     background.classed('click-mode', mode.click);
+    console.debug('mode update:', mode.current);
     if (mode.click) { this.labeller.deselect() }
   }
 
