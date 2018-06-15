@@ -18,7 +18,7 @@ import { Sensor } from "../sensor";
 import { Colorer} from '../colorer';
 import { Labeller, Label, LabelStream } from './labeller';
 import { Drawer } from './drawer';
-import { ToolMode, ModeTracker } from './tool-mode.enum';
+import { ToolMode, ModeTracker } from '../modes/tool-mode';
 import * as d3 from "d3";
 // #endregion
 

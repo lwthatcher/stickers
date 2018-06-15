@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ToolMode, ModeTracker } from '../databar/tool-mode.enum';
+import { ToolMode, ModeTracker } from './tool-mode';
 import { Sensor } from '../sensor';
 
 @Component({

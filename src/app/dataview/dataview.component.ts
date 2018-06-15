@@ -7,7 +7,7 @@ import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service'
 import { Label, LabelStream, EventMap } from './databar/labeller';
-import { ToolMode, ModeTracker } from './databar/tool-mode.enum';
+import { ToolMode, ModeTracker } from './modes/tool-mode';
 import { Colorer } from './colorer';
 import { Sensor } from './sensor';
 // #endregion
