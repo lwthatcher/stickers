@@ -15,7 +15,6 @@ export interface EventMap {
 }
 // #endregion
 
-
 export class LabelStream {
     // #region [Variables]
     name: string;
@@ -57,9 +56,7 @@ export class LabelStream {
     // #endregion
 
     // #region [Helper Methods]
-    /**
-     * Checks whether another label with the same start/end time already exists
-     */
+    /** checks whether another label with the same start/end time already exists */
     private exists(lbl) {
         let idx = this.labels.findIndex((l) => {
             return l.start === lbl.start 
@@ -68,9 +65,7 @@ export class LabelStream {
         return (idx > -1)
     }
 
-    /**
-     * Sorts the labels by their start time
-     */
+    /** sorts the labels by their start time */
     private sort(labels) {
         let compare = (a,b) => { return a.start - b.start }
         labels.sort(compare);

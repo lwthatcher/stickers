@@ -10,6 +10,7 @@ import { Label, LabelStream, EventMap } from './labelstream';
 import { ToolMode, ModeTracker } from './modes/tool-mode';
 import { Colorer } from './colorer';
 import { Sensor } from './sensor';
+import { EventTypeMap } from './types/event-types';
 // #endregion
 
 // #region [Interfaces]
@@ -44,7 +45,7 @@ export class DataviewComponent implements OnInit {
   get eventMap(): EventMap {
     if (!this.is_labelled) return {}
     const ds = this.data_info.labelled as string;
-    return this.info.labels[ds]['event-map'];
+    return this.info._labels[ds]['event-map'];
   }
 
   get default_stream(): string {
@@ -75,6 +76,14 @@ export class DataviewComponent implements OnInit {
     if (this._colors === undefined) 
       this._colors = this.colorer.labels.entries.map((entry) => entry.key)
     return this._colors;
+  }
+
+  get event_maps() {
+    let result = []
+    for (let scheme of this.info.labelschemes) {
+      result.push(new EventTypeMap(scheme))
+    }
+    return result
   }
   // #endregion
 
