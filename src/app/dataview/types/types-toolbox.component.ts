@@ -10,7 +10,7 @@ type LabelKey = number | string
 @Component({
   selector: 'toolbox-types',
   templateUrl: 'types-toolbox.component.html',
-  styles: [':host { padding-left: 20px; }']
+  styleUrls: ['types-toolbox.component.css']
 })
 export class TypesToolboxComponent implements OnInit {
 
