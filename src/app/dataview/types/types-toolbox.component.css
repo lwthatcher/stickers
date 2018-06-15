@@ -1,3 +1,4 @@
+/*#region [Toolbox] */
 :host {
     display: contents;
 }
@@ -7,7 +8,9 @@
     display: inline-flex;
     padding-left: 20px;
 }
+/*#endregion */
 
+/*#region [Label Types] */
 div.btn-group > label.btn-lbl {
     border: gray;
     border-width: 1px;
@@ -18,3 +21,4 @@ div.btn-group > label.btn-lbl.active {
     border-width: 2px;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
+/*#endregion */
