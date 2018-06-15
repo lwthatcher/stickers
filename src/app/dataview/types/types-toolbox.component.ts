@@ -29,6 +29,9 @@ export class TypesToolboxComponent implements OnInit {
 
   ngOnInit() {
     console.groupCollapsed('types-toolbox init', this.sensor.name);
+    // initial selected label-type
+    this.lbl = this.event_types[0];
+    console.debug('lbl:', this.lbl);
     console.info('types-toolbox initialized', this);
     console.groupEnd();
   }
@@ -42,12 +45,20 @@ export class TypesToolboxComponent implements OnInit {
   }
 
   get eventMap() { return this.colorer.dataview.eventMap }
+
+  get event_types(): string[] { return Object.keys(this.eventMap) }
   // #endregion
 
   // #region [Public Methods]
   style_color(label: number) {
     let c = this.colorer.labels.get(label);
     return {"background-color": c};
+  }
+  // #endregion
+
+  // #region [Event Handlers]
+  changed(event) {
+    console.debug('label type change:', event);
   }
   // #endregion
 }
