@@ -79,11 +79,7 @@ export class DataviewComponent implements OnInit {
   }
 
   get event_maps() {
-    let result = []
-    for (let scheme of this.info.labelschemes) {
-      result.push(new EventTypeMap(scheme))
-    }
-    return result
+    return this.info.labelschemes.map((scheme) => {return new EventTypeMap(scheme)})
   }
   // #endregion
 
@@ -125,16 +121,20 @@ export class DataviewComponent implements OnInit {
     this.sensors = this.setupSensors(this.data_info.channels);
     // specify which data to load
     this.dataloader.loadDataset(this.data_info);
+    // create label-streams based on event-maps
+    for (let emap of this.event_maps) {
+      this.addStream(emap.name, emap);
+    }
     // parse labels (when ready)
     if (this.is_labelled) {
       let _labels = this.dataloader.getLabels(this.dataset);
       this.parse_labels(_labels)
-          .then((labels) => { this.addStream(this.default_stream, labels) })
+          .then((labels) => { this.setLabels(this.default_stream, labels) })
     }
     // initial selected label-type
     this.lbl = this.event_types[0];
     // add user-labels stream, setup default save-lbls stream
-    this.addStream('user-labels', []);
+    this.addStream('user-labels');
     this.print_ls = this.default_stream;
     // component initialized
     console.info('dataview initialized', this);
@@ -158,8 +158,13 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Label Streams]
-  private addStream(name: string, labels: Label[] = []) {
-    this.labelStreams[name] = new LabelStream(name, labels, this.eventMap);
+  private addStream(name: string, emap: EventTypeMap = undefined) {
+    emap = emap || new EventTypeMap({name})
+    this.labelStreams[name] = new LabelStream(name, [], emap);
+  }
+
+  private setLabels(name: string, labels: Label[]) {
+    this.labelStreams[name].set_labels(labels);
   }
   // #endregion
 

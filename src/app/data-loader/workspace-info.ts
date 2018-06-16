@@ -17,7 +17,7 @@ export interface DataInfo {
 
 export interface LabelSchemeInfo {
     // passed in params
-    workspace: string;
+    workspace?: string;
     name: string;
     // required params
     event_map: EventMap;

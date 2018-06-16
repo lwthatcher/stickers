@@ -1,4 +1,5 @@
 import { EventEmitter } from '@angular/core';
+import { EventTypeMap } from './types/event-types';
 
 // #region [Interfaces]
 export interface Label {
@@ -21,21 +22,28 @@ export class LabelStream {
     labels: Label[];
     event: EventEmitter<string>;
     emap: EventMap;
+    event_map: EventTypeMap;
     private _i: number;
     // #endregion
 
     // #region [Constructor]
-    constructor(name:string, labels: Label[], emap: EventMap = {}) {
+    constructor(name:string, labels: Label[], event_map: EventTypeMap = undefined) {
         this.name = name;
-        this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl} )
-        this._i = this.labels.length;
-        this.emap = emap;
+        this.set_labels(labels);
+        this.event_map = event_map;
+        if (!event_map) this.emap = {}
+        else this.emap = event_map._emap;
         this.event = new EventEmitter<string>();
         this.event.emit('init');
     }
     // #endregion
 
     // #region [Public Methods]
+    set_labels(labels: Label[]) {
+        this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl })
+        this._i = this.labels.length;
+    }
+
     remove(lbl: Label) { 
         this.labels = this.labels.filter((l) => { return l.id !== lbl.id })
     }

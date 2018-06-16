@@ -1,17 +1,19 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Sensor } from '../sensor';
 import { Colorer } from '../colorer';
-
+import { LabelStream } from '../labelstream';
 
 // #region [Interfaces]
 type LabelKey = number | string
 // #endregion
 
+// #region [Metadata]
 @Component({
   selector: 'toolbox-types',
   templateUrl: 'types-toolbox.component.html',
   styleUrls: ['types-toolbox.component.css']
 })
+// #endregion
 export class TypesToolboxComponent implements OnInit {
 
   // #region [Variables]
@@ -22,6 +24,7 @@ export class TypesToolboxComponent implements OnInit {
   // #region [Inputs]
   @Input() sensor: Sensor;
   @Input() colorer: Colorer;
+  @Input() labelstream: LabelStream;
   // #endregion
 
   // #region [Constructors]
@@ -29,8 +32,7 @@ export class TypesToolboxComponent implements OnInit {
 
   ngOnInit() {
     console.groupCollapsed('types-toolbox init', this.sensor.name);
-    // initial selected label-type
-    this.lbl = this.event_types[0];
+    this.lbl = this.event_types[0];   // initial selected label-type
     console.debug('lbl:', this.lbl);
     console.info('types-toolbox initialized', this);
     console.groupEnd();

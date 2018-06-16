@@ -3,6 +3,8 @@ import { LabelSchemeInfo, EventMap } from '../../data-loader/workspace-info';
 
 // #region [Interfaces]
 type LabelKey = number | string
+
+type WeakScheme = {name: string}
 // #endregion
 
 export class EventTypeMap {
@@ -11,15 +13,18 @@ export class EventTypeMap {
     // #endregion
 
     // #region [Variables]
-    _emap: EventMap;
+    name: string;
     null_label: LabelKey;
-    private scheme: LabelSchemeInfo;
+    _emap: EventMap;
+    scheme: LabelSchemeInfo;
     // #endregion
 
     // #region [Constructor]
+    constructor(scheme: WeakScheme)
     constructor(labelscheme: LabelSchemeInfo) {
         this.scheme = labelscheme;
-        this._emap = labelscheme.event_map;
+        this.name = labelscheme.name;
+        this._emap = labelscheme.event_map || {};
         this.null_label = labelscheme.null_label || 0;
     }
     // #endregion
