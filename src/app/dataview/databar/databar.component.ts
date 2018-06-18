@@ -44,7 +44,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() sensor: Sensor;
   @Input() labelstream: LabelStream;
   @Input() mode: ModeTracker;
-  @Input() lbl_type;
   @Input() colorer: Colorer;
   // #endregion
 
@@ -166,26 +165,23 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Event Handlers]
   stream_update(event) {
-    // console.debug('label stream update:', event);
-    this.drawer.draw_labels();
-    this.drawer.draw_handles();
+    if (event === 'change-type') { this.type_changed(event) }
+    else { this.redraw_labels() }
   }
 
   stream_changed(change) {
     this.register_lblstream();
     console.debug('lbl stream changed', this.is_registered, this.labelstream);
-    if (!this.is_registered) console.warn('label stream not registered!', this);
-    // redraw labels/drag-handles
-    this.drawer.draw_labels();
-    this.drawer.draw_handles();
+    if (!this.is_registered)
+        console.warn('label stream not registered!', this);
+    this.redraw_labels();
   }
 
   mode_changed(change) { this.updateMode(this.mode) }
 
   type_changed(change) {
-    // TODO: we want to find some other functionality than this...
-    if (this.selected_label) 
-        this.labeller.change_label(this.selected_label, this.lbl_type);
+    console.debug('type change:', change)
+    // todo: if selected-label -> change-type
   }
 
   sensor_update(event) {
@@ -195,10 +191,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
       this.drawer.clear();
       this.drawer.draw();
     }
-    else if (event === 'toggle-labels') {
-      this.drawer.draw_labels();
-      this.drawer.draw_handles();
-    }
+    else if (event === 'toggle-labels') { this.redraw_labels() }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -317,6 +310,11 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   private domains_and_ranges() {
     let dr = (d) => {return [d.domain(), d.range()]}
     return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
+  }
+
+  private redraw_labels() {
+    this.drawer.draw_labels();
+    this.drawer.draw_handles();
   }
   // #endregion
 }

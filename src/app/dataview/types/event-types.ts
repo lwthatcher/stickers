@@ -39,7 +39,7 @@ export class EventTypeMap {
     // #endregion
 
     // #region [Public Methods]
-    get(key: LabelKey) {
+    get(key: LabelKey): string {
         // if null-label, return special string
         if (this.isNull(key)) return this.NULL_LABEL;
         // check if valid key
