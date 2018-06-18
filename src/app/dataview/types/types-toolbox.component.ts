@@ -41,18 +41,20 @@ export class TypesToolboxComponent implements OnInit {
 
   // #region [Accessors]
   get colors() {
-    return this.colorer.lbls(this.sensor.labelstream).entries.map((entry) => entry.key)
+    return this.colorer.lbls(this.labelstream.name).entries.map((entry) => entry.key)
   }
 
-  get eventMap() { return this.colorer.dataview.eventMap }
-
-  get event_types(): string[] { return Object.keys(this.eventMap) }
+  get event_types(): string[] { return this.labelstream.event_map.event_types }
   // #endregion
 
   // #region [Public Methods]
   style_color(label: number) {
-    let c = this.colorer.lbls(this.sensor.labelstream).get(label);
+    let c = this.colorer.lbls(this.labelstream.name).get(label);
     return {"background-color": c};
+  }
+
+  event_name(label: number) {
+    return this.labelstream.event_map.get(label)
   }
   // #endregion
 

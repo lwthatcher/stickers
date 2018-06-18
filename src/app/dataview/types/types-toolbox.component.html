@@ -8,7 +8,7 @@
         ngbButtonLabel 
         [ngStyle]="style_color(c)" 
         class="btn btn-lbl" 
-        [title]="eventMap[c]">
+        [title]="event_name(c)">
             <input ngbButton type="radio" [value]=c [disabled]="sensor.hidden">
         </label>
     </div>
