@@ -4,9 +4,9 @@ import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { saveAs } from 'file-saver/FileSaver';
 import { DataloaderService } from '../data-loader/data-loader.service';
-import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
+import { WorkspaceInfo, DataInfo, EventMap } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service'
-import { Label, LabelStream, EventMap } from './labelstream';
+import { Label, LabelStream} from './labelstream';
 import { ToolMode, ModeTracker } from './modes/tool-mode';
 import { Colorer } from './colorer';
 import { Sensor } from './sensor';

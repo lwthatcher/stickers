@@ -15,8 +15,8 @@ export class EventTypeMap {
     // #region [Variables]
     name: string;
     null_label: LabelKey;
-    _emap: EventMap;
-    scheme: LabelSchemeInfo;
+    private _emap: EventMap;
+    private scheme: LabelSchemeInfo;
     // #endregion
 
     // #region [Constructor]
@@ -31,6 +31,8 @@ export class EventTypeMap {
 
     // #region [Accessors]
     get event_types() { return Object.keys(this._emap) }
+
+    get labelscheme() { return this.scheme }
     // #endregion
 
     // #region [Public Methods]

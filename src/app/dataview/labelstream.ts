@@ -10,10 +10,6 @@ export interface Label {
     selected?: boolean;
     id?: number;
 }
-
-export interface EventMap {
-    [index: number]: string;
-}
 // #endregion
 
 export class LabelStream {
@@ -54,7 +50,7 @@ export class LabelStream {
     // #endregion
 
     // #region [Selected Label]
-    
+
     // #endregion
 
     // #region [Utility Methods]
