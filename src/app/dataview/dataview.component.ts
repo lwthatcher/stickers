@@ -83,7 +83,6 @@ export class DataviewComponent implements OnInit {
   zoom_transform;
   labelStreams: LabelStreamMap = {};
   mode: ModeTracker;
-  lbl: LabelKey;
   colorer: Colorer;
   print_ls: string;
   private _idx_map: Map<number,number[]>;

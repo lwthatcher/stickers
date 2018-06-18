@@ -426,15 +426,18 @@ export class Drawer {
   private mouse_down() {
     let buttons = this.mouse_event.buttons
     console.debug('mouse down', buttons);
-    if ((buttons & 16) === 16) {
-      this.mode.cycle()   // update mode
-      this.mouse_move()   // redraw mouse
-    }
+    if ((buttons & 16) === 16) { this.forward_click() }
+    if ((buttons & 4) === 4) { this.middle_click() }
   }
 
   private mouse_up() {
     console.debug('mouse up', this.mouse_event.button);
+    // prevent page-forward
     if (this.mouse_event.button === 4) {
+      this.mouse_event.preventDefault();
+    }
+    // prevent page-backwards
+    if (this.mouse_event.button === 3) {
       this.mouse_event.preventDefault();
     }
   }
@@ -457,6 +460,17 @@ export class Drawer {
   lbl_clicked(lbl) {
     if (this.mode.selection) this.labeller.select(lbl)
     if (this.mode.click)     this.labeller.change_label(lbl, this.label_type)
+  }
+
+  /** call-back for pressing the middle scroll-wheel button */
+  middle_click() {
+    console.debug('middle click');
+  }
+
+  /** call-back for pressing the "page-forward" button on the mouse */
+  forward_click() {
+    this.mode.cycle();    // cycle through mode
+    this.mouse_move();    // redraw mouse
   }
   // #endregion
 
