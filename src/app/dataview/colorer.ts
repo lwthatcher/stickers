@@ -11,9 +11,12 @@ type LabelstreamColorMap = { [name:string]: ColorMap }
 // #endregion
 
 export class Colorer {
+    // #region [Variables]
     dataview: DataviewComponent;
     lines: ColorMap;
-    _lbls: LabelstreamColorMap = {};
+    private _lbls: LabelstreamColorMap = {};
+    // #endregion
+
     // #region [Constructor]
     constructor(dataview: DataviewComponent) {
         this.dataview = dataview;
@@ -23,8 +26,6 @@ export class Colorer {
 
     // #region [Accessors]
     get settings() { return this.dataview.settings }
-
-    get etypes() { return this.dataview.event_types }
     // #endregion
 
     // #region [Public Methods]

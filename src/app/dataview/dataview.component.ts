@@ -60,8 +60,6 @@ export class DataviewComponent implements OnInit {
     return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i, channel: c} })
   }
 
-  get event_types(): string[] { return Object.keys(this.eventMap) }
-
   get idx_map(): IndexMap {
     if (!this._idx_map) 
       this._idx_map = Sensor.gen_idx_map(this.data_info.channels);
@@ -230,8 +228,8 @@ export class DataviewComponent implements OnInit {
     console.groupCollapsed('label streams');
       console.log('label streams:', this.labelStreams);
       console.log('num observers:', this.getObservers());
-      console.log('event-map:', this.eventMap);
       console.log('default label stream:', this.default_stream);
+      console.log('event maps:', this.event_maps);
     console.groupEnd();
     console.log('dataview component', this);
     console.groupEnd();
