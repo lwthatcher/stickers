@@ -101,8 +101,8 @@ export class Labeller {
         start = this.overlaps(start, temp, "left");
         end = this.overlaps(end, temp, "right");
         // add label
-        let lbl = { start, end, label } as Label
-        if (!this.is_empty(this.ls.emap)) lbl.type = this.ls.emap[label]
+        let type = this.ls.event_map.get(label);
+        let lbl = { start, end, label, type } as Label
         this.ls.add(lbl);
         // notify observers
         this.ls.event.emit('add');
@@ -110,17 +110,12 @@ export class Labeller {
 
     change_label(lbl: Label, new_label: number) {
         lbl.label = new_label;
-        if (!this.is_empty(this.ls.emap)) 
-            lbl.type = this.ls.emap[new_label]
+        lbl.type = this.ls.event_map.get(new_label);
         this.ls.event.emit('change-label');
     }
     // #endregion
 
     // #region [Helper Methods]
-    private is_empty(emap: EventMap) {
-        return Object.keys(emap).length === 0;
-    }
-
     private zero_width(lbl: Label) {
         return lbl.start === lbl.end;
     }

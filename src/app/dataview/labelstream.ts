@@ -21,7 +21,6 @@ export class LabelStream {
     name: string;
     labels: Label[];
     event: EventEmitter<string>;
-    emap: EventMap;
     event_map: EventTypeMap;
     private _i: number;
     // #endregion
@@ -31,14 +30,12 @@ export class LabelStream {
         this.name = name;
         this.set_labels(labels);
         this.event_map = event_map;
-        if (!event_map) this.emap = {}
-        else this.emap = event_map._emap;
         this.event = new EventEmitter<string>();
         this.event.emit('init');
     }
     // #endregion
 
-    // #region [Public Methods]
+    // #region [Label Editting]
     set_labels(labels: Label[]) {
         this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl })
         this._i = this.labels.length;
@@ -54,7 +51,13 @@ export class LabelStream {
         this._i++;
         this.labels.push(lbl);
     }
+    // #endregion
 
+    // #region [Selected Label]
+    
+    // #endregion
+
+    // #region [Utility Methods]
     toJSON() {
         let simplify = (lbl) => {return {start: lbl.start, end: lbl.end, label: lbl.label} }
         let lbls = this.labels.map(simplify);
