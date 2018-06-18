@@ -20,14 +20,14 @@ export interface LabelSchemeInfo {
     workspace?: string;
     name: string;
     // required params
-    event_map: EventMap;
+    event_map: TypeMap;
     // optional params
     path?: string;
     video?: string;
     null_label?: LabelKey;
 }
 
-export interface EventMap {
+export interface TypeMap {
     [index: number]: string;
 }
 

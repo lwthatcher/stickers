@@ -4,13 +4,13 @@ import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { saveAs } from 'file-saver/FileSaver';
 import { DataloaderService } from '../data-loader/data-loader.service';
-import { WorkspaceInfo, DataInfo, EventMap } from '../data-loader/workspace-info';
+import { WorkspaceInfo, DataInfo, TypeMap } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service'
 import { Label, LabelStream} from './labelstream';
 import { ToolMode, ModeTracker } from './modes/tool-mode';
 import { Colorer } from './colorer';
 import { Sensor } from './sensor';
-import { EventTypeMap, LabelKey } from './types/event-types';
+import { EventMap, LabelKey } from './types/event-types';
 // #endregion
 
 // #region [Interfaces]
@@ -40,7 +40,7 @@ export class DataviewComponent implements OnInit {
   // #region [Accessors]
   get is_labelled(): boolean { return !!this.data_info.labelled }
 
-  get eventMap(): EventMap {
+  get eventMap(): TypeMap {
     if (!this.is_labelled) return {}
     const ds = this.data_info.labelled as string;
     return this.info._labels[ds]['event-map'];
@@ -77,7 +77,7 @@ export class DataviewComponent implements OnInit {
   }
 
   get event_maps() {
-    return this.info.labelschemes.map((scheme) => {return new EventTypeMap(scheme)})
+    return this.info.labelschemes.map((scheme) => {return new EventMap(scheme)})
   }
   // #endregion
 
@@ -156,8 +156,8 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Label Streams]
-  private addStream(name: string, emap: EventTypeMap = undefined) {
-    emap = emap || new EventTypeMap({name})
+  private addStream(name: string, emap: EventMap = undefined) {
+    emap = emap || new EventMap({name})
     this.labelStreams[name] = new LabelStream(name, [], emap);
   }
 

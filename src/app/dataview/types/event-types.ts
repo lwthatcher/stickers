@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import { LabelSchemeInfo, EventMap } from '../../data-loader/workspace-info';
+import { LabelSchemeInfo, TypeMap } from '../../data-loader/workspace-info';
 
 // #region [Interfaces]
 export type LabelKey = number | string
@@ -7,7 +7,7 @@ export type LabelKey = number | string
 type WeakScheme = {name: string}
 // #endregion
 
-export class EventTypeMap {
+export class EventMap {
     // #region [Constants]
     NULL_LABEL = 'Ø'
     // #endregion
@@ -15,7 +15,7 @@ export class EventTypeMap {
     // #region [Variables]
     name: string;
     null_label: LabelKey;
-    private _emap: EventMap;
+    private _emap: TypeMap;
     private scheme: LabelSchemeInfo;
     // #endregion
 

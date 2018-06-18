@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import { EventTypeMap, LabelKey } from './types/event-types';
+import { EventMap, LabelKey } from './types/event-types';
 
 // #region [Interfaces]
 export interface Label {
@@ -17,13 +17,13 @@ export class LabelStream {
     name: string;
     labels: Label[];
     event: EventEmitter<string>;
-    emap: EventTypeMap;
+    emap: EventMap;
     private _type: LabelKey;
     private _i: number;
     // #endregion
 
     // #region [Constructor]
-    constructor(name:string, labels: Label[], emap: EventTypeMap = undefined) {
+    constructor(name:string, labels: Label[], emap: EventMap = undefined) {
         this.name = name;
         this.set_labels(labels);
         this.emap = emap;
