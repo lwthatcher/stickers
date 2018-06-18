@@ -4,12 +4,12 @@
     name="radiolbl" 
     [(ngModel)]="lbl"
     (ngModelChange)="changed($event)">
-        <label *ngFor="let c of colors" 
+        <label *ngFor="let t of event_types" 
         ngbButtonLabel 
-        [ngStyle]="style_color(c)" 
+        [ngStyle]="style_color(t)" 
         class="btn btn-lbl" 
-        [title]="event_name(c)">
-            <input ngbButton type="radio" [value]=c [disabled]="sensor.hidden">
+        [title]="event_name(t)">
+            <input ngbButton type="radio" [value]=t [disabled]="sensor.hidden">
         </label>
     </div>
 </div>

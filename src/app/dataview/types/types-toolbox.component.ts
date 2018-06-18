@@ -44,9 +44,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   // #region [Accessors]
   get emap() { return this.labelstream.emap }
 
-  get colors() { return this.emap.event_types(true) }
-
-  get event_types() { return this.emap.event_types() }
+  get event_types() { return this.emap.event_types(true) }
   // #endregion
 
   // #region [Public Methods]
