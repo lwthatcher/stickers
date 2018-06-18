@@ -14,6 +14,7 @@ import { LabelKey } from './event-types';
 export class TypesToolboxComponent implements OnInit, OnChanges {
   // #region [Variables]
   lbl: LabelKey;
+  registration;
   // #endregion
 
   // #region [Inputs]
@@ -29,6 +30,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     console.groupCollapsed('types-toolbox init', this.sensor.name);
     this.lbl = this.emap.initial;
     console.debug('initial lbl:', this.lbl);
+    this.register_lblstream();
     console.info('types-toolbox initialized', this);
     console.groupEnd();
   }
@@ -65,8 +67,23 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   }
 
   stream_changed() {
+    this.register_lblstream();
     console.debug('label-stream change:', this.labelstream);
     this.lbl = this.labelstream.lbl_type.toString();
+  }
+
+  stream_update(event) {
+    if (event === 'change-type') 
+      this.lbl = this.labelstream.lbl_type.toString();
+  }
+  // #endregion
+
+  // #region [Registrations]
+  private register_lblstream() {
+    if (!this.labelstream) return false;
+    if (this.registration) this.registration.unsubscribe();
+    this.registration = this.labelstream.event.subscribe((e) => { this.stream_update(e) })
+    return true;
   }
   // #endregion
 }

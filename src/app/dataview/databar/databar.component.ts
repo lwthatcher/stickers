@@ -117,7 +117,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     // draw data (when it loads)
     this.start_spinner();
     this.drawer.draw();
-    // mode and label-stream initialization
+    // initialize mode and register observers
     this.updateMode(this.mode);
     this.register_lblstream();
     this.register_sensor();
@@ -232,7 +232,9 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.drawer.draw_labels();
     this.drawer.draw_handles();
   }
+  // #endregion
 
+  // #region [Registrations]
   private register_lblstream() {
     if (!this.labelstream) return false;
     if (this.registration) this.registration.unsubscribe();
