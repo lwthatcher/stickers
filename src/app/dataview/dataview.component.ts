@@ -10,7 +10,7 @@ import { Label, LabelStream} from './labelstream';
 import { ToolMode, ModeTracker } from './modes/tool-mode';
 import { Colorer } from './colorer';
 import { Sensor } from './sensor';
-import { EventTypeMap } from './types/event-types';
+import { EventTypeMap, LabelKey } from './types/event-types';
 // #endregion
 
 // #region [Interfaces]
@@ -26,8 +26,6 @@ type LabelStreamMap = { [name: string]: LabelStream }
 
 type IdxEntries = [number, number[]][]
 type IndexMap = Map<number,number[]>
-
-type LabelKey = number | string
 // #endregion
 
 // #region [Metadata]

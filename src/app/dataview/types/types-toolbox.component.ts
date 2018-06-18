@@ -2,10 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Sensor } from '../sensor';
 import { Colorer } from '../colorer';
 import { LabelStream } from '../labelstream';
-
-// #region [Interfaces]
-type LabelKey = number | string
-// #endregion
+import { LabelKey } from './event-types';
 
 // #region [Metadata]
 @Component({
@@ -15,10 +12,8 @@ type LabelKey = number | string
 })
 // #endregion
 export class TypesToolboxComponent implements OnInit {
-
   // #region [Variables]
   lbl: LabelKey;
-  private _colors;
   // #endregion
 
   // #region [Inputs]
@@ -34,6 +29,7 @@ export class TypesToolboxComponent implements OnInit {
     console.groupCollapsed('types-toolbox init', this.sensor.name);
     this.lbl = this.event_types[0];   // initial selected label-type
     console.debug('lbl:', this.lbl);
+    console.log('COLORS:', this.colors, this.labelstream.emap.event_types(true))
     console.info('types-toolbox initialized', this);
     console.groupEnd();
   }
@@ -44,7 +40,7 @@ export class TypesToolboxComponent implements OnInit {
     return this.colorer.lbls(this.labelstream.name).entries.map((entry) => entry.key)
   }
 
-  get event_types(): string[] { return this.labelstream.emap.event_types }
+  get event_types() { return this.labelstream.emap.event_types() }
   // #endregion
 
   // #region [Public Methods]

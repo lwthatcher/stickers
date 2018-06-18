@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import { EventTypeMap } from './types/event-types';
+import { EventTypeMap, LabelKey } from './types/event-types';
 
 // #region [Interfaces]
 export interface Label {
@@ -18,6 +18,7 @@ export class LabelStream {
     labels: Label[];
     event: EventEmitter<string>;
     emap: EventTypeMap;
+    private _type: LabelKey;
     private _i: number;
     // #endregion
 
@@ -26,9 +27,14 @@ export class LabelStream {
         this.name = name;
         this.set_labels(labels);
         this.emap = emap;
+        this._type = this.emap.event_types()[0];
         this.event = new EventEmitter<string>();
         this.event.emit('init');
     }
+    // #endregion
+
+    // #region [Accessors]
+    get lbl_type() { return this._type }
     // #endregion
 
     // #region [Label Editting]
@@ -49,8 +55,11 @@ export class LabelStream {
     }
     // #endregion
 
-    // #region [Selected Label]
-
+    // #region [Selected Event Type]
+    change_type(type: LabelKey) {
+        this._type = type;
+        this.event.emit('change-type');
+    }
     // #endregion
 
     // #region [Utility Methods]

@@ -2,7 +2,7 @@ import { EventEmitter } from '@angular/core';
 import { LabelSchemeInfo, EventMap } from '../../data-loader/workspace-info';
 
 // #region [Interfaces]
-type LabelKey = number | string
+export type LabelKey = number | string
 
 type WeakScheme = {name: string}
 // #endregion
@@ -30,8 +30,6 @@ export class EventTypeMap {
     // #endregion
 
     // #region [Accessors]
-    get event_types() { return Object.keys(this._emap) }
-
     get labelscheme() { return this.scheme }
     // #endregion
 
@@ -43,6 +41,12 @@ export class EventTypeMap {
         key = this.toInt(key);
         if (!(key in this._emap)) { console.warn('unexpected label key:', key) }
         return this._emap[key];
+    }
+
+    event_types(include_null: boolean = false): string[] {
+        let types = Object.keys(this._emap);
+        if (!include_null) return types;
+        else return [this.null_label.toString(), ...types];
     }
     // #endregion
 
