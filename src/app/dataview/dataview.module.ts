@@ -5,6 +5,7 @@ import { DatabarComponent } from './databar/databar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
+import { TypesToolboxComponent } from './types/types-toolbox.component';
 
 @NgModule({
   imports: [
@@ -12,7 +13,7 @@ import { ModesToolboxComponent } from './modes/modes-toolbox.component';
     NgbModule,
     FormsModule
   ],
-  declarations: [DataviewComponent, DatabarComponent, ModesToolboxComponent],
+  declarations: [DataviewComponent, DatabarComponent, ModesToolboxComponent, TypesToolboxComponent],
   providers: []
 })
 export class DataviewModule { }

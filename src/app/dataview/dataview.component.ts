@@ -4,12 +4,13 @@ import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { saveAs } from 'file-saver/FileSaver';
 import { DataloaderService } from '../data-loader/data-loader.service';
-import { WorkspaceInfo, DataInfo } from '../data-loader/workspace-info';
+import { WorkspaceInfo, DataInfo, TypeMap } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service'
-import { Label, LabelStream, EventMap } from './databar/labeller';
+import { Label, LabelStream} from './labelstream';
 import { ToolMode, ModeTracker } from './modes/tool-mode';
 import { Colorer } from './colorer';
 import { Sensor } from './sensor';
+import { EventMap, LabelKey } from './types/event-types';
 // #endregion
 
 // #region [Interfaces]
@@ -21,12 +22,10 @@ interface SensorInfo {
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
 
-type LabelStreamMap = { [key: string]: LabelStream }
+type LabelStreamMap = { [name: string]: LabelStream }
 
 type IdxEntries = [number, number[]][]
 type IndexMap = Map<number,number[]>
-
-type LabelKey = number | string
 // #endregion
 
 // #region [Metadata]
@@ -41,10 +40,10 @@ export class DataviewComponent implements OnInit {
   // #region [Accessors]
   get is_labelled(): boolean { return !!this.data_info.labelled }
 
-  get eventMap(): EventMap {
+  get eventMap(): TypeMap {
     if (!this.is_labelled) return {}
     const ds = this.data_info.labelled as string;
-    return this.info.labels[ds]['event-map'];
+    return this.info._labels[ds]['event-map'];
   }
 
   get default_stream(): string {
@@ -61,8 +60,6 @@ export class DataviewComponent implements OnInit {
     return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i, channel: c} })
   }
 
-  get event_types(): string[] { return Object.keys(this.eventMap) }
-
   get idx_map(): IndexMap {
     if (!this._idx_map) 
       this._idx_map = Sensor.gen_idx_map(this.data_info.channels);
@@ -71,10 +68,8 @@ export class DataviewComponent implements OnInit {
 
   get settings() { return this._settings; }
 
-  get colors() {
-    if (this._colors === undefined) 
-      this._colors = this.colorer.labels.entries.map((entry) => entry.key)
-    return this._colors;
+  get event_maps() {
+    return this.info.labelschemes.map((scheme) => {return new EventMap(scheme)})
   }
   // #endregion
 
@@ -87,19 +82,18 @@ export class DataviewComponent implements OnInit {
   sensors: Sensor[];
   zoom_transform;
   labelStreams: LabelStreamMap = {};
-  MODE: ModeTracker;
+  mode: ModeTracker;
   lbl: LabelKey;
   colorer: Colorer;
   print_ls: string;
   private _idx_map: Map<number,number[]>;
-  private _colors = undefined;
   // #endregion
 
   // #region [Constructors]
   constructor(private route: ActivatedRoute, 
               private dataloader: DataloaderService,
               private _settings: SettingsService) { 
-    this.MODE = new ModeTracker();
+    this.mode = new ModeTracker();
   }
 
   ngOnInit() {
@@ -116,16 +110,18 @@ export class DataviewComponent implements OnInit {
     this.sensors = this.setupSensors(this.data_info.channels);
     // specify which data to load
     this.dataloader.loadDataset(this.data_info);
+    // create label-streams based on event-maps
+    for (let emap of this.event_maps) {
+      this.addStream(emap.name, emap);
+    }
     // parse labels (when ready)
     if (this.is_labelled) {
       let _labels = this.dataloader.getLabels(this.dataset);
       this.parse_labels(_labels)
-          .then((labels) => { this.addStream(this.default_stream, labels) })
+          .then((labels) => { this.setLabels(this.default_stream, labels) })
     }
-    // initial selected label-type
-    this.lbl = this.event_types[0];
     // add user-labels stream, setup default save-lbls stream
-    this.addStream('user-labels', []);
+    this.addStream('user-labels');
     this.print_ls = this.default_stream;
     // component initialized
     console.info('dataview initialized', this);
@@ -137,20 +133,14 @@ export class DataviewComponent implements OnInit {
   }
   // #endregion
 
-  // #region [Label Types]
-  style_color(label: number) {
-    let c = this.colorer.labels.get(label);
-    return {"background-color": c};
-  }
-
-  is_active(label: LabelKey) {
-    return this.lbl == label;
-  }
-  // #endregion
-
   // #region [Label Streams]
-  private addStream(name: string, labels: Label[] = []) {
-    this.labelStreams[name] = new LabelStream(name, labels, this.eventMap);
+  private addStream(name: string, emap: EventMap = undefined) {
+    emap = emap || new EventMap({name})
+    this.labelStreams[name] = new LabelStream(name, [], emap);
+  }
+
+  private setLabels(name: string, labels: Label[]) {
+    this.labelStreams[name].set_labels(labels);
   }
   // #endregion
 
@@ -238,8 +228,8 @@ export class DataviewComponent implements OnInit {
     console.groupCollapsed('label streams');
       console.log('label streams:', this.labelStreams);
       console.log('num observers:', this.getObservers());
-      console.log('event-map:', this.eventMap);
       console.log('default label stream:', this.default_stream);
+      console.log('event maps:', this.event_maps);
     console.groupEnd();
     console.log('dataview component', this);
     console.groupEnd();

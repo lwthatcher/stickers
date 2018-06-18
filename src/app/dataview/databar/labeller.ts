@@ -1,78 +1,7 @@
 import { DatabarComponent } from './databar.component';
 import { EventEmitter } from '@angular/core';
+import { Label } from '../labelstream';
 import * as d3 from "d3";
-
-// #region [Interfaces]
-export interface Label {
-    start: number;
-    end: number;
-    label: number;
-    type?: string;
-    selected?: boolean;
-    id?: number;
-}
-
-export interface EventMap {
-    [index: number]: string;
-}
-// #endregion
-
-// #region [Label Streams]
-export class LabelStream {
-    name: string;
-    labels: Label[];
-    event: EventEmitter<string>;
-    emap: EventMap;
-    private _i: number;
-
-    constructor(name:string, labels: Label[], emap: EventMap = {}) {
-        this.name = name;
-        this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl} )
-        this._i = this.labels.length;
-        this.emap = emap;
-        this.event = new EventEmitter<string>();
-        this.event.emit('init');
-    }
-
-    remove(lbl: Label) { 
-        this.labels = this.labels.filter((l) => { return l.id !== lbl.id })
-    }
-
-    add(lbl: Label) {
-        if (this.exists(lbl)) {console.warn('this label already exists', lbl); return; }
-        lbl.id = this._i;
-        this._i++;
-        this.labels.push(lbl);
-    }
-
-    toJSON() {
-        let simplify = (lbl) => {return {start: lbl.start, end: lbl.end, label: lbl.label} }
-        let lbls = this.labels.map(simplify);
-        lbls = this.sort(lbls);
-        return JSON.stringify(lbls);
-    }
-
-    /**
-     * Checks whether another label with the same start/end time already exists
-     */
-    private exists(lbl) {
-        let idx = this.labels.findIndex((l) => {
-            return l.start === lbl.start 
-                && l.end   === lbl.end 
-        })
-        return (idx > -1)
-    }
-
-    /**
-     * Sorts the labels by their start time
-     */
-    private sort(labels) {
-        let compare = (a,b) => { return a.start - b.start }
-        labels.sort(compare);
-        return labels;
-    }
-}
-// #endregion
 
 export class Labeller {
     // #region [Constants]
@@ -172,8 +101,8 @@ export class Labeller {
         start = this.overlaps(start, temp, "left");
         end = this.overlaps(end, temp, "right");
         // add label
-        let lbl = { start, end, label } as Label
-        if (!this.is_empty(this.ls.emap)) lbl.type = this.ls.emap[label]
+        let type = this.ls.emap.get(label);
+        let lbl = { start, end, label, type } as Label
         this.ls.add(lbl);
         // notify observers
         this.ls.event.emit('add');
@@ -181,17 +110,12 @@ export class Labeller {
 
     change_label(lbl: Label, new_label: number) {
         lbl.label = new_label;
-        if (!this.is_empty(this.ls.emap)) 
-            lbl.type = this.ls.emap[new_label]
+        lbl.type = this.ls.emap.get(new_label);
         this.ls.event.emit('change-label');
     }
     // #endregion
 
     // #region [Helper Methods]
-    private is_empty(emap: EventMap) {
-        return Object.keys(emap).length === 0;
-    }
-
     private zero_width(lbl: Label) {
         return lbl.start === lbl.end;
     }

@@ -16,7 +16,8 @@ import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../sensor";
 import { Colorer} from '../colorer';
-import { Labeller, Label, LabelStream } from './labeller';
+import { Labeller } from './labeller';
+import { Label, LabelStream } from '../labelstream';
 import { Drawer } from './drawer';
 import { ToolMode, ModeTracker } from '../modes/tool-mode';
 import * as d3 from "d3";
@@ -43,7 +44,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() sensor: Sensor;
   @Input() labelstream: LabelStream;
   @Input() mode: ModeTracker;
-  @Input() lbl_type;
   @Input() colorer: Colorer;
   // #endregion
 
@@ -117,7 +117,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     // draw data (when it loads)
     this.start_spinner();
     this.drawer.draw();
-    // mode and label-stream initialization
+    // initialize mode and register observers
     this.updateMode(this.mode);
     this.register_lblstream();
     this.register_sensor();
@@ -165,26 +165,23 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Event Handlers]
   stream_update(event) {
-    // console.debug('label stream update:', event);
-    this.drawer.draw_labels();
-    this.drawer.draw_handles();
+    if (event === 'change-type') { this.type_changed(event) }
+    else { this.redraw_labels() }
   }
 
   stream_changed(change) {
     this.register_lblstream();
     console.debug('lbl stream changed', this.is_registered, this.labelstream);
-    if (!this.is_registered) console.warn('label stream not registered!', this);
-    // redraw labels/drag-handles
-    this.drawer.draw_labels();
-    this.drawer.draw_handles();
+    if (!this.is_registered)
+        console.warn('label stream not registered!', this);
+    this.redraw_labels();
   }
 
   mode_changed(change) { this.updateMode(this.mode) }
 
   type_changed(change) {
-    // TODO: we want to find some other functionality than this...
-    if (this.selected_label) 
-        this.labeller.change_label(this.selected_label, this.lbl_type);
+    console.debug('type change:', change)
+    // todo: if selected-label -> change-type
   }
 
   sensor_update(event) {
@@ -194,10 +191,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
       this.drawer.clear();
       this.drawer.draw();
     }
-    else if (event === 'toggle-labels') {
-      this.drawer.draw_labels();
-      this.drawer.draw_handles();
-    }
+    else if (event === 'toggle-labels') { this.redraw_labels() }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -238,7 +232,9 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.drawer.draw_labels();
     this.drawer.draw_handles();
   }
+  // #endregion
 
+  // #region [Registrations]
   private register_lblstream() {
     if (!this.labelstream) return false;
     if (this.registration) this.registration.unsubscribe();
@@ -316,6 +312,11 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   private domains_and_ranges() {
     let dr = (d) => {return [d.domain(), d.range()]}
     return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
+  }
+
+  private redraw_labels() {
+    this.drawer.draw_labels();
+    this.drawer.draw_handles();
   }
   // #endregion
 }

@@ -40,15 +40,9 @@
                 </div>
             </div>
 
-            <toolbox-modes [sensor]="sensor" [tracker]="MODE"></toolbox-modes>
+            <toolbox-modes [sensor]="sensor" [tracker]="mode"></toolbox-modes>
 
-            <div class="label-types tools-box">
-                <div class="btn-group btn-group-toggle" ngbRadioGroup name="radiolbl" [(ngModel)]="lbl">
-                    <label *ngFor="let c of colors" ngbButtonLabel [ngStyle]="style_color(c)" class="btn btn-lbl" [title]="eventMap[c]">
-                        <input ngbButton type="radio" [value]=c [disabled]="sensor.hidden">
-                    </label>
-                </div>
-            </div>
+            <toolbox-types [sensor]="sensor" [colorer]="colorer" [(labelstream)]="labelStreams[sensor.labelstream]"></toolbox-types>
 
             <div class='right'>
                 <i *ngIf="!sensor.hidden" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">remove</i>
@@ -60,8 +54,7 @@
         <app-databar  *ngIf="!sensor.hidden"
         [data_info]="data_info" 
         [sensor]="sensor"
-        [mode]="MODE"
-        [lbl_type]="lbl"
+        [mode]="mode"
         [transform]="zoom_transform"
         [colorer]="colorer"
         [(labelstream)]="labelStreams[sensor.labelstream]"

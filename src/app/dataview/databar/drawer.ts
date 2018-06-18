@@ -1,5 +1,5 @@
 import { DatabarComponent } from './databar.component';
-import { Label } from './labeller';
+import { Label } from '../labelstream';
 import { Selection, SelectionTransition } from './selection';
 import * as d3 from "d3";
 
@@ -109,7 +109,9 @@ export class Drawer {
 
   get labeller() { return this.databar.labeller }
 
-  get label_type() { return parseInt(this.databar.lbl_type) }
+  get label_type() { return this.ls.lbl_type }
+
+  get ls() { return this.databar.labelstream }
 
   get mouse_event(): MouseEvent {
     let event = d3.event;
@@ -153,7 +155,7 @@ export class Drawer {
                     .classed('updated', true)
                     .attr('x', (d) => { return this.x(d.start) })
                     .attr('width', width)
-                    .attr('fill', (d) => { return this.databar.colorer.labels.get(d.label) })
+                    .attr('fill', (d) => { return this.databar.colorer.labels(this.ls.name).get(d.label) })
                     .classed('selected', (d) => d.selected )
     // exit (remove) elements
     rects.exit()
@@ -174,7 +176,7 @@ export class Drawer {
                       .attr('x', middle)
                       .attr('width', 0)
                       .classed('selected', (d) => d.selected )
-                      .attr('fill', (d) => { return this.databar.colorer.labels.get(d.label) })
+                      .attr('fill', (d) => { return this.databar.colorer.labels(this.ls.name).get(d.label) })
     // add title pop-over
     enter.append('svg:title')
           .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
