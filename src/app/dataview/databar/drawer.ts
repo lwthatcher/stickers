@@ -464,7 +464,7 @@ export class Drawer {
 
   /** call-back for pressing the middle scroll-wheel button */
   middle_click() {
-    console.debug('middle click');
+    this.ls.cycle();
   }
 
   /** call-back for pressing the "page-forward" button on the mouse */

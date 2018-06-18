@@ -60,6 +60,14 @@ export class LabelStream {
         this._type = type;
         this.event.emit('change-type');
     }
+
+    cycle() {
+        let types = this.emap.event_types(true);
+        let idx = types.findIndex((type) => {return type === this._type }) + 1
+        if (idx >= types.length) idx = 0;
+        this._type = types[idx];
+        this.event.emit('change-type');
+    }
     // #endregion
 
     // #region [Utility Methods]

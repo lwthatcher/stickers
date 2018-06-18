@@ -180,8 +180,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   mode_changed(change) { this.updateMode(this.mode) }
 
   type_changed(change) {
-    console.debug('type change:', change)
-    // todo: if selected-label -> change-type
+    console.debug('type change:', this.labelstream.lbl_type);
+    // todo: if selected-label -> change-type?
   }
 
   sensor_update(event) {
