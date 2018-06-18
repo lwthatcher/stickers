@@ -70,12 +70,6 @@ export class DataviewComponent implements OnInit {
 
   get settings() { return this._settings; }
 
-  get colors() {
-    if (this._colors === undefined) 
-      this._colors = this.colorer.labels.entries.map((entry) => entry.key)
-    return this._colors;
-  }
-
   get event_maps() {
     return this.info.labelschemes.map((scheme) => {return new EventMap(scheme)})
   }
@@ -95,7 +89,6 @@ export class DataviewComponent implements OnInit {
   colorer: Colorer;
   print_ls: string;
   private _idx_map: Map<number,number[]>;
-  private _colors = undefined;
   // #endregion
 
   // #region [Constructors]
@@ -129,8 +122,6 @@ export class DataviewComponent implements OnInit {
       this.parse_labels(_labels)
           .then((labels) => { this.setLabels(this.default_stream, labels) })
     }
-    // initial selected label-type
-    this.lbl = this.event_types[0];
     // add user-labels stream, setup default save-lbls stream
     this.addStream('user-labels');
     this.print_ls = this.default_stream;
@@ -141,17 +132,6 @@ export class DataviewComponent implements OnInit {
   ngAfterViewInit() {
     console.debug('dataview children initialized', this);
     console.groupEnd();
-  }
-  // #endregion
-
-  // #region [Label Types]
-  style_color(label: number) {
-    let c = this.colorer.labels.get(label);
-    return {"background-color": c};
-  }
-
-  is_active(label: LabelKey) {
-    return this.lbl == label;
   }
   // #endregion
 
