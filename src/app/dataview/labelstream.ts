@@ -17,15 +17,15 @@ export class LabelStream {
     name: string;
     labels: Label[];
     event: EventEmitter<string>;
-    event_map: EventTypeMap;
+    emap: EventTypeMap;
     private _i: number;
     // #endregion
 
     // #region [Constructor]
-    constructor(name:string, labels: Label[], event_map: EventTypeMap = undefined) {
+    constructor(name:string, labels: Label[], emap: EventTypeMap = undefined) {
         this.name = name;
         this.set_labels(labels);
-        this.event_map = event_map;
+        this.emap = emap;
         this.event = new EventEmitter<string>();
         this.event.emit('init');
     }

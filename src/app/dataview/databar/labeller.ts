@@ -101,7 +101,7 @@ export class Labeller {
         start = this.overlaps(start, temp, "left");
         end = this.overlaps(end, temp, "right");
         // add label
-        let type = this.ls.event_map.get(label);
+        let type = this.ls.emap.get(label);
         let lbl = { start, end, label, type } as Label
         this.ls.add(lbl);
         // notify observers
@@ -110,7 +110,7 @@ export class Labeller {
 
     change_label(lbl: Label, new_label: number) {
         lbl.label = new_label;
-        lbl.type = this.ls.event_map.get(new_label);
+        lbl.type = this.ls.emap.get(new_label);
         this.ls.event.emit('change-label');
     }
     // #endregion

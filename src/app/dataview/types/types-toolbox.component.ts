@@ -44,7 +44,7 @@ export class TypesToolboxComponent implements OnInit {
     return this.colorer.lbls(this.labelstream.name).entries.map((entry) => entry.key)
   }
 
-  get event_types(): string[] { return this.labelstream.event_map.event_types }
+  get event_types(): string[] { return this.labelstream.emap.event_types }
   // #endregion
 
   // #region [Public Methods]
@@ -54,7 +54,7 @@ export class TypesToolboxComponent implements OnInit {
   }
 
   event_name(label: number) {
-    return this.labelstream.event_map.get(label)
+    return this.labelstream.emap.get(label)
   }
   // #endregion
 

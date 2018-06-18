@@ -32,7 +32,7 @@ export class Colorer {
     // #region [Public Methods]
     lbls(name: string): ColorMap {
         if (!(name in this._lbls)) {
-            let etypes = this.dataview.labelStreams[name].event_map.event_types;
+            let etypes = this.dataview.labelStreams[name].emap.event_types;
             let cmap = new ColorMap(this.scale(this.settings.label_scheme), etypes);
             this._lbls[name] = cmap;
         }
