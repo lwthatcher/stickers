@@ -7,18 +7,16 @@ export interface ColorScale {
     (i:number): any
 }
 
-type LabelStreamCMap = { [name:string]: ColorMap }
+type LabelstreamColorMap = { [name:string]: ColorMap }
 // #endregion
 
 export class Colorer {
     dataview: DataviewComponent;
-    labels: ColorMap;
     lines: ColorMap;
-    _lbls: LabelStreamCMap = {};
+    _lbls: LabelstreamColorMap = {};
     // #region [Constructor]
     constructor(dataview: DataviewComponent) {
         this.dataview = dataview;
-        this.labels = new ColorMap(this.scale(this.settings.label_scheme), this.etypes)
         this.lines = new ColorMap(this.scale(this.settings.line_scheme))
     }
     // #endregion
@@ -30,7 +28,7 @@ export class Colorer {
     // #endregion
 
     // #region [Public Methods]
-    lbls(name: string): ColorMap {
+    labels(name: string): ColorMap {
         if (!(name in this._lbls)) {
             let emap = this.dataview.labelStreams[name].emap;
             let etypes = emap.event_types();

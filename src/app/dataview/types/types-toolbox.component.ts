@@ -51,7 +51,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
 
   // #region [Public Methods]
   style_color(type: LabelKey) {
-    let c = this.colorer.lbls(this.labelstream.name).get(type);
+    let c = this.colorer.labels(this.labelstream.name).get(type);
     return {"background-color": c};
   }
 

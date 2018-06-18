@@ -155,7 +155,7 @@ export class Drawer {
                     .classed('updated', true)
                     .attr('x', (d) => { return this.x(d.start) })
                     .attr('width', width)
-                    .attr('fill', (d) => { return this.databar.colorer.lbls(this.ls.name).get(d.label) })
+                    .attr('fill', (d) => { return this.databar.colorer.labels(this.ls.name).get(d.label) })
                     .classed('selected', (d) => d.selected )
     // exit (remove) elements
     rects.exit()
@@ -176,7 +176,7 @@ export class Drawer {
                       .attr('x', middle)
                       .attr('width', 0)
                       .classed('selected', (d) => d.selected )
-                      .attr('fill', (d) => { return this.databar.colorer.lbls(this.ls.name).get(d.label) })
+                      .attr('fill', (d) => { return this.databar.colorer.labels(this.ls.name).get(d.label) })
     // add title pop-over
     enter.append('svg:title')
           .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
