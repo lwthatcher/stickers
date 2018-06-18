@@ -27,7 +27,7 @@ export class LabelStream {
         this.name = name;
         this.set_labels(labels);
         this.emap = emap;
-        this._type = this.emap.event_types()[0];
+        this._type = this.emap.initial;
         this.event = new EventEmitter<string>();
         this.event.emit('init');
     }

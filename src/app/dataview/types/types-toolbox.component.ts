@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChange } from '@angular/core';
 import { Sensor } from '../sensor';
 import { Colorer } from '../colorer';
 import { LabelStream } from '../labelstream';
@@ -11,7 +11,7 @@ import { LabelKey } from './event-types';
   styleUrls: ['types-toolbox.component.css']
 })
 // #endregion
-export class TypesToolboxComponent implements OnInit {
+export class TypesToolboxComponent implements OnInit, OnChanges {
   // #region [Variables]
   lbl: LabelKey;
   // #endregion
@@ -27,36 +27,48 @@ export class TypesToolboxComponent implements OnInit {
 
   ngOnInit() {
     console.groupCollapsed('types-toolbox init', this.sensor.name);
-    this.lbl = this.event_types[0];   // initial selected label-type
-    console.debug('lbl:', this.lbl);
-    console.log('COLORS:', this.colors, this.labelstream.emap.event_types(true))
+    this.lbl = this.emap.initial;
+    console.debug('initial lbl:', this.lbl);
     console.info('types-toolbox initialized', this);
     console.groupEnd();
   }
   // #endregion
 
-  // #region [Accessors]
-  get colors() {
-    return this.colorer.lbls(this.labelstream.name).entries.map((entry) => entry.key)
+  // #region [Lifecycle Hooks]
+  ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+    let {labelstream} = changes;
+    if (labelstream && !labelstream.firstChange) this.stream_changed();
   }
+  // #endregion
 
-  get event_types() { return this.labelstream.emap.event_types() }
+  // #region [Accessors]
+  get emap() { return this.labelstream.emap }
+
+  get colors() { return this.emap.event_types(true) }
+
+  get event_types() { return this.emap.event_types() }
   // #endregion
 
   // #region [Public Methods]
-  style_color(label: number) {
-    let c = this.colorer.lbls(this.labelstream.name).get(label);
+  style_color(type: LabelKey) {
+    let c = this.colorer.lbls(this.labelstream.name).get(type);
     return {"background-color": c};
   }
 
-  event_name(label: number) {
-    return this.labelstream.emap.get(label)
+  event_name(type: LabelKey) {
+    return this.emap.get(type)
   }
   // #endregion
 
   // #region [Event Handlers]
-  changed(event) {
-    console.debug('label type change:', event);
+  changed(type: LabelKey) {
+    console.debug('label type change:', type);
+    this.labelstream.change_type(type);
+  }
+
+  stream_changed() {
+    console.debug('label-stream change:', this.labelstream);
+    this.lbl = this.labelstream.lbl_type;
   }
   // #endregion
 }

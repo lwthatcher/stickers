@@ -31,6 +31,11 @@ export class EventTypeMap {
 
     // #region [Accessors]
     get labelscheme() { return this.scheme }
+
+    get initial() {
+        if (!this.is_empty()) return this.event_types()[0];
+        else return this.null_label.toString();
+    }
     // #endregion
 
     // #region [Public Methods]
@@ -51,9 +56,9 @@ export class EventTypeMap {
     // #endregion
 
     // #region [Utility Methods]
-    isNull(key: LabelKey): boolean {
-        return key == this.null_label
-    }
+    isNull(key: LabelKey): boolean { return key == this.null_label }
+
+    is_empty(): boolean { return this.event_types().length === 0 }
     // #endregion
 
     // #region [Helper Methods]
