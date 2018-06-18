@@ -34,7 +34,7 @@ export class LabelStream {
     // #endregion
 
     // #region [Accessors]
-    get lbl_type() { return this._type }
+    get lbl_type(): number { return EventMap.toInt(this._type) }
     // #endregion
 
     // #region [Label Editting]

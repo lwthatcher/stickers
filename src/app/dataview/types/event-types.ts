@@ -43,7 +43,7 @@ export class EventMap {
         // if null-label, return special string
         if (this.isNull(key)) return this.NULL_LABEL;
         // check if valid key
-        key = this.toInt(key);
+        key = EventMap.toInt(key);
         if (!(key in this._emap)) { console.warn('unexpected label key:', key) }
         return this._emap[key];
     }
@@ -62,7 +62,7 @@ export class EventMap {
     // #endregion
 
     // #region [Helper Methods]
-    private toInt(key: LabelKey): number {
+    static toInt(key: LabelKey): number {
         if (typeof key === 'string') return parseInt(key);
         else return key;
     }

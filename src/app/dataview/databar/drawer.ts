@@ -109,7 +109,7 @@ export class Drawer {
 
   get labeller() { return this.databar.labeller }
 
-  get label_type() { return parseInt(this.ls.lbl_type) }
+  get label_type() { return this.ls.lbl_type }
 
   get ls() { return this.databar.labelstream }
 

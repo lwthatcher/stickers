@@ -66,7 +66,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
 
   stream_changed() {
     console.debug('label-stream change:', this.labelstream);
-    this.lbl = this.labelstream.lbl_type;
+    this.lbl = this.labelstream.lbl_type.toString();
   }
   // #endregion
 }
