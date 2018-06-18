@@ -1,15 +1,18 @@
 <div class="label-types tools-box">
     <div class="btn-group btn-group-toggle" 
-    ngbRadioGroup 
-    name="radiolbl" 
-    [(ngModel)]="lbl"
-    (ngModelChange)="changed($event)">
+        ngbRadioGroup 
+        name="radiolbl" 
+        [(ngModel)]="lbl"
+        (ngModelChange)="changed($event)">
         <label *ngFor="let t of event_types" 
-        ngbButtonLabel 
-        [ngStyle]="style_color(t)" 
-        class="btn btn-lbl" 
-        [title]="event_name(t)">
+            ngbButtonLabel 
+            [ngStyle]="style_color(t)" 
+            class="btn btn-lbl" 
+            [title]="event_name(t)">
             <input ngbButton type="radio" [value]=t [disabled]="sensor.hidden">
+        </label>
+        <label class='btn btn-outline-secondary add-type'>
+            <i class="material-icons icon">add</i>
         </label>
     </div>
 </div>

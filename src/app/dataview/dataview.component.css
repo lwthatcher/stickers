@@ -65,7 +65,7 @@ div.dropdown-item.dropdown-button {
 
 /*#region [Label Streams] */
 div.dropdown-item.dropdown-button > button.add-stream {
-    border-style: dotted; 
+    border-style: dashed; 
     width: 100%;
     padding: 0;
 }

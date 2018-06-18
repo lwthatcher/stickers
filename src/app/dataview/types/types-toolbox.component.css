@@ -22,3 +22,15 @@ div.btn-group > label.btn-lbl.active {
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
 /*#endregion */
+
+/*#region [Add Label Type Button] */
+label.add-type {
+    width: 30px;
+    padding-left: 1px;
+    border-style: dashed;
+}
+
+label.add-type > i.icon {
+    vertical-align: middle;
+}
+/*#endregion */
