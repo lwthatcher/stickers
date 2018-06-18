@@ -1,3 +1,7 @@
+<ng-template #popContent>
+    Hello, <b>DUCKS</b>!
+</ng-template>
+
 <div class="label-types tools-box">
     <div class="btn-group btn-group-toggle" 
         ngbRadioGroup 
@@ -11,7 +15,11 @@
             [title]="event_name(t)">
             <input ngbButton type="radio" [value]=t [disabled]="sensor.hidden">
         </label>
-        <label class='btn btn-outline-secondary add-type' title="new event type">
+        <label class='btn btn-outline-secondary add-type' 
+            [ngbPopover]="popContent" 
+            popoverTitle="New Event Type:"
+            placement="right" 
+            title="new event type">
             <i class="material-icons icon">add</i>
         </label>
     </div>

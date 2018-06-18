@@ -57,3 +57,9 @@ svg.databar.custom-cursor {
 svg.databar.custom-cursor * {
     cursor: none;
 }
+
+/*#region [Popover] */
+.popover {
+    width: fit-content;
+}
+/*#endregion */

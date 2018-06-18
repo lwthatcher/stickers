@@ -35,3 +35,9 @@ label.add-type > i.icon {
     vertical-align: middle;
 }
 /*#endregion */
+
+/*#region [Popover] */
+.popover {
+    width: fit-content;
+}
+/*#endregion */
