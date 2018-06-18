@@ -41,9 +41,7 @@ export class TypesToolboxComponent implements OnInit {
 
   // #region [Accessors]
   get colors() {
-    if (this._colors === undefined) 
-      this._colors = this.colorer.labels.entries.map((entry) => entry.key)
-    return this._colors;
+    return this.colorer.lbls(this.sensor.labelstream).entries.map((entry) => entry.key)
   }
 
   get eventMap() { return this.colorer.dataview.eventMap }
@@ -53,7 +51,7 @@ export class TypesToolboxComponent implements OnInit {
 
   // #region [Public Methods]
   style_color(label: number) {
-    let c = this.colorer.labels.get(label);
+    let c = this.colorer.lbls(this.sensor.labelstream).get(label);
     return {"background-color": c};
   }
   // #endregion

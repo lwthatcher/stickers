@@ -29,6 +29,10 @@ export class EventTypeMap {
     }
     // #endregion
 
+    // #region [Accessors]
+    get event_types() { return Object.keys(this._emap) }
+    // #endregion
+
     // #region [Public Methods]
     get(key: LabelKey) {
         // if null-label, return special string
@@ -50,19 +54,6 @@ export class EventTypeMap {
     private toInt(key: LabelKey): number {
         if (typeof key === 'string') return parseInt(key);
         else return key;
-    }
-    // #endregion
-}
-
-export class TypeTracker {
-    // #region [Variables]
-
-    // #endregion
-
-
-    // #region [Constructor]
-    constructor() {
-
     }
     // #endregion
 }

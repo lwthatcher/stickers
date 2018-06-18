@@ -22,7 +22,7 @@ interface SensorInfo {
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
 
-type LabelStreamMap = { [key: string]: LabelStream }
+type LabelStreamMap = { [name: string]: LabelStream }
 
 type IdxEntries = [number, number[]][]
 type IndexMap = Map<number,number[]>
