@@ -55,9 +55,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
 
   get event_types() { return this.emap.event_types(true) }
 
-  get menus() {
-    return this.editMenus.toArray()
-  }
+  get menus() { return this.editMenus.toArray() }
   // #endregion
 
   // #region [Public Methods]
@@ -71,10 +69,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   }
 
   add_type(name: string) {
-    if (name.length > 0) {
-      console.log('adding type:', name);
-      this.emap.add(name);
-    }
+    if (name.length > 0) { this.emap.add(name) }
     else console.warn('cannot add type with no name:', name);
     this.addMenu.close();
   }
@@ -85,10 +80,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   // #endregion
 
   // #region [Event Handlers]
-  changed(type: LabelKey) {
-    console.debug('label type change:', type);
-    this.labelstream.change_type(type);
-  }
+  changed(type: LabelKey) { this.labelstream.change_type(type) }
 
   stream_changed() {
     this.register_lblstream();
@@ -101,10 +93,36 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
       this.lbl = this.labelstream.lbl_type.toString();
   }
 
+  /** Called when the add-menu button is clicked 
+   * 
+   * This method is primarly to make sure any open edit-menus
+   * are closed when this menu is opened.
+  */
+  toggleAddMenu(event) {
+    this.closeOtherMenus();
+  }
+
+  /** Called when an event-type recieves a right-click event.
+   * 
+   * This method ensures only one menu is open at a time,
+   * selects the menu being editted,
+   * and prevents the default right-click behavior.
+   */
   openEditMenu(type, event) {
-    let idx = this.emap.index(type);
     event.preventDefault();
-    this.closeOtherMenus(idx);
+    this.closeOtherMenus(type);
+    this.labelstream.change_type(type);
+  }
+
+  /** Called when an event-type recieves a left-click event.
+   * 
+   * This method handles already-open edit menu interactions.
+   * The actual selection of the event is done via the ngModel.
+   */
+  selectEventType(type, event) {
+    if (!this.hasEditMenu()) return;
+    let menu = this.getMenu(type);
+    if (menu.isOpen()) menu.close();        // if this menu is open, close it
   }
   // #endregion
 
@@ -118,13 +136,24 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   // #endregion
 
   // #region [Helper Methods]
-  private closeOtherMenus(idx) {
-    // close add menu
-    this.addMenu.close();
-    // close edit menus
-    for (let i = 0; i < this.menus.length; i++) {
-      if (i !== idx) this.menus[i].close();
+  private closeOtherMenus(type?: LabelKey) {
+    // edit-menu
+    if (type) {   
+      let idx = this.emap.index(type);
+      this.addMenu.close();
+      for (let i = 0; i < this.menus.length; i++) {
+        if (i !== idx) this.menus[i].close();
+      }
     }
+    // add-menu
+    else for (let menu of this.menus) { menu.close() }
+  }
+
+  private hasEditMenu() { return this.menus.some((menu) => menu.isOpen()) }
+
+  private getMenu(type) {
+    let idx = this.emap.index(type);
+    return this.menus[idx];
   }
   // #endregion
 }
