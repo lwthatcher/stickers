@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, OnChanges, SimpleChange } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChange, ViewChild } from '@angular/core';
 import { Sensor } from '../sensor';
 import { Colorer } from '../colorer';
 import { LabelStream } from '../labelstream';
 import { LabelKey } from './event-types';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 // #region [Metadata]
 @Component({
@@ -21,6 +22,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   @Input() sensor: Sensor;
   @Input() colorer: Colorer;
   @Input() labelstream: LabelStream;
+  @ViewChild('popover') popover: NgbPopover;
   // #endregion
 
   // #region [Constructors]
@@ -31,6 +33,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     this.lbl = this.emap.initial;
     console.debug('initial lbl:', this.lbl);
     this.register_lblstream();
+    console.log('popover', this.popover);
     console.info('types-toolbox initialized', this);
     console.groupEnd();
   }

@@ -3,12 +3,24 @@
         <div class="form-group row">
             <label for="event-type" class="col-form-label">Name:</label>
             <div class="col">
-                <input type="text" class="form-control" id="event-type" placeholder="event name">
+                <input type="text" 
+                    class="form-control" 
+                    #textbox 
+                    id="event-type" 
+                    placeholder="event name">
             </div>
         </div>
         <div class="form-group row">
             <div class='col'>
-                <button class="btn btn-success btn-block">Create</button>
+                <button class="btn btn-success btn-block"
+                    [disabled]="textbox.value.length === 0">
+                    Create
+                </button>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class='col'>
+                {{textbox.value.length === 0}}
             </div>
         </div>
     </form>
@@ -30,7 +42,8 @@
         <label class='btn btn-outline-secondary add-type' 
             [ngbPopover]="popContent" 
             popoverTitle="New Event Type:"
-            placement="right" 
+            placement="right"
+            #popover="ngbPopover"
             title="new event type">
             <i class="material-icons icon">add</i>
         </label>
