@@ -40,7 +40,7 @@
             triggers="manual"
             popoverTitle="Edit Event Type:"
             (click)="selectEventType(t, $event)"
-            (contextmenu)="openEditMenu(t, $event)"
+            (contextmenu)="toggleEditMenu(t, $event)"
             #editMenu="ngbPopover"
             #event
             [ngStyle]="style_color(t)" 

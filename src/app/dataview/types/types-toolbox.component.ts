@@ -56,6 +56,8 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   get event_types() { return this.emap.event_types(true) }
 
   get menus() { return this.editMenus.toArray() }
+
+  get hasEditMenu() { return this.menus.some((menu) => menu.isOpen()) }
   // #endregion
 
   // #region [Public Methods]
@@ -93,44 +95,24 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
       this.lbl = this.labelstream.lbl_type.toString();
   }
 
-  /** Called when the add-menu button is clicked 
-   * 
-   * This method is primarly to make sure any open edit-menus
-   * are closed when this menu is opened.
-  */
-  toggleAddMenu(event) {
-    this.closeOtherMenus();
-  }
+  toggleAddMenu(event) { this.closeOtherMenus() }
 
-  /** Called when an event-type recieves a right-click event.
-   * 
-   * This method ensures only one menu is open at a time,
-   * selects the menu being editted,
-   * and prevents the default right-click behavior.
-   */
-  openEditMenu(type, event) {
+  toggleEditMenu(type, event) {
+    // prevent default right-click behavior
     event.preventDefault();
     let menu = this.getMenu(type);
-    if (menu.isOpen()) { menu.close() }   // if this menu is open, close it
-    else {
+    if (menu.isOpen()) { menu.close() }
+    else {                              
       menu.open();
       this.closeOtherMenus(type);
       this.labelstream.change_type(type);
     }
   }
 
-  /** Called when an event-type recieves a left-click event.
-   * 
-   * This method handles already-open edit menu interactions.
-   * The actual selection of the event is done via the ngModel.
-   */
   selectEventType(type, event) {
-    if (!this.hasEditMenu()) return;
-    let menu = this.getMenu(type);
-    if (menu.isOpen()) menu.close();        // if this menu is open, close it
-    else {
-      this.openEditMenu(type, event);
-    }
+    // ngModel does the actual event selection
+    if (!this.hasEditMenu) return;    
+    this.toggleEditMenu(type, event);
   }
   // #endregion
 
@@ -149,15 +131,12 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     if (type) {   
       let idx = this.emap.index(type);
       this.addMenu.close();
-      for (let i = 0; i < this.menus.length; i++) {
+      for (let i = 0; i < this.menus.length; i++)
         if (i !== idx) this.menus[i].close();
-      }
     }
     // add-menu
     else for (let menu of this.menus) { menu.close() }
   }
-
-  private hasEditMenu() { return this.menus.some((menu) => menu.isOpen()) }
 
   private getMenu(type) {
     let idx = this.emap.index(type);
