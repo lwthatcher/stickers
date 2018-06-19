@@ -8,7 +8,8 @@
                     #textbox 
                     id="event-type"
                     (keyup.enter)="add_type(textbox.value)"
-                    placeholder="event name">
+                    placeholder="event name"
+                    required>
             </div>
         </div>
         <div class="form-group row">
@@ -24,6 +25,32 @@
     </form>
 </ng-template>
 
+<ng-template #editPopover>
+        <form>
+            <div class="form-group row">
+                <label for="event-type" class="col-form-label">Name:</label>
+                <div class="col">
+                    <input type="text" 
+                        class="form-control" 
+                        #editname 
+                        id="event-type"
+                        (keyup.enter)="add_type(editname.value)"
+                        placeholder="event name"
+                        required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class='col'>
+                    <button class="btn btn-success btn-block"
+                        type="button"
+                        [disabled]="editname.value.length === 0">
+                        Create
+                    </button>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
 <div class="label-types tools-box">
     <div class="btn-group btn-group-toggle" 
         ngbRadioGroup 
@@ -32,6 +59,10 @@
         (ngModelChange)="changed($event)">
         <label *ngFor="let t of event_types" 
             ngbButtonLabel 
+            [ngbPopover]="editPopover"
+            placement="right"
+            triggers="contextmenu"
+            (contextmenu)="open_edit($event)"
             [ngStyle]="style_color(t)" 
             class="btn btn-lbl" 
             [title]="event_name(t)">

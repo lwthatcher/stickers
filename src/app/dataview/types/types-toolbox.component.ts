@@ -4,6 +4,7 @@ import { Colorer } from './colorer';
 import { LabelStream } from '../labelstream';
 import { LabelKey } from './event-types';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import * as d3 from "d3";
 
 // #region [Metadata]
 @Component({
@@ -69,6 +70,11 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     }
     else console.warn('cannot add type with no name:', name);
     this.popover.close();
+  }
+
+  open_edit(event) {
+    console.debug('right click', event);
+    event.preventDefault();
   }
   // #endregion
 
