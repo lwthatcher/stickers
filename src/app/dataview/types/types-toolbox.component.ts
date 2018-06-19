@@ -63,8 +63,11 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   }
 
   add_type(name: string) {
-    console.log('adding type:', name);
-    this.emap.add(name);
+    if (name.length > 0) {
+      console.log('adding type:', name);
+      this.emap.add(name);
+    }
+    else console.warn('cannot add type with no name:', name);
     this.popover.close();
   }
   // #endregion

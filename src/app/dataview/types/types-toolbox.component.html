@@ -6,7 +6,8 @@
                 <input type="text" 
                     class="form-control" 
                     #textbox 
-                    id="event-type" 
+                    id="event-type"
+                    (keyup.enter)="add_type(textbox.value)"
                     placeholder="event name">
             </div>
         </div>
