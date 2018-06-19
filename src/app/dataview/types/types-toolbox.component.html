@@ -80,9 +80,9 @@
                             <button class="btn btn-info btn-block"
                                 title="save changes"
                                 type="button"
-                                (click)="edit_type(editname.value)"
+                                (click)="edit_type(t, editname.value)"
                                 [disabled]="!any_changes(t, editname.value) || !valid_name(editname.value)">
-                                <i class="material-icons icon">done</i>
+                                <i class="material-icons icon">save</i>
                             </button>
                         </div>
                     </div>

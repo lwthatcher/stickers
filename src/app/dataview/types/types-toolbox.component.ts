@@ -79,13 +79,16 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   valid_name(name: string) { return name.length > 0 }
 
   add_type(name: string): void {
-    if (this.valid_name(name)) { this.emap.add(name) }
-    else console.warn('cannot add type with no name:', name);
+    if (!this.valid_name(name)) { return }
+    let lbl = this.emap.add(name);
+    this.labelstream.change_type(lbl);
     this.addMenu.close();
   }
 
-  edit_type(name: string): void {
-    console.log('saving event type changes:', name);
+  edit_type(type: LabelKey, name: string): void {
+    let lbl = this.emap.edit(type, name);
+    this.labelstream.change_type(lbl);
+    this.getMenu(type).close();
   }
 
   remove_type(type: LabelKey): void {

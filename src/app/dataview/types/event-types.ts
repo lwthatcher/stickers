@@ -60,9 +60,10 @@ export class EventMap {
     }
 
     add(name: string) {
-        let key = this.nextKey()
+        let key = this.nextKey();
         console.debug('adding event type:', key, name);
         this._emap[key] = name;
+        return key;
     }
 
     remove(key: LabelKey) {
@@ -73,6 +74,11 @@ export class EventMap {
         let idx = Math.max(this.index(key)-1, 0);
         delete this._emap[key];
         return this.event_types(true)[idx];
+    }
+
+    edit(key: LabelKey, name: string) {
+        this._emap[key] = name;
+        return key;
     }
     // #endregion
 
