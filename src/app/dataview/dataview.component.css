@@ -25,6 +25,10 @@ span > i.material-icons {
     vertical-align:middle;
 }
 
+div.right > i.icon {
+    vertical-align: initial;
+}
+
 .icon {
     cursor: pointer;
 }

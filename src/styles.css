@@ -74,3 +74,9 @@ svg.databar.custom-cursor * {
     font-weight: bold;
 }
 /*#endregion */
+
+/*#region [Icons] */
+i.icon {
+    vertical-align:middle;
+}
+/*#endregion */
