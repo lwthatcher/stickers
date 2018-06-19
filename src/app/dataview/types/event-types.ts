@@ -48,6 +48,11 @@ export class EventMap {
         return this._emap[key];
     }
 
+    index(key: LabelKey) {
+        let keys = this.event_types(true);
+        return keys.indexOf(key.toString());
+    }
+
     event_types(include_null: boolean = false): string[] {
         let types = Object.keys(this._emap);
         if (!include_null) return types;

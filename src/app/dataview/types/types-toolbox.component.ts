@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChange, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChange, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { Sensor } from '../sensor';
 import { Colorer } from './colorer';
 import { LabelStream } from '../labelstream';
@@ -24,6 +24,8 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   @Input() colorer: Colorer;
   @Input() labelstream: LabelStream;
   @ViewChild('addMenu') addMenu: NgbPopover;
+  @ViewChildren('editMenu') editMenus: QueryList<NgbPopover>;
+  @ViewChildren('event') events: any[];
   // #endregion
 
   // #region [Constructors]
@@ -34,7 +36,8 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     this.lbl = this.emap.initial;
     console.debug('initial lbl:', this.lbl);
     this.register_lblstream();
-    console.log('popover', this.addMenu);
+    console.log('popovers', this.addMenu, this.editMenus);
+    console.log('events', this.events);
     console.info('types-toolbox initialized', this);
     console.groupEnd();
   }
@@ -51,6 +54,10 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   get emap() { return this.labelstream.emap }
 
   get event_types() { return this.emap.event_types(true) }
+
+  get menus() {
+    return this.editMenus.toArray()
+  }
   // #endregion
 
   // #region [Public Methods]
@@ -72,9 +79,11 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     this.addMenu.close();
   }
 
-  prevent_rightclick(event) {
-    console.debug('right click', event);
+  openEditMenu(type, event) {
+    let idx = this.emap.index(type)
+    console.debug('right click', type, event, idx, this.menus[idx]);
     event.preventDefault();
+    this.closeOtherMenus(idx);
   }
   // #endregion
 
@@ -102,6 +111,14 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     if (this.registration) this.registration.unsubscribe();
     this.registration = this.labelstream.event.subscribe((e) => { this.stream_update(e) })
     return true;
+  }
+  // #endregion
+
+  // #region [Helper Methods]
+  private closeOtherMenus(idx) {
+    for (let i = 0; i < this.menus.length; i++) {
+      if (i !== idx) this.menus[i].close();
+    }
   }
   // #endregion
 }
