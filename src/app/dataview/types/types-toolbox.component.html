@@ -17,7 +17,7 @@
                 <button class="btn btn-success btn-block"
                     type="button"
                     title="create"
-                    [disabled]="textbox.value.length === 0"
+                    [disabled]="!valid_name(textbox.value)"
                     (click)="add_type(textbox.value)">
                     <i class="material-icons icon">done</i>
                 </button>
@@ -70,6 +70,8 @@
                         <div class='col'>
                             <button class="btn btn-danger btn-block"
                                 title="delete"
+                                (click)="remove_type(t)"
+                                [disabled]="!can_delete(t)"
                                 type="button">
                                 <i class="material-icons icon">delete</i>
                             </button>
@@ -79,7 +81,7 @@
                                 title="save changes"
                                 type="button"
                                 (click)="edit_type(editname.value)"
-                                [disabled]="editname.value.length === 0">
+                                [disabled]="!any_changes(t, editname.value) || !valid_name(editname.value)">
                                 <i class="material-icons icon">done</i>
                             </button>
                         </div>

@@ -71,6 +71,11 @@ export class LabelStream {
     // #endregion
 
     // #region [Utility Methods]
+    findType(type: LabelKey) {
+        let label = EventMap.toInt(type)
+        return this.labels.filter((lbl) => {return lbl.label == label})
+    }
+
     toJSON() {
         let simplify = (lbl) => {return {start: lbl.start, end: lbl.end, label: lbl.label} }
         let lbls = this.labels.map(simplify);

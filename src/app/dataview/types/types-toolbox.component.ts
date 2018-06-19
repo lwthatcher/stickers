@@ -66,18 +66,31 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     return {"background-color": c};
   }
 
-  event_name(type: LabelKey) {
-    return this.emap.get(type)
+  event_name(type: LabelKey): string { return this.emap.get(type) }
+
+  can_delete(type: LabelKey): boolean {
+    let num = this.labelstream.findType(type);
+    return num.length === 0;
   }
 
-  add_type(name: string) {
-    if (name.length > 0) { this.emap.add(name) }
+  any_changes(type: LabelKey, name: string) {
+    return name !== this.event_name(type);
+  }
+
+  valid_name(name: string) { return name.length > 0 }
+
+  add_type(name: string): void {
+    if (this.valid_name(name)) { this.emap.add(name) }
     else console.warn('cannot add type with no name:', name);
     this.addMenu.close();
   }
 
-  edit_type(name: string) {
+  edit_type(name: string): void {
     console.log('saving event type changes:', name);
+  }
+
+  remove_type(type: LabelKey): void {
+    console.log('removing label type:', type);
   }
   // #endregion
 
