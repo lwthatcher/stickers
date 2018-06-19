@@ -1,5 +1,5 @@
-import { DataviewComponent } from './dataview.component'
-import { SettingsService, ColorScheme } from '../settings/settings.service';
+import { DataviewComponent } from '../dataview.component'
+import { SettingsService, ColorScheme } from '../../settings/settings.service';
 import * as d3 from "d3";
 
 // #region [Interfaces]

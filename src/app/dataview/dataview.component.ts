@@ -8,7 +8,7 @@ import { WorkspaceInfo, DataInfo, TypeMap } from '../data-loader/workspace-info'
 import { SettingsService } from '../settings/settings.service'
 import { Label, LabelStream} from './labelstream';
 import { ToolMode, ModeTracker } from './modes/tool-mode';
-import { Colorer } from './colorer';
+import { Colorer } from './types/colorer';
 import { Sensor } from './sensor';
 import { EventMap, LabelKey } from './types/event-types';
 // #endregion

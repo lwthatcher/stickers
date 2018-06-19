@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChange, ViewChild } from '@angular/core';
 import { Sensor } from '../sensor';
-import { Colorer } from '../colorer';
+import { Colorer } from './colorer';
 import { LabelStream } from '../labelstream';
 import { LabelKey } from './event-types';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
