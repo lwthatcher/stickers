@@ -79,11 +79,8 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     this.addMenu.close();
   }
 
-  openEditMenu(type, event) {
-    let idx = this.emap.index(type)
-    console.debug('right click', type, event, idx, this.menus[idx]);
-    event.preventDefault();
-    this.closeOtherMenus(idx);
+  edit_type(name: string) {
+    console.log('saving event type changes:', name);
   }
   // #endregion
 
@@ -103,6 +100,12 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     if (event === 'change-type') 
       this.lbl = this.labelstream.lbl_type.toString();
   }
+
+  openEditMenu(type, event) {
+    let idx = this.emap.index(type);
+    event.preventDefault();
+    this.closeOtherMenus(idx);
+  }
   // #endregion
 
   // #region [Registrations]
@@ -116,6 +119,9 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
 
   // #region [Helper Methods]
   private closeOtherMenus(idx) {
+    // close add menu
+    this.addMenu.close();
+    // close edit menus
     for (let i = 0; i < this.menus.length; i++) {
       if (i !== idx) this.menus[i].close();
     }
