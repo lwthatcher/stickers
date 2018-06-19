@@ -64,6 +64,16 @@ export class EventMap {
         console.debug('adding event type:', key, name);
         this._emap[key] = name;
     }
+
+    remove(key: LabelKey) {
+        if (key === this.null_label) {
+            console.warn('cannot delete null label!', key);
+            return;
+        }
+        let idx = Math.max(this.index(key)-1, 0);
+        delete this._emap[key];
+        return this.event_types(true)[idx];
+    }
     // #endregion
 
     // #region [Utility Methods]

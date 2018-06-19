@@ -69,13 +69,12 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   event_name(type: LabelKey): string { return this.emap.get(type) }
 
   can_delete(type: LabelKey): boolean {
+    if (this.emap.isNull(type)) return false;
     let num = this.labelstream.findType(type);
     return num.length === 0;
   }
 
-  any_changes(type: LabelKey, name: string) {
-    return name !== this.event_name(type);
-  }
+  any_changes(type, name) { return name !== this.event_name(type) }
 
   valid_name(name: string) { return name.length > 0 }
 
@@ -91,6 +90,8 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
 
   remove_type(type: LabelKey): void {
     console.log('removing label type:', type);
+    let lbl = this.emap.remove(type);
+    this.labelstream.change_type(lbl);
   }
   // #endregion
 
