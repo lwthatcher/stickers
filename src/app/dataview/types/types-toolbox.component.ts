@@ -110,8 +110,13 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
    */
   openEditMenu(type, event) {
     event.preventDefault();
-    this.closeOtherMenus(type);
-    this.labelstream.change_type(type);
+    let menu = this.getMenu(type);
+    if (menu.isOpen()) { menu.close() }   // if this menu is open, close it
+    else {
+      menu.open();
+      this.closeOtherMenus(type);
+      this.labelstream.change_type(type);
+    }
   }
 
   /** Called when an event-type recieves a left-click event.
@@ -123,6 +128,9 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     if (!this.hasEditMenu()) return;
     let menu = this.getMenu(type);
     if (menu.isOpen()) menu.close();        // if this menu is open, close it
+    else {
+      this.openEditMenu(type, event);
+    }
   }
   // #endregion
 
