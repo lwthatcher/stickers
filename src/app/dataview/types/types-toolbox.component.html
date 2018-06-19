@@ -62,7 +62,7 @@
             [ngbPopover]="editPopover"
             placement="right"
             triggers="contextmenu"
-            (contextmenu)="open_edit($event)"
+            (contextmenu)="prevent_rightclick($event)"
             [ngStyle]="style_color(t)" 
             class="btn btn-lbl" 
             [title]="event_name(t)">
@@ -72,10 +72,10 @@
             [ngbPopover]="addPopover" 
             popoverTitle="New Event Type:"
             placement="right"
-            #popover="ngbPopover"
+            #addMenu="ngbPopover"
             title="new event type">
-            <i *ngIf="!popover.isOpen()" class="material-icons icon">add</i>
-            <i *ngIf="popover.isOpen()" class="material-icons icon">remove</i>
+            <i *ngIf="!addMenu.isOpen()" class="material-icons icon">add</i>
+            <i *ngIf="addMenu.isOpen()" class="material-icons icon">remove</i>
         </label>
     </div>
 </div>

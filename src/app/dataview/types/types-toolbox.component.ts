@@ -23,7 +23,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   @Input() sensor: Sensor;
   @Input() colorer: Colorer;
   @Input() labelstream: LabelStream;
-  @ViewChild('popover') popover: NgbPopover;
+  @ViewChild('addMenu') addMenu: NgbPopover;
   // #endregion
 
   // #region [Constructors]
@@ -34,7 +34,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
     this.lbl = this.emap.initial;
     console.debug('initial lbl:', this.lbl);
     this.register_lblstream();
-    console.log('popover', this.popover);
+    console.log('popover', this.addMenu);
     console.info('types-toolbox initialized', this);
     console.groupEnd();
   }
@@ -69,10 +69,10 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
       this.emap.add(name);
     }
     else console.warn('cannot add type with no name:', name);
-    this.popover.close();
+    this.addMenu.close();
   }
 
-  open_edit(event) {
+  prevent_rightclick(event) {
     console.debug('right click', event);
     event.preventDefault();
   }
