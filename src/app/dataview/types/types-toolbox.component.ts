@@ -61,6 +61,11 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   event_name(type: LabelKey) {
     return this.emap.get(type)
   }
+
+  add_type(name: string) {
+    console.log('adding type:', name);
+    this.popover.close();
+  }
   // #endregion
 
   // #region [Event Handlers]
