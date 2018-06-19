@@ -53,6 +53,12 @@ export class EventMap {
         if (!include_null) return types;
         else return [this.null_label.toString(), ...types];
     }
+
+    add(name: string) {
+        let key = this.nextKey()
+        console.debug('adding event type:', key, name);
+        this._emap[key] = name;
+    }
     // #endregion
 
     // #region [Utility Methods]
@@ -65,6 +71,11 @@ export class EventMap {
     static toInt(key: LabelKey): number {
         if (typeof key === 'string') return parseInt(key);
         else return key;
+    }
+
+    private nextKey() {
+        let keys = this.event_types(true).map((k) => { return parseInt(k) })
+        return Math.max(...keys) + 1
     }
     // #endregion
 }

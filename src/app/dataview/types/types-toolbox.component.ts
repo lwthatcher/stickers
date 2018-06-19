@@ -64,6 +64,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
 
   add_type(name: string) {
     console.log('adding type:', name);
+    this.emap.add(name);
     this.popover.close();
   }
   // #endregion
