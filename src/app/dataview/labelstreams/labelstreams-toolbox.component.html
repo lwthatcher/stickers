@@ -55,14 +55,15 @@
                   (click)="selectStream(stream)" 
                   class="dropdown-item">
                     {{stream}}
-                    <div class='btn btn-danger btn-icon' 
+                    <button class='btn btn-danger btn-icon'
+                      [disabled]="!can_remove(stream)"
                       (click)="remove_stream(stream, $event)">
                         <i class="material-icons icon">delete</i>
-                    </div>
+                    </button>
                 </div>
                 <div class="dropdown-item dropdown-button">
                     <button type="button" 
-                      class="btn btn-outline-success add-stream" 
+                      class="btn btn-outline-secondary add-stream" 
                       title='new label stream'
                       [ngbPopover]="addPopover"
                       #popover="ngbPopover"

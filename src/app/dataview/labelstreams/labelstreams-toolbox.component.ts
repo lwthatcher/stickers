@@ -40,6 +40,10 @@ export class LabelstreamToolboxComponent implements OnInit {
 
   valid_name(name: string) { return name.length > 0 }
 
+  can_remove(stream: string) {
+    return this.streams.length > 1 && this.getStream(stream).isEmpty 
+  }
+
   selectStream(stream: string) {
     this.sensor.labelstream = stream;
     this.dropdown.close();
@@ -57,7 +61,15 @@ export class LabelstreamToolboxComponent implements OnInit {
   remove_stream(stream: string, event) {
     event.stopPropagation();
     console.log('remove stream:', stream);
+    if (this.sensor.labelstream === stream) {
+      this.sensor.labelstream = this.streams[0];
+    }
+    delete this.labelstreams[stream];
     this.dropdown.close();
   }
+  // #endregion
+
+  // #region [Helper Methods]
+  private getStream(stream: string) { return this.labelstreams[stream] }
   // #endregion
 }
