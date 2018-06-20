@@ -1,0 +1,49 @@
+/*#region [Toolbox] */
+:host {
+    display: contents;
+}
+
+:host > .tools-box {
+    float: left;
+    display: inline-flex;
+    padding-left: 20px;
+}
+/*#endregion */
+
+/*#region [Icons] */
+button > i.material-icons,
+span > i.material-icons {
+    vertical-align:middle;
+}
+
+div.right > i.icon {
+    vertical-align: initial;
+}
+
+.icon {
+    cursor: pointer;
+}
+/*#endregion */
+
+/*#region [Generic Dropdowns] */
+button.dropdown-item,
+div.dropdown-item {
+    cursor: pointer;
+}
+
+div.dropdown-item.dropdown-button {
+    padding: 1px 1px;
+}
+/*#endregion */
+
+/*#region [Label Streams] */
+div.dropdown-item.dropdown-button > button.add-stream {
+    border-style: dashed; 
+    width: 100%;
+    padding: 0;
+}
+
+div.dropdown-item.dropdown-button > button.add-stream > i.material-icons {
+    vertical-align: middle;
+}
+/*#endregion */

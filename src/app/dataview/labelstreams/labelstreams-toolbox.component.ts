@@ -9,7 +9,7 @@ type LabelStreamMap = { [name: string]: LabelStream }
 @Component({
   selector: 'toolbox-labelstreams',
   templateUrl: './labelstreams-toolbox.component.html',
-  styles: []
+  styleUrls: ['labelstreams-toolbox.component.css']
 })
 export class LabelstreamToolboxComponent implements OnInit {
   // #region [Variables]
