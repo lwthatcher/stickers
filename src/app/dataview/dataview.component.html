@@ -1,18 +1,6 @@
 <div class="card">
     <div *ngFor="let sensor of sensors">
         <div class='card-header d-flex'>
-            
-            <ul  class="nav nav-tabs card-header-tabs">
-                <li class="nav-item">
-                    <a class="nav-link" [ngClass]="{'active': !sensor.hidden, 'disabled': sensor.hidden}">{{sensor.name}}</a>
-                </li>
-                <li class="nav-item" ngbDropdown>
-                    <a class="nav-link btn-secondary text-white select-sensor" id="dropdownBasic1" ngbDropdownToggle>...</a>
-                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                        <button *ngFor="let s of known_sensors" (click)="changeSensor(sensor,s)" class="dropdown-item">{{s.name}}</button>
-                    </div>
-                </li>
-            </ul>
 
             <toolbox-sensors
                 [sensor]="sensor"
@@ -41,7 +29,6 @@
                 <i *ngIf="!sensor.hidden" (click)="remove(sensor)" class="material-icons icon" title='close' aria-label="hide">close</i>
                 <i *ngIf="sensor.hidden" (click)="show(sensor)" class="material-icons icon" title='show' aria-label="show">add</i>
             </div>
-            
         </div>
         <app-databar  
             *ngIf="!sensor.hidden"

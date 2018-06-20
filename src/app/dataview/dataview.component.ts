@@ -113,11 +113,6 @@ export class DataviewComponent implements OnInit {
 
   get channels() { return this.data_info.channels }
 
-  get known_sensors(): SensorInfo[] {
-    let channels = this.data_info.channels;
-    return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i, channel: c} })
-  }
-
   get idx_map(): IndexMap {
     if (!this._idx_map) 
       this._idx_map = Sensor.gen_idx_map(this.data_info.channels);
@@ -152,6 +147,11 @@ export class DataviewComponent implements OnInit {
 
   show(sensor: Sensor) { sensor.show() }
 
+  remove(sensor: Sensor) {
+    console.debug('removing sensor:', sensor);
+    this.sensors = this.sensors.filter((s) => { return s.id !== sensor.id })
+  }
+
   removeStream(stream: string) {
     console.log('deleting labelstream:', stream);
     for (let sensor of this.sensors) {
@@ -163,13 +163,6 @@ export class DataviewComponent implements OnInit {
     }
     delete this.labelStreams[stream];
   }
-
-  remove(sensor: Sensor) {
-    console.debug('removing sensor:', sensor);
-    this.sensors = this.sensors.filter((s) => { return s.id !== sensor.id })
-  }
-
-  changeSensor(sensor: Sensor, to: SensorInfo) { sensor.update(to) }
 
   newSensor() {
     let id = this.next_id();
@@ -221,7 +214,6 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
     console.groupCollapsed('sensors');
       console.log('sensors:', this.sensors);
-      console.log('sensor names:', this.known_sensors);
     console.groupEnd();
     console.groupCollapsed('label streams');
       console.log('label streams:', this.labelStreams);
