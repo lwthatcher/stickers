@@ -25,6 +25,9 @@ export class LabelstreamToolboxComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.groupCollapsed('labelstreams-toolbox init', this.sensor.name);
+    console.info('labelstreams-toolbox initialized', this);
+    console.groupEnd();
   }
   // #endregion
 
@@ -36,5 +39,9 @@ export class LabelstreamToolboxComponent implements OnInit {
   toggleLabels() { this.sensor.toggle_labels() }
 
   selectStream(stream: string) { this.sensor.labelstream = stream }
+
+  newStream() {
+    console.log('oh look, you clicked on the new stream button!')
+  }
   // #endregion
 }
