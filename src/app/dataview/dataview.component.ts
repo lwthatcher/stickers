@@ -134,7 +134,6 @@ export class DataviewComponent implements OnInit {
 
   // #region [Label Streams]
   private addStream(name: string, emap: EventMap = undefined) {
-    emap = emap || new EventMap({name})
     this.labelStreams[name] = new LabelStream(name, [], emap);
   }
 

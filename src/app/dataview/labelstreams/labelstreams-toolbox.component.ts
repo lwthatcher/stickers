@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Sensor } from '../sensor';
 import { LabelStream } from './labelstream';
-import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 // #region [Interfaces]
 type LabelStreamMap = { [name: string]: LabelStream }
@@ -17,6 +17,7 @@ export class LabelstreamToolboxComponent implements OnInit {
   @Input() sensor: Sensor;
   @Input() labelstreams: LabelStreamMap;
   @ViewChild('dropdown') dropdown: NgbDropdown;
+  @ViewChild('popover') popover: NgbPopover;
   // #endregion
 
   // #region [Constructors]
@@ -37,13 +38,22 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #region [Public Methods]
   toggleLabels() { this.sensor.toggle_labels() }
 
-  selectStream(stream: string) { 
+  valid_name(name: string) { return name.length > 0 }
+
+  selectStream(stream: string) {
     this.sensor.labelstream = stream;
     this.dropdown.close();
   }
 
-  newStream() {
-    console.log('oh look, you clicked on the new stream button!')
+  add_stream(stream: string) {
+    if (!this.valid_name(stream)) { return }
+    console.debug('new stream:', stream);
+    this.labelstreams[stream] = new LabelStream(stream);
+    this.sensor.labelstream = stream;
+    this.popover.close();
+    this.dropdown.close();
   }
+
+  
   // #endregion
 }

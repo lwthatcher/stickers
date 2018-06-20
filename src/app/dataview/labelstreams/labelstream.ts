@@ -23,7 +23,8 @@ export class LabelStream {
     // #endregion
 
     // #region [Constructor]
-    constructor(name:string, labels: Label[], emap: EventMap = undefined) {
+    constructor(name:string, labels: Label[] = [], emap: EventMap = undefined) {
+        emap = emap || new EventMap({name})
         this.name = name;
         this.set_labels(labels);
         this.emap = emap;
