@@ -1,3 +1,19 @@
-<p>
-  sensors-toolbox works!
-</p>
+<ul class="nav nav-tabs card-header-tabs">
+    <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': !sensor.hidden, 'disabled': sensor.hidden}">
+            {{sensor.name}}
+        </a>
+    </li>
+    <li class="nav-item" ngbDropdown>
+        <a class="nav-link btn-secondary text-white select-sensor" 
+          id="dropdownBasic1" 
+          ngbDropdownToggle>...</a>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <button *ngFor="let s of known_sensors" 
+              (click)="changeSensor(sensor,s)" 
+              class="dropdown-item">
+                {{s.name}}
+            </button>
+        </div>
+    </li>
+</ul>
