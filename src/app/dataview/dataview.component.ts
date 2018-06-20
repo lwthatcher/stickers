@@ -132,16 +132,6 @@ export class DataviewComponent implements OnInit {
   }
   // #endregion
 
-  // #region [Label Streams]
-  private addStream(name: string, emap: EventMap = undefined) {
-    this.labelStreams[name] = new LabelStream(name, [], emap);
-  }
-
-  private setLabels(name: string, labels: Label[]) {
-    this.labelStreams[name].set_labels(labels);
-  }
-  // #endregion
-
   // #region [Sensors]
   private get_channel(id) {
     if (id >= this.channels.length) id = 0;
@@ -162,6 +152,10 @@ export class DataviewComponent implements OnInit {
   hide(sensor: Sensor) { sensor.hide() }
 
   show(sensor: Sensor) { sensor.show() }
+
+  stream_remove(stream: string) {
+    console.log('stream removed:', stream);
+  }
 
   remove(sensor: Sensor) { 
     console.debug('REMOVING SENSOR', sensor);
@@ -198,6 +192,14 @@ export class DataviewComponent implements OnInit {
   parse_labels(labels: Promise<ArrayLike>): Promise<Label[]> {
     return labels.then((lbls) => {return this.boundaries(lbls)})
                  .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
+  }
+
+  private addStream(name: string, emap: EventMap = undefined) {
+    this.labelStreams[name] = new LabelStream(name, [], emap);
+  }
+
+  private setLabels(name: string, labels: Label[]) {
+    this.labelStreams[name].set_labels(labels);
   }
   // #endregion
 

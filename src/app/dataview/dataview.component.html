@@ -14,11 +14,16 @@
                 </li>
             </ul>
 
-            <toolbox-labelstreams [sensor]="sensor" [(labelstreams)]="labelStreams"></toolbox-labelstreams>
+            <toolbox-labelstreams [sensor]="sensor" [(labelstreams)]="labelStreams">
+            </toolbox-labelstreams>
 
-            <toolbox-modes [sensor]="sensor" [tracker]="mode"></toolbox-modes>
+            <toolbox-modes [sensor]="sensor" [tracker]="mode">
+            </toolbox-modes>
 
-            <toolbox-types [sensor]="sensor" [colorer]="colorer" [(labelstream)]="labelStreams[sensor.labelstream]"></toolbox-types>
+            <toolbox-types [sensor]="sensor" [colorer]="colorer" 
+                (remove)="stream_remove($event)"
+                [(labelstream)]="labelStreams[sensor.labelstream]">
+            </toolbox-types>
 
             <div class='right'>
                 <i *ngIf="!sensor.hidden" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">remove</i>

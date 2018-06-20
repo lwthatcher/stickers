@@ -1,10 +1,15 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { Sensor } from '../sensor';
 import { LabelStream } from './labelstream';
 import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 // #region [Interfaces]
 type LabelStreamMap = { [name: string]: LabelStream }
+
+export interface StreamChange {
+  stream: string;
+  action: string;
+}
 // #endregion
 
 @Component({
@@ -20,12 +25,17 @@ export class LabelstreamToolboxComponent implements OnInit {
   @ViewChild('popover') popover: NgbPopover;
   // #endregion
 
+  // #region [Outputs]
+  @Output() remove: EventEmitter<string>;
+  // #endregion
+
   // #region [Constructors]
   constructor() { }
 
   ngOnInit() {
     console.groupCollapsed('labelstreams-toolbox init', this.sensor.name);
     console.debug('dropdown', this.dropdown);
+    this.remove = new EventEmitter<string>();
     console.info('labelstreams-toolbox initialized', this);
     console.groupEnd();
   }
@@ -59,12 +69,19 @@ export class LabelstreamToolboxComponent implements OnInit {
   }
 
   remove_stream(stream: string, event) {
+    // prevent click from selecting stream
     event.stopPropagation();
     console.log('remove stream:', stream);
-    if (this.sensor.labelstream === stream) {
+    // switch streams if deleting current stream
+    if (this.sensor.labelstream === stream) { 
       this.sensor.labelstream = this.streams[0];
     }
+    // delete stream
     delete this.labelstreams[stream];
+    // notify parent
+    let action = "remove";
+    this.remove.emit(stream);
+    // close dropdown
     this.dropdown.close();
   }
   // #endregion
