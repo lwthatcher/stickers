@@ -2,7 +2,13 @@
 The practical interface for interactive temporal data annotation used for my Thesis proposal.
 
 ## Dependencies
-> COMING SOON!
+```
+Angular:      ^5.2.0
+Angular CLI:  ~1.7.0
+Typescript:   ~2.5.3
+Node:         ^8.3.0
+npm:          ^5.3.0
+```
 
 ## Project Structure
 The main application code is housed in the `/src/app/` directory.
