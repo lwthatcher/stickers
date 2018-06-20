@@ -42,6 +42,11 @@ export class LabelstreamToolboxComponent implements OnInit {
 
   // #region [Accessors]
   get streams(): string[] { return Object.keys(this.labelstreams) }
+
+  get icon(): string {
+    if (this.popover.isOpen()) return 'remove'
+    else return 'add'
+  }
   // #endregion
 
   // #region [Public Methods]
