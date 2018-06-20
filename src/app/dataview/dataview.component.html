@@ -40,6 +40,8 @@
                 </div>
             </div>
 
+            <toolbox-labelstreams [sensor]="sensor" [(labelstreams)]="labelStreams"></toolbox-labelstreams>
+
             <toolbox-modes [sensor]="sensor" [tracker]="mode"></toolbox-modes>
 
             <toolbox-types [sensor]="sensor" [colorer]="colorer" [(labelstream)]="labelStreams[sensor.labelstream]"></toolbox-types>
