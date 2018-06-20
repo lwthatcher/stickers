@@ -31,15 +31,13 @@ export class SensorsToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Accessors]
-  get known_sensors(): SensorInfo[] {
-    let channels = this.channels;
-    return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i, channel: c} })
+  get sensors(): SensorInfo[] {
+    let getInfo = (c,i) => { return {name: Sensor.SENSOR_NAMES[c], channel: c, index: i} }
+    return [...this.channels].map(getInfo);
   }
   // #endregion
 
   // #region [Public Methods]
-  changeSensor(sensor, s) {
-    console.log('change sensor', sensor, s);
-  }
+  changeSensor(to: SensorInfo) { this.sensor.update(to) }
   // #endregion
 }
