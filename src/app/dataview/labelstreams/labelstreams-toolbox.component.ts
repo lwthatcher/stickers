@@ -1,6 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Sensor } from '../sensor';
 import { LabelStream } from './labelstream';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 
 // #region [Interfaces]
 type LabelStreamMap = { [name: string]: LabelStream }
@@ -12,13 +13,10 @@ type LabelStreamMap = { [name: string]: LabelStream }
   styleUrls: ['labelstreams-toolbox.component.css']
 })
 export class LabelstreamToolboxComponent implements OnInit {
-  // #region [Variables]
-
-  // #endregion
-
   // #region [Inputs]
   @Input() sensor: Sensor;
   @Input() labelstreams: LabelStreamMap;
+  @ViewChild('dropdown') dropdown: NgbDropdown;
   // #endregion
 
   // #region [Constructors]
@@ -26,6 +24,7 @@ export class LabelstreamToolboxComponent implements OnInit {
 
   ngOnInit() {
     console.groupCollapsed('labelstreams-toolbox init', this.sensor.name);
+    console.debug('dropdown', this.dropdown);
     console.info('labelstreams-toolbox initialized', this);
     console.groupEnd();
   }
@@ -38,7 +37,10 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #region [Public Methods]
   toggleLabels() { this.sensor.toggle_labels() }
 
-  selectStream(stream: string) { this.sensor.labelstream = stream }
+  selectStream(stream: string) { 
+    this.sensor.labelstream = stream;
+    this.dropdown.close();
+  }
 
   newStream() {
     console.log('oh look, you clicked on the new stream button!')
