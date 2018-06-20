@@ -26,7 +26,7 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Outputs]
-  @Output() remove: EventEmitter<string>;
+  @Output() remove = new EventEmitter<string>();
   // #endregion
 
   // #region [Constructors]
@@ -35,7 +35,6 @@ export class LabelstreamToolboxComponent implements OnInit {
   ngOnInit() {
     console.groupCollapsed('labelstreams-toolbox init', this.sensor.name);
     console.debug('dropdown', this.dropdown);
-    this.remove = new EventEmitter<string>();
     console.info('labelstreams-toolbox initialized', this);
     console.groupEnd();
   }
@@ -61,7 +60,6 @@ export class LabelstreamToolboxComponent implements OnInit {
 
   add_stream(stream: string) {
     if (!this.valid_name(stream)) { return }
-    console.debug('new stream:', stream);
     this.labelstreams[stream] = new LabelStream(stream);
     this.sensor.labelstream = stream;
     this.popover.close();
@@ -69,19 +67,8 @@ export class LabelstreamToolboxComponent implements OnInit {
   }
 
   remove_stream(stream: string, event) {
-    // prevent click from selecting stream
     event.stopPropagation();
-    console.log('remove stream:', stream);
-    // switch streams if deleting current stream
-    if (this.sensor.labelstream === stream) { 
-      this.sensor.labelstream = this.streams[0];
-    }
-    // delete stream
-    delete this.labelstreams[stream];
-    // notify parent
-    let action = "remove";
     this.remove.emit(stream);
-    // close dropdown
     this.dropdown.close();
   }
   // #endregion

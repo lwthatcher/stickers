@@ -14,15 +14,15 @@
                 </li>
             </ul>
 
-            <toolbox-labelstreams [sensor]="sensor" [(labelstreams)]="labelStreams">
+            <toolbox-labelstreams [sensor]="sensor" 
+                [(labelstreams)]="labelStreams" 
+                (remove)="removeStream($event)">
             </toolbox-labelstreams>
 
             <toolbox-modes [sensor]="sensor" [tracker]="mode">
             </toolbox-modes>
 
-            <toolbox-types [sensor]="sensor" [colorer]="colorer" 
-                (remove)="stream_remove($event)"
-                [(labelstream)]="labelStreams[sensor.labelstream]">
+            <toolbox-types [sensor]="sensor" [colorer]="colorer" [(labelstream)]="labelStreams[sensor.labelstream]">
             </toolbox-types>
 
             <div class='right'>

@@ -153,12 +153,20 @@ export class DataviewComponent implements OnInit {
 
   show(sensor: Sensor) { sensor.show() }
 
-  stream_remove(stream: string) {
-    console.log('stream removed:', stream);
+  removeStream(stream: string) {
+    console.log('deleting labelstream:', stream);
+    for (let sensor of this.sensors) {
+      if (sensor.labelstream === stream) {
+        let newstream = this.nextStream(stream);
+        sensor.labelstream = newstream;
+        console.debug('changing sensor labelstream:', sensor.name, newstream);
+      }
+    }
+    delete this.labelStreams[stream];
   }
 
-  remove(sensor: Sensor) { 
-    console.debug('REMOVING SENSOR', sensor);
+  remove(sensor: Sensor) {
+    console.debug('removing sensor:', sensor);
     this.sensors = this.sensors.filter((s) => { return s.id !== sensor.id })
   }
 
@@ -172,7 +180,7 @@ export class DataviewComponent implements OnInit {
     this.sensors.push(sensor);
   }
 
-  change_ls(stream) {console.debug('changing print label-stream:', stream); this.print_ls = stream;}
+  change_ls(stream) { this.print_ls = stream }
 
   save_labels() {
     let json = this.labelStreams[this.print_ls].toJSON();
@@ -224,6 +232,14 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
     console.log('dataview component', this);
     console.groupEnd();
+  }
+
+  /**
+   * Gets which stream to switch to when the specified stream is removed.
+   */
+  private nextStream(stream: string) {
+    let streams = this.streams.filter((s) => s !== stream);
+    return streams[0];
   }
 
   /**
