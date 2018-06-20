@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { TypesToolboxComponent } from './types/types-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
+import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 
 @NgModule({
   imports: [
@@ -14,7 +15,13 @@ import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox
     NgbModule,
     FormsModule
   ],
-  declarations: [DataviewComponent, DatabarComponent, ModesToolboxComponent, TypesToolboxComponent, LabelstreamToolboxComponent],
+  declarations: [
+    DataviewComponent, 
+    DatabarComponent, 
+    ModesToolboxComponent, 
+    TypesToolboxComponent, 
+    LabelstreamToolboxComponent, 
+    SensorsToolboxComponent],
   providers: []
 })
 export class DataviewModule { }
