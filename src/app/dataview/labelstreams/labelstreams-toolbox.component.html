@@ -55,6 +55,10 @@
                   (click)="selectStream(stream)" 
                   class="dropdown-item">
                     {{stream}}
+                    <div class='btn btn-danger btn-icon' 
+                      (click)="remove_stream(stream, $event)">
+                        <i class="material-icons icon">delete</i>
+                    </div>
                 </div>
                 <div class="dropdown-item dropdown-button">
                     <button type="button" 
@@ -63,7 +67,8 @@
                       [ngbPopover]="addPopover"
                       #popover="ngbPopover"
                       placement="right" >
-                        <i class="material-icons icon">add</i>
+                        <i *ngIf="!popover.isOpen()" class="material-icons icon">add</i>
+                        <i *ngIf="popover.isOpen()" class="material-icons icon">remove</i>
                     </button>
                 </div>
             </div>

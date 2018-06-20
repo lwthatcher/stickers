@@ -54,6 +54,10 @@ export class LabelstreamToolboxComponent implements OnInit {
     this.dropdown.close();
   }
 
-  
+  remove_stream(stream: string, event) {
+    event.stopPropagation();
+    console.log('remove stream:', stream);
+    this.dropdown.close();
+  }
   // #endregion
 }

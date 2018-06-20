@@ -16,10 +16,6 @@ span > i.material-icons {
     vertical-align:middle;
 }
 
-div.right > i.icon {
-    vertical-align: initial;
-}
-
 .icon {
     cursor: pointer;
 }
@@ -29,18 +25,27 @@ div.right > i.icon {
 button.dropdown-item,
 div.dropdown-item {
     cursor: pointer;
+    padding-right: 0.25rem;
 }
 
 div.dropdown-item.dropdown-button {
     padding: 1px 1px;
 }
 
+div.dropdown-item > .btn-icon {
+    float: right;
+    padding: 0;
+    visibility: hidden;
+}
+
+div.dropdown-item:hover > .btn-icon {
+    visibility: visible;
+}
+
 div.dropdown-menu {
     padding-bottom: 0;
 }
-/*#endregion */
 
-/*#region [Label Streams] */
 div.dropdown-item.dropdown-button > button.add-stream {
     border-style: dashed; 
     width: 100%;
