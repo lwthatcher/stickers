@@ -169,14 +169,7 @@ export class DataviewComponent implements OnInit {
     this.sensors = this.sensors.filter((s) => { return s.id !== sensor.id })
   }
 
-  selectStream(sensor, stream) { sensor.labelstream = stream }
-
   changeSensor(sensor: Sensor, to: SensorInfo) { sensor.update(to) }
-
-  toggleLabels(sensor: Sensor) { sensor.toggle_labels() }
-
-  // TODO: implement
-  newStream() { console.log('lets make another stream!') }
 
   newSensor() {
     let id = this.next_id();

@@ -14,32 +14,6 @@
                 </li>
             </ul>
 
-            <div class='label-streams tools-box'>
-                <div class="btn-group">
-                    <button type="button" 
-                    (click)="toggleLabels(sensor)" 
-                    class="btn btn-outline-secondary"
-                    [disabled]="sensor.hidden" 
-                    title="toggle labels on/off">
-                        <span>
-                            <i *ngIf="sensor.show_labels" class="material-icons">label</i>
-                            <i *ngIf="!sensor.show_labels" class="material-icons">label_outline</i>
-                        </span>
-                    </button>
-                    <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
-                        <button class="btn btn-outline-secondary" title="current label stream" [ngClass]="{'disabled': sensor.hidden}" ngbDropdownToggle>{{sensor.labelstream}}</button>
-                        <div class="dropdown-menu" ngbDropdownMenu>
-                            <div *ngFor="let stream of streams" (click)="selectStream(sensor, stream)" class="dropdown-item">{{stream}}</div>
-                            <div class="dropdown-item dropdown-button">
-                                <button type="button" class="btn btn-outline-success add-stream" title='new label stream' placement="right" >
-                                    <i class="material-icons icon">add</i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <toolbox-labelstreams [sensor]="sensor" [(labelstreams)]="labelStreams"></toolbox-labelstreams>
 
             <toolbox-modes [sensor]="sensor" [tracker]="mode"></toolbox-modes>

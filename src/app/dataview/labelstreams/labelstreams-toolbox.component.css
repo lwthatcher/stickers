@@ -25,7 +25,7 @@ div.right > i.icon {
 }
 /*#endregion */
 
-/*#region [Generic Dropdowns] */
+/*#region [Dropdown Menu] */
 button.dropdown-item,
 div.dropdown-item {
     cursor: pointer;
@@ -33,6 +33,10 @@ div.dropdown-item {
 
 div.dropdown-item.dropdown-button {
     padding: 1px 1px;
+}
+
+div.dropdown-menu {
+    padding-bottom: 0;
 }
 /*#endregion */
 
