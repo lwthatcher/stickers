@@ -38,7 +38,6 @@ type IndexMap = Map<number,number[]>
 // #endregion
 export class DataviewComponent implements OnInit {
   // #region [Properties]
-  TOOL_MODE = ToolMode;
   dataset: string;
   workspace: string;
   info: WorkspaceInfo;

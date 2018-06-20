@@ -14,15 +14,21 @@
                 </li>
             </ul>
 
-            <toolbox-labelstreams [sensor]="sensor" 
+            <toolbox-labelstreams 
+                [sensor]="sensor" 
                 [(labelstreams)]="labelStreams" 
                 (remove)="removeStream($event)">
             </toolbox-labelstreams>
 
-            <toolbox-modes [sensor]="sensor" [tracker]="mode">
+            <toolbox-modes 
+                [sensor]="sensor" 
+                [tracker]="mode">
             </toolbox-modes>
 
-            <toolbox-types [sensor]="sensor" [colorer]="colorer" [(labelstream)]="labelStreams[sensor.labelstream]">
+            <toolbox-types 
+                [sensor]="sensor" 
+                [colorer]="colorer" 
+                [(labelstream)]="labelStreams[sensor.labelstream]">
             </toolbox-types>
 
             <div class='right'>
@@ -32,14 +38,15 @@
             </div>
             
         </div>
-        <app-databar  *ngIf="!sensor.hidden"
-        [data_info]="data_info" 
-        [sensor]="sensor"
-        [mode]="mode"
-        [transform]="zoom_transform"
-        [colorer]="colorer"
-        [(labelstream)]="labelStreams[sensor.labelstream]"
-        (zoom)="onZoom($event)">
+        <app-databar  
+            *ngIf="!sensor.hidden"
+            [data_info]="data_info" 
+            [sensor]="sensor"
+            [mode]="mode"
+            [transform]="zoom_transform"
+            [colorer]="colorer"
+            [(labelstream)]="labelStreams[sensor.labelstream]"
+            (zoom)="onZoom($event)">
         </app-databar>
     </div>
     <div class="card-header">
