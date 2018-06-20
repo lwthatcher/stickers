@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChange, ViewChild, ViewChildren, QueryList } from '@angular/core';
-import { Sensor } from '../sensor';
+import { Sensor } from '../sensors/sensor';
 import { Colorer } from './colorer';
 import { LabelStream } from '../labelstreams/labelstream';
 import { LabelKey } from './event-types';

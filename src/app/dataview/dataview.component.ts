@@ -9,7 +9,7 @@ import { SettingsService } from '../settings/settings.service';
 import { Label, LabelStream} from './labelstreams/labelstream';
 import { ToolMode, ModeTracker } from './modes/tool-mode';
 import { Colorer } from './types/colorer';
-import { Sensor } from './sensor';
+import { Sensor } from './sensors/sensor';
 import { EventMap, LabelKey } from './types/event-types';
 // #endregion
 

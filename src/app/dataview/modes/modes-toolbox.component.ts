@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ToolMode, ModeTracker } from './tool-mode';
-import { Sensor } from '../sensor';
+import { Sensor } from '../sensors/sensor';
 
 @Component({
   selector: 'toolbox-modes',
