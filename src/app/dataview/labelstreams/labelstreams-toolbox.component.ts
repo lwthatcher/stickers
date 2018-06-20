@@ -33,8 +33,8 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Public Methods]
-  toggleLabels(sensor: Sensor) {
-
+  toggleLabels() {
+    this.sensor.toggle_labels();
   }
 
   selectStream(sensor: Sensor, stream: string) {

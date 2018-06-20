@@ -155,8 +155,6 @@ export class DataviewComponent implements OnInit {
     let nxt_id = this.sensors.map(toID).reduce(maxID, -1) + 1;
     return nxt_id;
   }
-
-  
   // #endregion
 
   // #region [Event Handlers]
