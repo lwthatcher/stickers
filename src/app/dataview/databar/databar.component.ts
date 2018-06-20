@@ -17,7 +17,7 @@ import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../sensor";
 import { Colorer} from '../types/colorer';
 import { Labeller } from './labeller';
-import { Label, LabelStream } from '../labelstream';
+import { Label, LabelStream } from '../labelstreams/labelstream';
 import { Drawer } from './drawer';
 import { ToolMode, ModeTracker } from '../modes/tool-mode';
 import * as d3 from "d3";

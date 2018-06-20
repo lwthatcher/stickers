@@ -1,6 +1,6 @@
 import { DatabarComponent } from './databar.component';
 import { EventEmitter } from '@angular/core';
-import { Label } from '../labelstream';
+import { Label } from '../labelstreams/labelstream';
 import * as d3 from "d3";
 
 export class Labeller {
