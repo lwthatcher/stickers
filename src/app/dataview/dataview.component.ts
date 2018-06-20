@@ -37,42 +37,6 @@ type IndexMap = Map<number,number[]>
 })
 // #endregion
 export class DataviewComponent implements OnInit {
-  // #region [Accessors]
-  get is_labelled(): boolean { return !!this.data_info.labelled }
-
-  get eventMap(): TypeMap {
-    if (!this.is_labelled) return {}
-    const ds = this.data_info.labelled as string;
-    return this.info._labels[ds]['event-map'];
-  }
-
-  get default_stream(): string {
-    if (!this.is_labelled) return "user-labels";
-    return this.data_info.labelled as string;
-  }
-
-  get streams(): string[] { return Object.keys(this.labelStreams) }
-
-  get channels() { return this.data_info.channels }
-
-  get known_sensors(): SensorInfo[] {
-    let channels = this.data_info.channels;
-    return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i, channel: c} })
-  }
-
-  get idx_map(): IndexMap {
-    if (!this._idx_map) 
-      this._idx_map = Sensor.gen_idx_map(this.data_info.channels);
-    return this._idx_map;
-  }
-
-  get settings() { return this._settings; }
-
-  get event_maps() {
-    return this.info.labelschemes.map((scheme) => {return new EventMap(scheme)})
-  }
-  // #endregion
-
   // #region [Properties]
   TOOL_MODE = ToolMode;
   dataset: string;
@@ -129,6 +93,42 @@ export class DataviewComponent implements OnInit {
   ngAfterViewInit() {
     console.debug('dataview children initialized', this);
     console.groupEnd();
+  }
+  // #endregion
+
+  // #region [Accessors]
+  get is_labelled(): boolean { return !!this.data_info.labelled }
+
+  get eventMap(): TypeMap {
+    if (!this.is_labelled) return {}
+    const ds = this.data_info.labelled as string;
+    return this.info._labels[ds]['event-map'];
+  }
+
+  get default_stream(): string {
+    if (!this.is_labelled) return "user-labels";
+    return this.data_info.labelled as string;
+  }
+
+  get streams(): string[] { return Object.keys(this.labelStreams) }
+
+  get channels() { return this.data_info.channels }
+
+  get known_sensors(): SensorInfo[] {
+    let channels = this.data_info.channels;
+    return [...channels].map((c,i) => { return {name: Sensor.SENSOR_NAMES[c], index: i, channel: c} })
+  }
+
+  get idx_map(): IndexMap {
+    if (!this._idx_map) 
+      this._idx_map = Sensor.gen_idx_map(this.data_info.channels);
+    return this._idx_map;
+  }
+
+  get settings() { return this._settings; }
+
+  get event_maps() {
+    return this.info.labelschemes.map((scheme) => {return new EventMap(scheme)})
   }
   // #endregion
 
