@@ -6,7 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { TypesToolboxComponent } from './types/types-toolbox.component';
-import { LabelstreamToolboxComponent } from './labelstreams/labelstream-toolbox.component';
+import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 
 @NgModule({
   imports: [
