@@ -1,16 +1,14 @@
 // #region [Imports]
 import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
-import { saveAs } from 'file-saver/FileSaver';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo, TypeMap } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service';
 import { Label, LabelStream} from './labelstreams/labelstream';
-import { ToolMode, ModeTracker } from './modes/tool-mode';
+import { ModeTracker } from './modes/tool-mode';
 import { Colorer } from './types/colorer';
 import { Sensor } from './sensors/sensor';
-import { EventMap, LabelKey } from './types/event-types';
+import { EventMap } from './types/event-types';
 // #endregion
 
 // #region [Interfaces]
@@ -47,7 +45,6 @@ export class DataviewComponent implements OnInit {
   labelStreams: LabelStreamMap = {};
   mode: ModeTracker;
   colorer: Colorer;
-  print_ls: string;
   private _idx_map: Map<number,number[]>;
   // #endregion
 
@@ -82,9 +79,8 @@ export class DataviewComponent implements OnInit {
       this.parse_labels(_labels)
           .then((labels) => { this.setLabels(this.default_stream, labels) })
     }
-    // add user-labels stream, setup default save-lbls stream
+    // add user-labels stream
     this.addStream('user-labels');
-    this.print_ls = this.default_stream;
     // component initialized
     console.info('dataview initialized', this);
   }
@@ -170,16 +166,6 @@ export class DataviewComponent implements OnInit {
     let sensor = new Sensor(c, id, this.default_stream, this.idx_map);
     console.debug('Adding new sensor:', sensor);
     this.sensors.push(sensor);
-  }
-
-  change_ls(stream) { this.print_ls = stream }
-
-  save_labels() {
-    let json = this.labelStreams[this.print_ls].toJSON();
-    let name = this.print_ls + '.labels.json'
-    console.info('saving label-stream:', this.print_ls, name, json);
-    let blob = new Blob([json], {type: 'application/json;charset=utf-8'})
-    saveAs(blob, name);
   }
 
   @HostListener('document:keypress', ['$event'])
