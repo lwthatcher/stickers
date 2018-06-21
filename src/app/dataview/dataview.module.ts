@@ -8,6 +8,7 @@ import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { TypesToolboxComponent } from './types/types-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
+import { SaveMenuComponent } from './save-menu/save-menu.component';
 
 @NgModule({
   imports: [
@@ -21,7 +22,7 @@ import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
     ModesToolboxComponent, 
     TypesToolboxComponent, 
     LabelstreamToolboxComponent, 
-    SensorsToolboxComponent],
+    SensorsToolboxComponent, SaveMenuComponent],
   providers: []
 })
 export class DataviewModule { }
