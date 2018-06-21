@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { LabelStream } from '../labelstreams/labelstream';
+import { saveAs } from 'file-saver/FileSaver';
 
 // #region [Interfaces]
 type LabelStreamMap = { [name: string]: LabelStream }
@@ -13,7 +14,12 @@ type LabelStreamMap = { [name: string]: LabelStream }
 })
 export class SaveMenuComponent implements OnInit {
   // #region [Inputs]
-  @Input() labelstreams: LabelStreamMap
+  @Input() labelstreams: LabelStreamMap;
+  @Input() default: string;
+  // #endregion
+
+  // #region [Variables]
+  selected_stream: string;
   // #endregion
 
   // #region [Constructors]
@@ -21,6 +27,7 @@ export class SaveMenuComponent implements OnInit {
 
   ngOnInit() {
     console.groupCollapsed('save-menu');
+    this.selected_stream = this.default;
     console.info('save-menu initialized', this);
     console.groupEnd();
   }
@@ -31,12 +38,14 @@ export class SaveMenuComponent implements OnInit {
   // #endregion
 
   // #region [Public Methods]
-  save_labels() {
-    console.log('save labels');
-  }
+  select(stream: string) { this.selected_stream = stream }
 
-  change_ls(stream: string) {
-    console.log('selecting stream to save:', stream);
+  save_labels() {
+    let json = this.labelstreams[this.selected_stream].toJSON();
+    let name = this.selected_stream + '.labels.json'
+    console.info('saving label-stream:', this.selected_stream, name, json);
+    let blob = new Blob([json], {type: 'application/json;charset=utf-8'})
+    saveAs(blob, name);
   }
   // #endregion
 }

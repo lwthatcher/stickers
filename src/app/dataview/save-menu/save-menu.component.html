@@ -1,11 +1,11 @@
 <div class='card text-white bg-secondary mb-3'>
-    <div class="btn-group mr-3">
-        <button type="button" class="btn btn-success" (click)="save_labels()">Save Labels</button>
-        <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
-            <button class="btn btn-success dropdown-toggle-split" ngbDropdownToggle></button>
-            <div class="dropdown-menu" ngbDropdownMenu>
-                <div *ngFor="let stream of streams" (click)="change_ls(stream)" class="dropdown-item">{{stream}}</div>
-            </div>
-        </div>
+  <div class="btn-group mr-3">
+    <button type="button" class="btn btn-success" (click)="save_labels()">Save Labels</button>
+    <div class="btn-group" ngbDropdown role="group">
+      <button class="btn btn-success dropdown-toggle-split" ngbDropdownToggle></button>
+      <div class="dropdown-menu" ngbDropdownMenu>
+          <div *ngFor="let stream of streams" (click)="select(stream)" class="dropdown-item">{{stream}}</div>
+      </div>
     </div>
+  </div>
 </div>
