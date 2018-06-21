@@ -64,6 +64,15 @@ but we'll try to update this section when there are...
 > Currently, this component does not actually exist.
 It is more of a helpful concept for grouping releated functionality.
 
+#### `sensors-toolbox` component
+This toolbox displays the name of the current sensor and provides the user with
+a dropdown to change to displaying a different sensor.
+
+#### `labelstreams-toolbox` component
+This toolbox allows the user to toggle the labels on/off for the current sensor,
+as well as allowing them to select which labelstream to display.
+It also provides support for the user to create/delete labelstreams.
+
 #### `types-toolbox` component
 This toolbox handles adjustments to the label scheme,
 by allowing the user to select from and modify the list of _event-types_.
@@ -92,10 +101,13 @@ The directory layout mostly follows the design layout of the `dataview` componen
 with its child components and related helper classes generally grouped with them.
 A brief overview of the sub-directories:
 
-- the _databar_ directory contains the `databar` component, as well as the `drawer` and `labeller` helper classes.
-- the _modes_ directory contains the `modes-toolbox` toolbox component,
- as well as the _tool-mode_ helper classes
- - the _types_ directory contains the `types-toolbox` component,
- the `colorer` helper class, and the _event-types_ helper classes.
-
-
+- the _/databar/_ directory contains the `databar` component, 
+as well as the `drawer` and `labeller` helper classes.
+- the _/labelstreams/_ directory contains the `labelstreams-toolbox` component
+and the `labelstream` helper class.
+- the _/modes/_ directory contains the `modes-toolbox` component,
+as well as the _tool-mode_ helper classes.
+- the _/sensors/_ directory contains the `sensors-toolbox` component
+and the `sensor` helper class.
+- the _/types/_ directory contains the `types-toolbox` component,
+the `colorer` helper class, and the _event-types_ helper classes.
