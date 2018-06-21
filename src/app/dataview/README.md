@@ -56,8 +56,10 @@ into multiple smaller groups called _toolkits_.
 Each toolkit is often its own component, but this is still an in-progress extraction.
 
 **Non-Repeating Components:**
-Currently, there aren't really any non-repeating components,
-but we'll try to update this section when there are...
+These components have only instance of them on the dataview, 
+and usually handle controls not related to individual streams.
+Currently we only have one non-repeating component: the `save-menu`,
+located at the bottom.
 
 ### Child Components
 #### `toolbar` component
@@ -89,12 +91,19 @@ This contains the main SVG that plots the signals data and displays the labels.
 The main work of label creation or editting from the _user's_ perspective 
 will be done here.
 
+This component is also responsible for actually loading the appropriate sensor streams
+from the `data-loader` server and displaying them.
+
 Some of the core functionality of the `databar` component 
 is broken into a few helper classes to simplify things:
 
 - The `drawer` handles the code for plotting data/labels and zooming on the SVG
 - The `labeller` handles the creation, deletion, and editting of the actual labels
 in the provided _labelstream_
+
+
+#### `save-menu` component
+This is a simple non-repeating menu located at the bottom for saving user work.
 
 ## Directory Layout
 The directory layout mostly follows the design layout of the `dataview` component,
@@ -111,3 +120,4 @@ as well as the _tool-mode_ helper classes.
 and the `sensor` helper class.
 - the _/types/_ directory contains the `types-toolbox` component,
 the `colorer` helper class, and the _event-types_ helper classes.
+- the _/save-menu/_ directory contains the `save-menu` component.
