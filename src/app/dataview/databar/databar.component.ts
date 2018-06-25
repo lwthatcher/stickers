@@ -272,7 +272,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   private logInfo() {
     console.groupCollapsed('Databar ' + this.sensor.name);
     console.groupCollapsed('helpers');
-      console.log('labeller', this.labeller);
+      this.labeller.logInfo();
       this.drawer.logInfo();
     console.groupEnd();
     console.groupCollapsed('svg / drawing');

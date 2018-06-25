@@ -155,5 +155,13 @@ export class Labeller {
         }
         return dx;
     }
+
+    logInfo() {
+        console.groupCollapsed('labeller');
+        console.log('labels:', this.labels);
+        console.log('labelstream:', this.ls);
+        console.log('labeller:', this);
+        console.groupEnd();
+    }
     // #endregion
 }
