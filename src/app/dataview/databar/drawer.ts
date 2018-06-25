@@ -153,7 +153,6 @@ export class Drawer {
     // updated elements
     let rects = this.layers[Layer.Labels].selectAll('rect.label')
                     .data(this.labels, key)
-                    .classed('updated', true)
                     .attr('x', (d) => { return this.x(d.start) })
                     .attr('width', width)
                     .attr('fill', (d) => { return this.databar.colorer.labels(this.ls.name).get(d.label) })
@@ -277,6 +276,14 @@ export class Drawer {
       let dim_sigs = this.layers[Layer.Host].selectAll('g.signals > path.line.line-' + j.toString());
       dim_sigs.attr("d", this.lines[j]);
     }
+  }
+
+  updateLabels() {
+    let width = (d) => { return this.x(d.end) - this.x(d.start) }
+    let rects = this.layers[Layer.Labels]
+                    .selectAll('rect.label')
+                    .attr('x', (d) => { return this.x(d.start) })
+                    .attr('width', width)
   }
   // #endregion
 

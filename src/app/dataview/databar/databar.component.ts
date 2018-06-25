@@ -210,7 +210,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.drawer.clear('x-axis');
     this.drawer.draw_xAxis();
     // redraw labels
-    this.drawer.draw_labels();
+    this.drawer.updateLabels();
     this.drawer.draw_handles();
   }
   // #endregion
