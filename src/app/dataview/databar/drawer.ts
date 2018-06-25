@@ -40,7 +40,7 @@ export class Drawer {
   // #region [Variables]
   databar: DatabarComponent;
   layers: LayerMap = {};
-  _x; _x0;
+  x; x0;
   Y = [];
   lines = [];
   zoom: ZoomBehavior;
@@ -100,10 +100,6 @@ export class Drawer {
 
   get show_labels() { return this.databar.sensor.show_labels }
 
-  get x() { return this.databar.x }
-
-  get y() { return this.databar.y }
-
   get signals() { return this.layers[Layer.Host].selectAll('g.signals > path.line') }
 
   get width() { return this.databar.width }
@@ -128,12 +124,10 @@ export class Drawer {
   // #region [Public Plotting Methods]
   async draw() {
     // set the respective ranges for x/y
-    this.databar.set_ranges();
     this.set_ranges();
     // wait for data to load
     let data = await this.databar._data;
     // stop loading-spinner once the domains are updated
-    this.databar.set_domains(data);
     this.set_domains(data);
     this.databar.stop_spinner();
     // draw axes
@@ -249,7 +243,13 @@ export class Drawer {
   draw_yAxis() {
     this.layers[Layer.Axes].append('g')
         .attr('class', 'y-axis')
-        .call(d3.axisLeft(this.y));
+        .call(d3.axisLeft(this.Y[0]));
+    if (this.yDims().length > 1) {
+      this.layers[Layer.Axes].append('g')
+        .attr('class', 'y-axis')
+        .attr("transform", "translate( " +this.width + ", 0 )")
+        .call(d3.axisRight(this.Y[1]));
+    }
   }
 
   draw_cursor(cursor) {
@@ -267,6 +267,16 @@ export class Drawer {
              .attr('viewBox', "0 0 24 24")
              .append('path')
              .attr('d', cursor);
+  }
+
+  updateSignals() {
+    if (this.yDims().length === 1) {
+      this.signals.attr("d", this.lines[0])
+    }
+    else for (let j of this.yDims()) {
+      let dim_sigs = this.layers[Layer.Host].selectAll('g.signals > path.line.line-' + j.toString());
+      dim_sigs.attr("d", this.lines[j]);
+    }
   }
   // #endregion
 
@@ -290,7 +300,7 @@ export class Drawer {
         .attr("stroke", this.databar.colorer.lines.get(j+1))
         .attr("stroke-width", 1.5)
         .attr("stroke-opacity", 0.7)
-        .attr("d", this.databar.line);
+        .attr("d", this.getLine(j));
   }
   
   private _add_handle(selection: Selection, side: 'left' | 'right') {
@@ -312,23 +322,23 @@ export class Drawer {
   // #region [Domains and Ranges]
   set_ranges() {
     // set x-ranges
-    this._x = d3.scaleLinear().rangeRound([0, this.width]);
-    this._x0 = d3.scaleLinear().rangeRound([0, this.width]);
+    this.x = d3.scaleLinear().rangeRound([0, this.width]);
+    this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
     // set y-ranges
     for (let j of this.yDims()) {
       this.Y[j] = d3.scaleLinear().rangeRound([this.height, 0]);
     }
     // setup line-drawing method(s)
     for (let j of this.yDims()) {
-      this.lines[j] = d3.line().x((d,i) => this._x(d.i))
+      this.lines[j] = d3.line().x((d,i) => this.x(d.i))
                                .y((d,i) => this.Y[j](d.d))
     }
   }
 
   set_domains(axes) {
     // setup x-domains
-    this._x.domain([0, axes[0].length]);
-    this._x0.domain(this._x.domain());
+    this.x.domain([0, axes[0].length]);
+    this.x0.domain(this.x.domain());
     // combined y-domains (default)
     if (this.yDims().length === 1) {
       this.Y[0].domain([d3.min(axes, (ax) => d3.min(ax, (d) => d.d)), 
@@ -344,6 +354,11 @@ export class Drawer {
   private yDims() {
     if (this.sensor.channel === 'B') return [0, 1];
     else return [0];
+  }
+
+  private getLine(j) {
+    if (this.sensor.channel !== 'B') return this.lines[0];
+    else return this.lines[j];
   }
   // #endregion
 
@@ -539,12 +554,14 @@ export class Drawer {
   private domains_and_ranges() {
     let dr = (d) => {return [d.domain(), d.range()]}
     let ys = this.Y.map((y) => dr(y))
-    return {x: dr(this._x), x0: dr(this._x0), Y: ys} 
+    return {x: dr(this.x), x0: dr(this.x0), Y: ys} 
   }
 
   logInfo() {
-    console.groupCollapsed('drawer', this.sensor.name);
+    console.groupCollapsed('drawer');
     console.log('domains/ranges', this.domains_and_ranges());
+    console.log('line(s):', this.lines);
+    console.log('drawer:', this);
     console.groupEnd();
   }
   // #endregion

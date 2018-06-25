@@ -52,10 +52,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #endregion
 
   // #region [Variables]
-  margin = {top: 5, right: 20, bottom: 20, left: 50}
+  margin = {top: 2, right: 40, bottom: 20, left: 50}
   container: Element;
-  // line drawing functions
-  x; y; line; x0;
   // zoom handler
   _zoom;
   // data references
@@ -75,6 +73,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #endregion
 
   // #region [Accessors]
+  get x() { return this.drawer.x }
+
+  get x0() { return this.drawer.x0 }
+
   get WIDTH() { return this.container.clientWidth; }
 
   get HEIGHT() { return this._height; }
@@ -143,26 +145,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
   // #endregion
 
-  // #region [Domains and Ranges]
-  set_ranges() {
-    // set x-ranges
-    this.x = d3.scaleLinear().rangeRound([0, this.width]);
-    this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
-    // set y-ranges
-    this.y = d3.scaleLinear().rangeRound([this.height, 0]);
-    // update line method to new ranges
-    this.line = d3.line().x((d,i) => this.x(d.i))
-                         .y((d,i) => this.y(d.d));
-  }
-
-  set_domains(axes) {
-    this.x.domain([0, axes[0].length]);
-    this.x0.domain(this.x.domain());
-    this.y.domain([d3.min(axes, (ax) => d3.min(ax, (d) => d.d)), 
-                   d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
-  }
-  // #endregion
-
   // #region [Event Handlers]
   stream_update(event) {
     if (event === 'change-type') { this.type_changed(event) }
@@ -223,7 +205,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     // rescale x-domain to zoom level
     this.x.domain(t.rescaleX(this.x0).domain());
     // redraw signals
-    this.drawer.signals.attr("d", this.line);
+    this.drawer.updateSignals();
     // redraw x-axis
     this.drawer.clear('x-axis');
     this.drawer.draw_xAxis();
@@ -296,7 +278,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     console.groupCollapsed('svg / drawing');
       console.log('heights/widths:', [this.height, this.width], [this.HEIGHT, this.WIDTH]);
       console.log('current zoom:', this.transform);
-      console.log('domains/ranges:', this.domains_and_ranges());
+      // console.log('domains/ranges:', this.domains_and_ranges());
     console.groupEnd();
     console.groupCollapsed('labels');
       console.log('label-stream:', this.labelstream);
@@ -310,11 +292,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     console.groupEnd();
     console.log('databar component', this);
     console.groupEnd()
-  }
-
-  private domains_and_ranges() {
-    let dr = (d) => {return [d.domain(), d.range()]}
-    return {x: dr(this.x), x0: dr(this.x0), y: dr(this.y)}
   }
 
   private redraw_labels() {
