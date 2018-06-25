@@ -40,10 +40,13 @@ export class Drawer {
   // #region [Variables]
   databar: DatabarComponent;
   layers: LayerMap = {};
+  _x; _x0;
+  Y = [];
+  lines = [];
   zoom: ZoomBehavior;
   move: DragBehavior;
   resize: DragBehavior = {};
-  mouse: MouseBehavior
+  mouse: MouseBehavior;
   // #endregion
 
   // #region [Private Variables]
@@ -89,6 +92,8 @@ export class Drawer {
   // #endregion
 
   // #region [Accessors]
+  get sensor() { return this.databar.sensor }
+
   get labels() { return this.databar.labels }
 
   get selected_label() { return this.databar.selected_label }
@@ -124,10 +129,12 @@ export class Drawer {
   async draw() {
     // set the respective ranges for x/y
     this.databar.set_ranges();
+    this.set_ranges();
     // wait for data to load
     let data = await this.databar._data;
     // stop loading-spinner once the domains are updated
     this.databar.set_domains(data);
+    this.set_domains(data);
     this.databar.stop_spinner();
     // draw axes
     this.draw_xAxis();
@@ -299,6 +306,44 @@ export class Drawer {
                     .call(this.resize[side])
                     .merge(selection)
                     .attr('x', callback)
+  }
+  // #endregion
+
+  // #region [Domains and Ranges]
+  set_ranges() {
+    // set x-ranges
+    this._x = d3.scaleLinear().rangeRound([0, this.width]);
+    this._x0 = d3.scaleLinear().rangeRound([0, this.width]);
+    // set y-ranges
+    for (let j of this.yDims()) {
+      this.Y[j] = d3.scaleLinear().rangeRound([this.height, 0]);
+    }
+    // setup line-drawing method(s)
+    for (let j of this.yDims()) {
+      this.lines[j] = d3.line().x((d,i) => this._x(d.i))
+                               .y((d,i) => this.Y[j](d.d))
+    }
+  }
+
+  set_domains(axes) {
+    // setup x-domains
+    this._x.domain([0, axes[0].length]);
+    this._x0.domain(this._x.domain());
+    // combined y-domains (default)
+    if (this.yDims().length === 1) {
+      this.Y[0].domain([d3.min(axes, (ax) => d3.min(ax, (d) => d.d)), 
+                        d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
+    }
+    // individual y-domains
+    else for (let j of this.yDims()) {
+      this.Y[j].domain([d3.min(axes[j], (d) => d.d), 
+                        d3.max(axes[j], (d) => d.d)])
+    }
+  }
+
+  private yDims() {
+    if (this.sensor.channel === 'B') return [0, 1];
+    else return [0];
   }
   // #endregion
 
@@ -489,6 +534,18 @@ export class Drawer {
     if (region === 'frame' && mode.click && !overlaps) return POINTER;
     if (region === 'frame' && mode.click && overlaps) return BRUSH;
     else return null;
+  }
+
+  private domains_and_ranges() {
+    let dr = (d) => {return [d.domain(), d.range()]}
+    let ys = this.Y.map((y) => dr(y))
+    return {x: dr(this._x), x0: dr(this._x0), Y: ys} 
+  }
+
+  logInfo() {
+    console.groupCollapsed('drawer', this.sensor.name);
+    console.log('domains/ranges', this.domains_and_ranges());
+    console.groupEnd();
   }
   // #endregion
 }

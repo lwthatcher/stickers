@@ -289,6 +289,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Helper Methods]
   private logInfo() {
     console.groupCollapsed('Databar ' + this.sensor.name);
+    console.groupCollapsed('helpers');
+      console.log('labeller', this.labeller);
+      this.drawer.logInfo();
+    console.groupEnd();
     console.groupCollapsed('svg / drawing');
       console.log('heights/widths:', [this.height, this.width], [this.HEIGHT, this.WIDTH]);
       console.log('current zoom:', this.transform);
