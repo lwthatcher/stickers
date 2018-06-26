@@ -8,11 +8,13 @@ import * as d3 from "d3";
 import * as math from 'mathjs';
 
 // #region [Interfaces]
-export interface Dataset {
+export abstract class Dataset {
   axes: Axes;
   info: DataInfo;
-  format(): SignalStream;
-  filter(idx: number[]): Dataset;
+  abstract format(): SignalStream;
+  abstract filter(idx: number[]): Dataset;
+
+  constructor(info: DataInfo) { this.info = info }
 }
 type Axes = Array<Axis>
 type Axis = tf.Tensor | number[]
@@ -21,12 +23,12 @@ type RawData = ArrayBuffer | string;
 // #endregion
 
 // #region [Helper Classes]
-class TensorDataset implements Dataset {
+class TensorDataset extends Dataset {
   axes: Array<tf.Tensor>;
   info: DataInfo;
-  constructor(axes: Array<tf.Tensor>, info: DataInfo) { 
+  constructor(axes: Array<tf.Tensor>, info: DataInfo) {
+    super(info);
     this.axes = axes;
-    this.info = info;
   }
   format() {
     return this.axes.map((axis) => axis.dataSync())
@@ -37,11 +39,11 @@ class TensorDataset implements Dataset {
   }
 }
 
-class CSVDataset implements Dataset {
+class CSVDataset extends Dataset {
   axes: number[][];
   info: DataInfo;
-  constructor(axes: number[][],info: DataInfo, transpose = true) {
-    this.info = info;
+  constructor(axes: number[][], info: DataInfo, transpose = true) {
+    super(info);
     if (transpose) this.axes = math.transpose(axes); 
     else this.axes = axes;
   }
