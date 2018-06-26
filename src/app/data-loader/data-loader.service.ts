@@ -30,9 +30,7 @@ class TensorDataset extends Dataset {
     super(info);
     this.axes = axes;
   }
-  format() {
-    return this.axes.map((axis) => axis.dataSync())
-  }
+  format() { return this.axes.map((axis) => axis.dataSync()) }
   filter(idx: number[]): Dataset {
     const newaxes = this.axes.filter((e,i) => idx.includes(i));
     return new TensorDataset(newaxes, this.info);
@@ -49,7 +47,6 @@ class CSVDataset extends Dataset {
   }
   format() { return this.axes }
   filter(idx: number[]): Dataset {
-    let filterRow = (row: number[]) => { return row.filter((d,i) => idx.includes(i)) }
     const newaxes = this.axes.filter((e,i) => idx.includes(i));
     return new CSVDataset(newaxes, this.info, false);
   }
