@@ -10,6 +10,7 @@ import * as math from 'mathjs';
 // #region [Interfaces]
 export interface Dataset {
   axes: Axes;
+  info: DataInfo;
   format(): SignalStream;
   filter(idx: number[]): Dataset;
 }
@@ -22,19 +23,25 @@ type RawData = ArrayBuffer | string;
 // #region [Helper Classes]
 class TensorDataset implements Dataset {
   axes: Array<tf.Tensor>;
-  constructor(axes: Array<tf.Tensor>) { this.axes = axes; }
+  info: DataInfo;
+  constructor(axes: Array<tf.Tensor>, info: DataInfo) { 
+    this.axes = axes;
+    this.info = info;
+  }
   format() {
     return this.axes.map((axis) => axis.dataSync())
   }
   filter(idx: number[]): Dataset {
     const newaxes = this.axes.filter((e,i) => idx.includes(i));
-    return new TensorDataset(newaxes);
+    return new TensorDataset(newaxes, this.info);
   }
 }
 
 class CSVDataset implements Dataset {
-  axes: number[][]
-  constructor(axes: number[][], transpose = true) {
+  axes: number[][];
+  info: DataInfo;
+  constructor(axes: number[][],info: DataInfo, transpose = true) {
+    this.info = info;
     if (transpose) this.axes = math.transpose(axes); 
     else this.axes = axes;
   }
@@ -42,7 +49,7 @@ class CSVDataset implements Dataset {
   filter(idx: number[]): Dataset {
     let filterRow = (row: number[]) => { return row.filter((d,i) => idx.includes(i)) }
     const newaxes = this.axes.filter((e,i) => idx.includes(i));
-    return new CSVDataset(newaxes, false);
+    return new CSVDataset(newaxes, this.info, false);
   }
 }
 // #endregion
@@ -63,7 +70,7 @@ export class DataloaderService {
     let uri = '/api/data/' + data.workspace + '/' + data.name;
     let options = this.getOptions(data.format);
     let result = this.http.get(uri, options).toPromise()
-                     .then((d: RawData) => { return this.toDataset(d, data.format) });
+                     .then((d: RawData) => { return this.toDataset(d, data) });
     this.datasets.set(data.name, result);
     console.debug('LOADING DATASET', result, data, this);
     return this.datasets.get(data.name);
@@ -83,16 +90,17 @@ export class DataloaderService {
   // #endregion
 
   // #region [Helper Methods]
-  private toDataset(d: RawData, format: string): Dataset {
+  private toDataset(d: RawData, info: DataInfo): Dataset {
+    let format = info.format;
     if (format === 'tensor') {
       let tensors = parse(d as ArrayBuffer);
       let axes = tf.split(tensors, tensors.shape[1], 1);
-      return new TensorDataset(axes);
+      return new TensorDataset(axes, info);
     }
     else if (format === 'csv') {
       let asNumber = (d: Array<string>) => { return d.map((di) => +di) };
       let axes = d3.csvParseRows(d, asNumber);
-      return new CSVDataset(axes);
+      return new CSVDataset(axes, info);
     }
     else throw new TypeError('unrecognized or unsupported format type: ' + format);
   }
