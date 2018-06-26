@@ -1,6 +1,7 @@
 import { DataviewComponent } from '../dataview.component'
 import { SettingsService, ColorScheme } from '../../settings/settings.service';
 import * as d3 from "d3";
+import { LabelKey } from './event-types';
 
 // #region [Interfaces]
 export interface ColorScale {
@@ -33,7 +34,7 @@ export class Colorer {
         if (!(name in this._lbls)) {
             let emap = this.dataview.labelStreams[name].emap;
             let etypes = emap.event_types();
-            let cmap = new ColorMap(this.scale(this.settings.label_scheme), etypes);
+            let cmap = new ColorMap(this.scale(this.settings.label_scheme), etypes, emap.null_label);
             this._lbls[name] = cmap;
         }
         return this._lbls[name]
@@ -59,7 +60,7 @@ class ColorMap {
     private scale;
     private null_lbl;
 
-    constructor(scale, events=[], null_lbl="0") {
+    constructor(scale, events=[], null_lbl:LabelKey = "0") {
         this.scale = scale;
         this.null_lbl = null_lbl;
         // setup colors
