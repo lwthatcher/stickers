@@ -344,7 +344,8 @@ export class Drawer {
 
   set_domains(axes) {
     // setup x-domains
-    this.x.domain([0, axes[0].length]);
+    let max = axes[0][axes[0].length-1].i;
+    this.x.domain([0, max]);
     this.x0.domain(this.x.domain());
     // combined y-domains (default)
     if (this.yDims().length === 1) {
