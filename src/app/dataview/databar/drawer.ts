@@ -236,7 +236,8 @@ export class Drawer {
     this.layers[Layer.Axes].append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + this.databar.height + ')')
-        .call(d3.axisBottom(this.x));
+        .call(d3.axisBottom(this.x)
+                .tickFormat((d) => { return d / 1000; }));
   }
 
   draw_yAxis() {

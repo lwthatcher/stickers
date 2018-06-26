@@ -7,6 +7,8 @@ import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 import * as math from 'mathjs';
 
+export const MILLISECONDS = 1000
+
 // #region [Interfaces]
 export abstract class Dataset {
   // properties
@@ -21,7 +23,7 @@ export abstract class Dataset {
   toDatum(): datum[][] {
     let toArray = (axis) => {
       return Array.from(axis).map((d,_i) => {
-        let i = (_i * this.info.Hz);
+        let i = (_i * (MILLISECONDS / this.info.Hz) );
         let t = new Date(i);
         return {d, i, t} 
       }) as datum[] 
