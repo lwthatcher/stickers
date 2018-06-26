@@ -181,9 +181,9 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Data Loading]
-  parse_labels(labels: Promise<datum[]>): Promise<Label[]> {
-    return labels.then((lbls) => {return this.boundaries(lbls)})
-                 .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
+  parse_labels(labeldata: Promise<datum[]>): Promise<Label[]> {
+    return labeldata.then((data) => this.boundaries(data))
+                    .then((labels) => this.filterNullLabels(labels));
   }
 
   private addStream(name: string, emap: EventMap = undefined) {
@@ -192,6 +192,11 @@ export class DataviewComponent implements OnInit {
 
   private setLabels(name: string, labels: Label[]) {
     this.labelStreams[name].set_labels(labels);
+  }
+
+  private filterNullLabels(labels: Label[]) {
+    let ls = this.labelStreams[this.default_stream];
+    return labels.filter((lbl) => lbl.label !== 0);
   }
   // #endregion
 
