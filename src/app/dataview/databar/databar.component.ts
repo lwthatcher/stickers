@@ -10,7 +10,7 @@ import { Component,
          OnChanges,
          OnDestroy } from '@angular/core';
 import { SettingsService, DownsamplingMethod } from '../../settings/settings.service';
-import { DataloaderService, Dataset } from '../../data-loader/data-loader.service';
+import { DataloaderService, Dataset, MILLISECONDS } from '../../data-loader/data-loader.service';
 import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
@@ -85,7 +85,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   get height() { return this.HEIGHT - this.margin.top - this.margin.bottom; }
 
-  get points_per_pixel() { return (this.x.domain()[1] - this.x.domain()[0]) / (this.x.range()[1] - this.x.range()[0]) }
+  get points_per_pixel() { return ((this.x.domain()[1] - this.x.domain()[0])/( MILLISECONDS / this.data_info.Hz)) / (this.x.range()[1] - this.x.range()[0]) }
 
   get bucket_size() { return Math.trunc(this.points_per_pixel / 2) }
 
@@ -234,12 +234,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Data Loading]
   load_data(): Promise<Array<datum>[]> {
-    let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as Array<datum> }
     return this.dataloader.getSensorStreams(this.data_info.name, this.sensor.idxs)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.debug('loaded dataset', this._dataset) })
-        .then(() => { return this._dataset.format() })
-        .then((axes) => {return axes.map(toArray)})
+        .then(() => { return this._dataset.toDatum() })
   }
 
   start_spinner(): void {
@@ -248,9 +246,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.spinner = new Spinner(opts).spin(target);
   }
 
-  stop_spinner() {
-    this.spinner.stop();
-  }
+  stop_spinner() { this.spinner.stop() }
 
   downsample(data) {
     // only downsample if enabled

@@ -236,7 +236,8 @@ export class Drawer {
     this.layers[Layer.Axes].append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + this.databar.height + ')')
-        .call(d3.axisBottom(this.x));
+        .call(d3.axisBottom(this.x)
+                .tickFormat((d) => { return time_format(d) }));
   }
 
   draw_yAxis() {
@@ -344,7 +345,8 @@ export class Drawer {
 
   set_domains(axes) {
     // setup x-domains
-    this.x.domain([0, axes[0].length]);
+    let max = axes[0][axes[0].length-1].i;
+    this.x.domain([0, max]);
     this.x0.domain(this.x.domain());
     // combined y-domains (default)
     if (this.yDims().length === 1) {
@@ -572,4 +574,15 @@ export class Drawer {
     console.groupEnd();
   }
   // #endregion
+}
+
+function time_format(ms: number) {
+  let secs = Math.floor(ms % (1000 * 60) / 1000);
+  let mins = Math.floor(ms % (1000 * 60 * 60) / (1000 * 60));
+  let hours = Math.floor(ms / (1000 * 60 * 60));
+  let result = ""
+  if (hours > 0) result += hours.toString() + ":" + mins.toString().padStart(2,'0');
+  else result += mins.toString();
+  result += ':' + secs.toString().padStart(2, '0');
+  return result;
 }

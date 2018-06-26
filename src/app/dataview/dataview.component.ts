@@ -18,6 +18,12 @@ interface SensorInfo {
   channel?: string;
 }
 
+interface datum {
+  d: number;
+  i: number;
+  t?: Date;
+}
+
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
 
 type LabelStreamMap = { [name: string]: LabelStream }
@@ -175,7 +181,7 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Data Loading]
-  parse_labels(labels: Promise<ArrayLike>): Promise<Label[]> {
+  parse_labels(labels: Promise<datum[]>): Promise<Label[]> {
     return labels.then((lbls) => {return this.boundaries(lbls)})
                  .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
   }
@@ -232,18 +238,21 @@ export class DataviewComponent implements OnInit {
   }
 
   /**
-   * Infers discrete event start/end times from a stream of label readings
+   * Infers discrete event start/end times from a stream of datum readings
    * 
-   * @param lbls the stream of label IDs
+   * @param lbls the stream of label datum readings
    */
   private boundaries(lbls: ArrayLike): Label[] {
     // helper functions
-    let boundaryChange = (v,i,arr) => { return arr[i-1] && v[1] != arr[i-1][1] }
-    let convert = (v,j,arr) => {
-      let [i1,l1] = v;
-      let [i2,l2] = arr[j+1] || lbls[lbls.length-1];
-      let result = {start:i1, end:i2, label:l1} as Label;
-      if (l1 in this.eventMap) result.type = this.eventMap[l1];
+    let boundaryChange = (entry,i,arr) => {
+      if (i === 0) {console.debug('BC', entry)}
+      return arr[i-1] && entry[1].d != arr[i-1][1].d
+    }
+    let convert = (entry,j,arr) => {
+      let [i1,d1] = entry;
+      let [i2,d2] = arr[j+1] || lbls[lbls.length-1];
+      let result = {start:d1.i, end:d2.i, label:d1.d} as Label;
+      if (d1.d in this.eventMap) result.type = this.eventMap[d1.d];
       return result;
     }
     // format from ArrayLike -> array of tuples: [index, label]
@@ -253,7 +262,7 @@ export class DataviewComponent implements OnInit {
     let boundaries = lbls.filter(boundaryChange)
     boundaries.unshift(lbls[0])         // add the first point
     // converts to list of Label objects
-    let result = boundaries.map(convert)
+    let result = boundaries.map(convert);
     return result;
   }
 
