@@ -104,6 +104,12 @@ export class DataloaderService {
                         .then((ds) => ds.filter([ds.axes.length-1]))
                         .then((ds) => ds.format()[0])
   }
+
+  getLabels2(dataset: string) {
+    return this.datasets.get(dataset)
+                        .then((ds) => ds.filter([ds.axes.length-1]))
+                        .then((ds) => ds.toDatum()[0])
+  }
   // #endregion
 
   // #region [Helper Methods]

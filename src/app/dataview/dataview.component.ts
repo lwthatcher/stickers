@@ -18,6 +18,12 @@ interface SensorInfo {
   channel?: string;
 }
 
+interface datum {
+  d: number;
+  i: number;
+  t?: Date;
+}
+
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
 
 type LabelStreamMap = { [name: string]: LabelStream }
@@ -78,6 +84,10 @@ export class DataviewComponent implements OnInit {
       let _labels = this.dataloader.getLabels(this.dataset);
       this.parse_labels(_labels)
           .then((labels) => { this.setLabels(this.default_stream, labels) })
+
+      let _labels2 = this.dataloader.getLabels2(this.dataset);
+      let res = this.parse_labels2(_labels2);
+      console.info('LABELS 2:', res);
     }
     // add user-labels stream
     this.addStream('user-labels');
@@ -180,6 +190,12 @@ export class DataviewComponent implements OnInit {
                  .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
   }
 
+  parse_labels2(labels: Promise<datum[]>): Promise<Label[]> {
+    console.log('PARSE LABELS 2', labels);
+    return labels.then((lbls) => {return this.boundaries2(lbls)})
+                 .then((boundaries) => { return boundaries.filter((lbl) => lbl.label !== 0) })
+  }
+
   private addStream(name: string, emap: EventMap = undefined) {
     this.labelStreams[name] = new LabelStream(name, [], emap);
   }
@@ -240,10 +256,36 @@ export class DataviewComponent implements OnInit {
     // helper functions
     let boundaryChange = (v,i,arr) => { return arr[i-1] && v[1] != arr[i-1][1] }
     let convert = (v,j,arr) => {
+      console.debug('convert', v);
       let [i1,l1] = v;
       let [i2,l2] = arr[j+1] || lbls[lbls.length-1];
       let result = {start:i1, end:i2, label:l1} as Label;
       if (l1 in this.eventMap) result.type = this.eventMap[l1];
+      return result;
+    }
+    // format from ArrayLike -> array of tuples: [index, label]
+    lbls = Array.from(lbls);            // make sure its an Array (not TypedArray)
+    lbls = Array.from(lbls.entries());  // look at both the value and index
+    // find boundaries (points where the values changed)
+    let boundaries = lbls.filter(boundaryChange)
+    boundaries.unshift(lbls[0])         // add the first point
+    // converts to list of Label objects
+    let result = boundaries.map(convert)
+    return result;
+  }
+
+  private boundaries2(lbls: ArrayLike): Label[] {
+    // helper functions
+    let boundaryChange = (entry,i,arr) => {
+      if (i === 0) {console.debug('BC', entry)}
+      return arr[i-1] && entry[1].d != arr[i-1][1].d
+    }
+    let convert = (entry,j,arr) => {
+      console.debug('CONVERT', entry);
+      let [i1,d1] = entry;
+      let [i2,d2] = arr[j+1] || lbls[lbls.length-1];
+      let result = {start:d1.i, end:d2.i, label:d1.d} as Label;
+      if (d1.d in this.eventMap) result.type = this.eventMap[d1.d];
       return result;
     }
     // format from ArrayLike -> array of tuples: [index, label]
