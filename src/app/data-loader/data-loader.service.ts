@@ -38,7 +38,6 @@ type RawData = ArrayBuffer | string;
 // #region [Helper Classes]
 class TensorDataset extends Dataset {
   axes: Array<tf.Tensor>;
-  info: DataInfo;
   constructor(axes: Array<tf.Tensor>, info: DataInfo) {
     super(info);
     this.axes = axes;
@@ -52,7 +51,6 @@ class TensorDataset extends Dataset {
 
 class CSVDataset extends Dataset {
   axes: number[][];
-  info: DataInfo;
   constructor(axes: number[][], info: DataInfo, transpose = true) {
     super(info);
     if (transpose) this.axes = math.transpose(axes); 
