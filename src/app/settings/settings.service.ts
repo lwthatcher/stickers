@@ -50,6 +50,7 @@ export class SettingsService {
   databar_height: number = 200;
   downsampling: DownsamplingMethod = 'dynamic';
   max_sensors: number = 3;
+  filter_nulls: boolean = true;
   // #endregion
 
   // #region [Accessors]

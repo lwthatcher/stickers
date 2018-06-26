@@ -196,7 +196,8 @@ export class DataviewComponent implements OnInit {
 
   private filterNullLabels(labels: Label[]) {
     let ls = this.labelStreams[this.default_stream];
-    return labels.filter((lbl) => lbl.label !== ls.emap.null_label);
+    if (!this.settings.filter_nulls) return labels;
+    else return labels.filter((lbl) => lbl.label !== ls.emap.null_label);
   }
   // #endregion
 
