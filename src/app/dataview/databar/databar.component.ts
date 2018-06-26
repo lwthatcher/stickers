@@ -234,12 +234,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Data Loading]
   load_data(): Promise<Array<datum>[]> {
-    let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as Array<datum> }
     return this.dataloader.getSensorStreams(this.data_info.name, this.sensor.idxs)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.debug('loaded dataset', this._dataset) })
-        .then(() => { return this._dataset.format() })
-        .then((axes) => {return axes.map(toArray)})
+        .then(() => { return this._dataset.toDatum() })
   }
 
   start_spinner(): void {
@@ -248,9 +246,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.spinner = new Spinner(opts).spin(target);
   }
 
-  stop_spinner() {
-    this.spinner.stop();
-  }
+  stop_spinner() { this.spinner.stop() }
 
   downsample(data) {
     // only downsample if enabled

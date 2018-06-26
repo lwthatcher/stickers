@@ -9,13 +9,26 @@ import * as math from 'mathjs';
 
 // #region [Interfaces]
 export abstract class Dataset {
+  // properties
   axes: Axes;
   info: DataInfo;
+  // constructor
+  constructor(info: DataInfo) { this.info = info }
+  // abstract methods
   abstract format(): SignalStream;
   abstract filter(idx: number[]): Dataset;
-
-  constructor(info: DataInfo) { this.info = info }
+  // shared methods
+  toDatum(): datum[][] {
+    let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as datum[] }
+    return this.format().map(toArray)
+  }
 }
+
+interface datum {
+  d: number;
+  i: number;
+}
+
 type Axes = Array<Axis>
 type Axis = tf.Tensor | number[]
 type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
