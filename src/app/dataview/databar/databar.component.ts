@@ -85,7 +85,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   get height() { return this.HEIGHT - this.margin.top - this.margin.bottom; }
 
-  get points_per_pixel() { return (this.x.domain()[1] - this.x.domain()[0]) / (this.x.range()[1] - this.x.range()[0]) }
+  get points_per_pixel() { return ((this.x.domain()[1] - this.x.domain()[0])/this.data_info.Hz) / (this.x.range()[1] - this.x.range()[0]) }
 
   get bucket_size() { return Math.trunc(this.points_per_pixel / 2) }
 

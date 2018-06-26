@@ -19,7 +19,9 @@ export abstract class Dataset {
   abstract filter(idx: number[]): Dataset;
   // shared methods
   toDatum(): datum[][] {
-    let toArray = (axis) => { return Array.from(axis).map((d,i) => { return {d, i} }) as datum[] }
+    let toArray = (axis) => {
+      return Array.from(axis).map((d,i) => { return {d, i: (i * this.info.Hz)} }) as datum[] 
+    }
     return this.format().map(toArray)
   }
 }
