@@ -1,20 +1,4 @@
 // #region [Interfaces]
-export interface DataInfo {
-    // passed in params
-    workspace: string;
-    name: string;
-    // required params
-    format: string;
-    labelled: boolean | string;
-    Hz: number;
-    channels: string;
-    path: string;
-    // optional params
-    flashes?: number[];
-    hide?: boolean;
-    crop?: number[];
-}
-
 export interface LabelSchemeInfo {
     // passed in params
     workspace?: string;
@@ -56,7 +40,7 @@ export class WorkspaceInfo {
 
     // #region [Accessors]
     get data(): DataInfo[] {
-        return Object.entries(this._data).map(entry => this.toInfo(entry)) as DataInfo[];
+        return Object.entries(this._data).map(entry => new DataInfo(this.toInfo(entry)));
     }
 
     get labelschemes(): LabelSchemeInfo[] {
@@ -71,10 +55,7 @@ export class WorkspaceInfo {
 
     // #region [Public Methods]
     getDataInfo(dataset: string): DataInfo {
-        let info = this._data[dataset];
-        info.workspace = this.name;
-        info.name = dataset;
-        return info;
+        return this.data.find((d) => { return d.name === dataset })
     }
     // #endregion
 
@@ -97,6 +78,39 @@ export class WorkspaceInfo {
             }
         }
         return obj;
+    }
+    // #endregion
+}
+
+export class DataInfo {
+    // #region [Properties]
+    workspace: string;
+    name: string;
+    format: string;
+    labelled: boolean | string;
+    Hz: number;
+    channels: string;
+    path: string;
+    flashes: number[];
+    hide: boolean;
+    crop?: number[];
+    // #endregion
+
+    // #region [Constructor]
+    constructor(info) {
+        // provided properties
+        this.workspace = info.workspace;
+        this.name = info.name;
+        // required properties
+        this.format = info.format;
+        this.labelled = info.labelled;
+        this.Hz = info.Hz;
+        this.channels = info.channels;
+        this.path = info.path;
+        // optional properties
+        this.flashes = info.flashes || [];
+        this.hide = info.hide || false;
+        if ('crop' in info) this.crop = info.crop;
     }
     // #endregion
 }
