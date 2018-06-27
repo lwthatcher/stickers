@@ -36,12 +36,14 @@ export abstract class Dataset {
     // #endregion
     
     // #region [Abstract Methods]
-    abstract filter(sensor: SensorLike): Dataset;
-    abstract get formatted(): SignalStream;
+    abstract filter(sensor: SensorLike): Axes;
+    abstract format(axes): SignalStream;
     // #endregion
     
     // #region [Public Methods]
-    toDatum(): datum[][] { return this.formatted.map((axis) => this.toArray(axis)) }
+    get(sensor: SensorLike) {
+        return this.format(this.filter(sensor)).map((axis) => this.toArray(axis))
+    }
     // #endregion
 
     // #region [Protected Methods]
@@ -63,12 +65,12 @@ export class TensorDataset extends Dataset {
     // #endregion
 
     // #region [Implementation]
-    get formatted() { return this.axes.map((axis) => axis.dataSync()) }
+    format(axes: tf.Tensor[]) { return axes.map((axis) => axis.dataSync()) }
 
-    filter(sensor: SensorLike): Dataset {
+    filter(sensor: SensorLike): Axes {
         let idx = sensor.idxs;
         const newaxes = this.axes.filter((e,i) => idx.includes(i));
-        return new TensorDataset(newaxes, this.info);
+        return newaxes;
     }
     // #endregion
 }
@@ -84,12 +86,12 @@ export class CSVDataset extends Dataset {
     // #endregion
 
     // #region [Implementation]
-    get formatted() { return this.axes }
+    format(axes): SignalStream { return axes as SignalStream }
 
-    filter(sensor: SensorLike): Dataset {
+    filter(sensor: SensorLike): Axes {
         let idx = sensor.idxs;
         const newaxes = this.axes.filter((e,i) => idx.includes(i));
-        return new CSVDataset(newaxes, this.info, false);
+        return newaxes;
     }
     // #endregion
 }
@@ -102,9 +104,12 @@ export class BDLDataset extends Dataset {
     // #endregion
 
     // #region [Implementation]
-    filter(sensor: SensorLike): Dataset {
+    filter(sensor: SensorLike): Axes {
         throw new Error("Method not implemented.");
     }
-    formatted: (Float32Array | Int32Array | Uint8Array | number[])[];
+
+    format(): (Float32Array | Int32Array | Uint8Array | number[])[] {
+        throw new Error("Method not implemented.");
+    }
     // #endregion
 }

@@ -47,13 +47,11 @@ export class DataloaderService {
   getSensorStreams(dataset: string, sensor: Sensor): Promise<Dataset> {
     console.debug('retrieving data', dataset, sensor, this);
     return this.datasets.get(dataset)
-                        .then((dataset) => dataset.filter(sensor))
   }
 
   getLabels(dataset: string) {
     return this.datasets.get(dataset)
-                        .then((ds) => ds.filter({idxs: [ds.axes.length-1]}))
-                        .then((ds) => ds.toDatum()[0])
+                        .then((ds) => ds.get({idxs: [ds.axes.length-1]})[0] )
   }
   // #endregion
 

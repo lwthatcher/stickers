@@ -238,7 +238,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     return this.dataloader.getSensorStreams(this.data_info.name, this.sensor)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.debug('loaded dataset', this._dataset) })
-        .then(() => { return this._dataset.toDatum() })
+        .then(() => { return this._dataset.get(this.sensor) })
   }
 
   start_spinner(): void {
