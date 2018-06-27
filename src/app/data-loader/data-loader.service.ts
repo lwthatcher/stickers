@@ -34,10 +34,10 @@ export abstract class Dataset {
   // constructor
   constructor(info: DataInfo) { this.info = info }
   // abstract methods
-  abstract format(): SignalStream;
+  abstract get formatted(): SignalStream;
   abstract filter(sensor: SensorLike): Dataset;
   // shared methods
-  toDatum(): datum[][] { return this.format().map((axis) => this.toArray(axis)) }
+  toDatum(): datum[][] { return this.formatted.map((axis) => this.toArray(axis)) }
   // protected methods
   protected toArray(axis): datum[] { return Array.from(axis).map((d,i) => this.convert(d,i)) }
   protected convert(d, _i) {
@@ -52,7 +52,7 @@ class TensorDataset extends Dataset {
     super(info);
     this.axes = axes;
   }
-  format() { return this.axes.map((axis) => axis.dataSync()) }
+  get formatted() { return this.axes.map((axis) => axis.dataSync()) }
   filter(sensor: SensorLike): Dataset {
     let idx = sensor.idxs;
     const newaxes = this.axes.filter((e,i) => idx.includes(i));
@@ -67,7 +67,7 @@ class CSVDataset extends Dataset {
     if (transpose) this.axes = math.transpose(axes); 
     else this.axes = axes;
   }
-  format() { return this.axes }
+  get formatted() { return this.axes }
   filter(sensor: SensorLike): Dataset {
     let idx = sensor.idxs;
     const newaxes = this.axes.filter((e,i) => idx.includes(i));
@@ -79,7 +79,6 @@ class CSVDataset extends Dataset {
 
 @Injectable()
 export class DataloaderService {
-
   // #region [Constructors]
   private datasets: Map<String,Promise<Dataset>>;
   constructor(private http: HttpClient) { 
