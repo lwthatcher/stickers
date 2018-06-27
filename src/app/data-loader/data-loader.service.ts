@@ -11,6 +11,23 @@ import { Sensor } from '../dataview/sensors/sensor';
 export const MILLISECONDS = 1000
 
 // #region [Interfaces]
+interface datum {
+  d: number;
+  i: number;
+  t?: Date;
+}
+
+interface SensorLike {
+  idxs: number[];
+}
+
+type Axes = Array<Axis>
+type Axis = tf.Tensor | number[]
+type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
+type RawData = ArrayBuffer | string;
+// #endregion
+
+// #region [Helper Classes]
 export abstract class Dataset {
   // properties
   axes: Axes;
@@ -19,7 +36,7 @@ export abstract class Dataset {
   constructor(info: DataInfo) { this.info = info }
   // abstract methods
   abstract format(): SignalStream;
-  abstract filter(idx: number[]): Dataset;
+  abstract filter(sensor: SensorLike): Dataset;
   // shared methods
   toDatum(): datum[][] {
     let toArray = (axis) => {
@@ -33,19 +50,6 @@ export abstract class Dataset {
   }
 }
 
-interface datum {
-  d: number;
-  i: number;
-  t?: Date;
-}
-
-type Axes = Array<Axis>
-type Axis = tf.Tensor | number[]
-type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
-type RawData = ArrayBuffer | string;
-// #endregion
-
-// #region [Helper Classes]
 class TensorDataset extends Dataset {
   axes: Array<tf.Tensor>;
   constructor(axes: Array<tf.Tensor>, info: DataInfo) {
@@ -53,7 +57,8 @@ class TensorDataset extends Dataset {
     this.axes = axes;
   }
   format() { return this.axes.map((axis) => axis.dataSync()) }
-  filter(idx: number[]): Dataset {
+  filter(sensor: SensorLike): Dataset {
+    let idx = sensor.idxs;
     const newaxes = this.axes.filter((e,i) => idx.includes(i));
     return new TensorDataset(newaxes, this.info);
   }
@@ -67,7 +72,8 @@ class CSVDataset extends Dataset {
     else this.axes = axes;
   }
   format() { return this.axes }
-  filter(idx: number[]): Dataset {
+  filter(sensor: SensorLike): Dataset {
+    let idx = sensor.idxs;
     const newaxes = this.axes.filter((e,i) => idx.includes(i));
     return new CSVDataset(newaxes, this.info, false);
   }
@@ -99,12 +105,12 @@ export class DataloaderService {
   getSensorStreams(dataset: string, sensor: Sensor): Promise<Dataset> {
     console.debug('retrieving data', dataset, sensor, this);
     return this.datasets.get(dataset)
-                        .then((dataset) => dataset.filter(sensor.idxs))
+                        .then((dataset) => dataset.filter(sensor))
   }
 
   getLabels(dataset: string) {
     return this.datasets.get(dataset)
-                        .then((ds) => ds.filter([ds.axes.length-1]))
+                        .then((ds) => ds.filter({idxs: [ds.axes.length-1]}))
                         .then((ds) => ds.toDatum()[0])
   }
   // #endregion
