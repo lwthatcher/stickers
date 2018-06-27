@@ -14,7 +14,6 @@ export const MILLISECONDS = 1000
 interface datum {
   d: number;
   i: number;
-  t?: Date;
 }
 
 interface SensorLike {
@@ -39,14 +38,13 @@ export abstract class Dataset {
   abstract filter(sensor: SensorLike): Dataset;
   // shared methods
   toDatum(): datum[][] {
-    let toArray = (axis) => {
-      return Array.from(axis).map((d,_i) => {
-        let i = (_i * (MILLISECONDS / this.info.Hz) );
-        let t = new Date(i);
-        return {d, i, t} 
-      }) as datum[] 
-    }
+    let toArray = (axis) => { return Array.from(axis).map((d,i) => this.convert(d,i)) as datum[] }
     return this.format().map(toArray)
+  }
+  // protected methods
+  protected convert(d, _i) {
+    let i = (_i * (MILLISECONDS / this.info.Hz) );
+    return {d, i};
   }
 }
 
