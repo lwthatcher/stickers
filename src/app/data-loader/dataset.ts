@@ -3,10 +3,6 @@ import * as tf from "@tensorflow/tfjs-core";
 import * as math from 'mathjs';
 
 
-// #region [Constants]
-export const MILLISECONDS = 1000
-// #endregion
-
 // #region [Interfaces]
 interface datum {
     d: number;
@@ -44,7 +40,7 @@ export abstract class Dataset {
     // #region [Protected Methods]
     protected toArray(axis): datum[] { return Array.from(axis).map((d,i) => this.convert(d,i)) }
     protected convert(d, _i) {
-        let i = (_i * (MILLISECONDS / this.info.Hz) );
+        let i = (_i * this.info.rate );
         return {d, i};
     }
     // #endregion

@@ -83,6 +83,10 @@ export class WorkspaceInfo {
 }
 
 export class DataInfo {
+    // #region [Constants]
+    static MILLISECONDS = 1000
+    // #endregion
+
     // #region [Properties]
     workspace: string;
     name: string;
@@ -112,5 +116,9 @@ export class DataInfo {
         this.hide = info.hide || false;
         if ('crop' in info) this.crop = info.crop;
     }
+    // #endregion
+
+    // #region [Accessors]
+    get rate() { return DataInfo.MILLISECONDS / this.Hz }
     // #endregion
 }

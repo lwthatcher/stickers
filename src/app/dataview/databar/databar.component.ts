@@ -10,7 +10,7 @@ import { Component,
          OnChanges,
          OnDestroy } from '@angular/core';
 import { SettingsService, DownsamplingMethod } from '../../settings/settings.service';
-import { DataloaderService, MILLISECONDS } from '../../data-loader/data-loader.service';
+import { DataloaderService } from '../../data-loader/data-loader.service';
 import { Dataset } from '../../data-loader/dataset';
 import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
@@ -86,7 +86,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   get height() { return this.HEIGHT - this.margin.top - this.margin.bottom; }
 
-  get points_per_pixel() { return ((this.x.domain()[1] - this.x.domain()[0])/( MILLISECONDS / this.data_info.Hz)) / (this.x.range()[1] - this.x.range()[0]) }
+  get points_per_pixel() { return ((this.x.domain()[1] - this.x.domain()[0])/this.data_info.rate) / (this.x.range()[1] - this.x.range()[0]) }
 
   get bucket_size() { return Math.trunc(this.points_per_pixel / 2) }
 
