@@ -10,7 +10,8 @@ import { Component,
          OnChanges,
          OnDestroy } from '@angular/core';
 import { SettingsService, DownsamplingMethod } from '../../settings/settings.service';
-import { DataloaderService, Dataset, MILLISECONDS } from '../../data-loader/data-loader.service';
+import { DataloaderService, MILLISECONDS } from '../../data-loader/data-loader.service';
+import { Dataset } from '../../data-loader/dataset';
 import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
