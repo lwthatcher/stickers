@@ -14,13 +14,17 @@ channel?: string;
 idxs: number[];
 }
 
+interface ReadingsMap {
+    [channel: string]: bdldatum[]
+}
+
 interface bdldatum {
     token: string;
     t: number;
     data: number[];
 }
   
-type Axes = Array<Axis>
+type Axes = Array<Axis> | ReadingsMap
 type Axis = tf.Tensor | number[]
 type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
   // #endregion
@@ -73,8 +77,10 @@ export class CSVDataset extends Dataset {
 
 export class BDLDataset extends Dataset {
     // #region [Constructor]
-    constructor(axes, info: DataInfo) {
+    axes: ReadingsMap
+    constructor(axes: ReadingsMap, info: DataInfo) {
         super(info);
+        this.axes = axes;
     }
     // #endregion
 
