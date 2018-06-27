@@ -81,7 +81,7 @@ export class DataviewComponent implements OnInit {
     }
     // parse labels (when ready)
     if (this.is_labelled) {
-      let _labels = this.dataloader.getLabels(this.dataset);
+      let _labels = this.dataloader.labels(this.dataset);
       this.parse_labels(_labels)
           .then((labels) => { this.setLabels(this.default_stream, labels) })
     }

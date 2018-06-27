@@ -58,7 +58,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // zoom handler
   _zoom;
   // data references
-  _dataset: Dataset;
+  dataset: Dataset;
   _data: Promise<Array<datum>[]>;
   // loading spinner
   spinner: Spinner;
@@ -235,10 +235,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Data Loading]
   load_data(): Promise<Array<datum>[]> {
-    return this.dataloader.getSensorStreams(this.data_info.name, this.sensor)
-        .then((_dataset) => this._dataset = _dataset)
-        .then(() => { console.debug('loaded dataset', this._dataset) })
-        .then(() => { return this._dataset.get(this.sensor) })
+    return this.dataloader.get(this.data_info.name)
+               .then((dataset) => this.dataset = dataset)
+               .then(() => { console.debug('loaded dataset', this.dataset) })
+               .then(() => { return this.dataset.get(this.sensor) })
   }
 
   start_spinner(): void {
@@ -283,7 +283,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
       console.log('labels:', this.labels);
     console.groupEnd();
     console.groupCollapsed('dataset');
-      console.log('Dataset:', this._dataset);
+      console.log('Dataset:', this.dataset);
       console.log('data info:', this.data_info);
       console.log('sensor:', this.sensor);
     console.groupEnd();

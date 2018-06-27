@@ -9,7 +9,6 @@ import * as math from 'mathjs';
 import { Sensor } from '../dataview/sensors/sensor';
 import { Dataset, TensorDataset, CSVDataset } from './dataset';
 
-export const MILLISECONDS = 1000
 
 // #region [Interfaces]
 interface datum {
@@ -28,9 +27,7 @@ type RawData = ArrayBuffer | string;
 export class DataloaderService {
   // #region [Constructors]
   private datasets: Map<String,Promise<Dataset>>;
-  constructor(private http: HttpClient) { 
-    this.datasets = new Map();
-  }
+  constructor(private http: HttpClient) { this.datasets = new Map() }
   // #endregion
 
   // #region [Public Methods]
@@ -40,16 +37,13 @@ export class DataloaderService {
     let result = this.http.get(uri, options).toPromise()
                      .then((d: RawData) => { return this.toDataset(d, data) });
     this.datasets.set(data.name, result);
-    console.debug('LOADING DATASET', result, data, this);
+    console.debug('loading dataset:', result, data, this);
     return this.datasets.get(data.name);
   }
 
-  getSensorStreams(dataset: string, sensor: Sensor): Promise<Dataset> {
-    console.debug('retrieving data', dataset, sensor, this);
-    return this.datasets.get(dataset)
-  }
+  get(dataset: string): Promise<Dataset> { return this.datasets.get(dataset) }
 
-  getLabels(dataset: string) {
+  labels(dataset: string) {
     return this.datasets.get(dataset)
                         .then((ds) => ds.get({idxs: [ds.axes.length-1]})[0] )
   }
