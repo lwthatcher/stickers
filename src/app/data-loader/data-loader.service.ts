@@ -37,11 +37,9 @@ export abstract class Dataset {
   abstract format(): SignalStream;
   abstract filter(sensor: SensorLike): Dataset;
   // shared methods
-  toDatum(): datum[][] {
-    let toArray = (axis) => { return Array.from(axis).map((d,i) => this.convert(d,i)) as datum[] }
-    return this.format().map(toArray)
-  }
+  toDatum(): datum[][] { return this.format().map((axis) => this.toArray(axis)) }
   // protected methods
+  protected toArray(axis): datum[] { return Array.from(axis).map((d,i) => this.convert(d,i)) }
   protected convert(d, _i) {
     let i = (_i * (MILLISECONDS / this.info.Hz) );
     return {d, i};
