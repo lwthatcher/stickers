@@ -6,6 +6,7 @@ import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 import * as math from 'mathjs';
+import { Sensor } from '../dataview/sensors/sensor';
 
 export const MILLISECONDS = 1000
 
@@ -95,10 +96,10 @@ export class DataloaderService {
     return this.datasets.get(data.name);
   }
 
-  getSensorStreams(dataset: string, idx: number[]): Promise<Dataset> {
-    console.debug('retrieving data', dataset, idx, this);
+  getSensorStreams(dataset: string, sensor: Sensor): Promise<Dataset> {
+    console.debug('retrieving data', dataset, sensor, this);
     return this.datasets.get(dataset)
-                        .then((dataset) => dataset.filter(idx))
+                        .then((dataset) => dataset.filter(sensor.idxs))
   }
 
   getLabels(dataset: string) {

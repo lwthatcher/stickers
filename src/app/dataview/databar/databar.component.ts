@@ -234,7 +234,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Data Loading]
   load_data(): Promise<Array<datum>[]> {
-    return this.dataloader.getSensorStreams(this.data_info.name, this.sensor.idxs)
+    return this.dataloader.getSensorStreams(this.data_info.name, this.sensor)
         .then((_dataset) => this._dataset = _dataset)
         .then(() => { console.debug('loaded dataset', this._dataset) })
         .then(() => { return this._dataset.toDatum() })
