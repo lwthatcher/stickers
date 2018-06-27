@@ -58,17 +58,24 @@ export class DataloaderService {
   // #endregion
 
   // #region [Helper Methods]
-  private toDataset(d: RawData, info: DataInfo): Dataset {
+  private toDataset(data: RawData, info: DataInfo): Dataset {
     let format = info.format;
     if (format === 'tensor') {
-      let tensors = parse(d as ArrayBuffer);
+      let tensors = parse(data as ArrayBuffer);
       let axes = tf.split(tensors, tensors.shape[1], 1);
       return new TensorDataset(axes, info);
     }
     else if (format === 'csv') {
       let asNumber = (d: Array<string>) => { return d.map((di) => +di) };
-      let axes = d3.csvParseRows(d, asNumber);
+      let axes = d3.csvParseRows(data, asNumber);
       return new CSVDataset(axes, info);
+    }
+    else if (format === 'bdl') {
+      let rows = d3.csvParseRows(data, (d) => { return this.bdlrow(d) });
+      let axes = d3.nest()
+                   .key((d) => { return d.token })
+                   .object(rows);
+      
     }
     else throw new TypeError('unrecognized or unsupported format type: ' + format);
   }
@@ -77,6 +84,16 @@ export class DataloaderService {
     if (format === 'tensor') return { responseType: 'arraybuffer' }
     else if (format === 'csv') return { responseType: 'text' }
     else throw new TypeError('unrecognized or unsupported format type: ' + format);
+  }
+
+  private bdlrow(d) {
+    let [token, t, ...data] = d;
+    // skip empty/non-data lines
+    if (!token || token === 'D' || token === 'S') return undefined;
+    // format as numbers
+    t = +t;
+    data = data.map((d) => +d);
+    return {token, t, data}
   }
   // #endregion
 }

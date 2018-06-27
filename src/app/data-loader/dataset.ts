@@ -9,13 +9,20 @@ interface datum {
     i: number;
   }
   
-  interface SensorLike {
-    idxs: number[];
-  }
+interface SensorLike {
+channel?: string;
+idxs: number[];
+}
+
+interface bdldatum {
+    token: string;
+    t: number;
+    data: number[];
+}
   
-  type Axes = Array<Axis>
-  type Axis = tf.Tensor | number[]
-  type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
+type Axes = Array<Axis>
+type Axis = tf.Tensor | number[]
+type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
   // #endregion
 
 export abstract class Dataset {
@@ -84,5 +91,20 @@ export class CSVDataset extends Dataset {
         const newaxes = this.axes.filter((e,i) => idx.includes(i));
         return new CSVDataset(newaxes, this.info, false);
     }
+    // #endregion
+}
+
+export class BDLDataset extends Dataset {
+    // #region [Constructor]
+    constructor(axes, info: DataInfo) {
+        super(info);
+    }
+    // #endregion
+
+    // #region [Implementation]
+    filter(sensor: SensorLike): Dataset {
+        throw new Error("Method not implemented.");
+    }
+    formatted: (Float32Array | Int32Array | Uint8Array | number[])[];
     // #endregion
 }

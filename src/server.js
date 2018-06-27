@@ -44,7 +44,8 @@ app.route('/api/data/:workspace/:dataset').get((req, res) => {
             res.end(null, 'binary');
             break;
         case 'bdl':
-            res.sendStatus(501);
+            const bdl = fs.readFileSync(_path, 'utf8');
+            res.send(bdl);
             break;
         default:
             res.status(400).send('Bad Request: unrecognized format "' + _format + '"')
