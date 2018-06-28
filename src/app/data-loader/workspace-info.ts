@@ -28,11 +28,11 @@ export class WorkspaceInfo {
 
     // #region [Accessors]
     get data(): DataInfo[] {
-        return Object.entries(this._data).map(entry => new DataInfo(this.toInfo(entry)));
+        return Object.entries(this._data).map(entry => new DataInfo(this, this.toInfo(entry)));
     }
 
     get labelschemes(): LabelScheme[] {
-        return Object.entries(this._labels).map(entry => new LabelScheme(this.toInfo(entry)));
+        return Object.entries(this._labels).map(entry => new LabelScheme(this, this.toInfo(entry)));
     }
 
     get visibleData(): DataInfo[] {
@@ -86,11 +86,13 @@ export class DataInfo {
     flashes: number[];
     hide: boolean;
     crop?: number[];
+    private ws: WorkspaceInfo;
     // #endregion
 
     // #region [Constructor]
-    constructor(info) {
+    constructor(ws, info) {
         // provided properties
+        this.ws = ws;
         this.workspace = info.workspace;
         this.name = info.name;
         // required properties
@@ -124,11 +126,12 @@ export class LabelScheme {
     null_label: LabelKey;
     path?: string;
     video?: string;
-    
+    private ws: WorkspaceInfo;
     // #endregion
 
     // #region [Constructor]
-    constructor(info) {
+    constructor(ws, info) {
+        this.ws = ws;
         this.workspace = info.workspace;
         this.name = info.name;
         this.event_map = info.event_map;
