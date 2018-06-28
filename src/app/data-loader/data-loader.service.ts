@@ -41,8 +41,6 @@ export class DataloaderService {
     return this.datasets.get(data.name);
   }
 
-  get(dataset: string): Promise<Dataset> { return this.datasets.get(dataset) }
-
   labels(dataset: string) {
     return this.datasets.get(dataset)
                         .then((ds) => ds.get({idxs: [ds.axes.length-1]})[0] )

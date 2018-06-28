@@ -59,7 +59,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // zoom handler
   _zoom;
   // data references
-  // dataset: Dataset;
   _data: Promise<Array<datum>[]>;
   // loading spinner
   spinner: Spinner;
@@ -102,7 +101,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Constructors]
   constructor(private el: ElementRef, 
-              // private dataloader: DataloaderService,
               private settings: SettingsService) {
     this._height = this.settings.databar_height;
     this.downsampling = this.settings.downsampling;
