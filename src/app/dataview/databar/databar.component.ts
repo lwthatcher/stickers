@@ -46,6 +46,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() labelstream: LabelStream;
   @Input() mode: ModeTracker;
   @Input() colorer: Colorer;
+  @Input() dataset: Promise<Dataset>;
   // #endregion
 
   // #region [Outputs]
@@ -58,7 +59,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // zoom handler
   _zoom;
   // data references
-  dataset: Dataset;
+  // dataset: Dataset;
   _data: Promise<Array<datum>[]>;
   // loading spinner
   spinner: Spinner;
@@ -101,7 +102,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Constructors]
   constructor(private el: ElementRef, 
-              private dataloader: DataloaderService,
+              // private dataloader: DataloaderService,
               private settings: SettingsService) {
     this._height = this.settings.databar_height;
     this.downsampling = this.settings.downsampling;
@@ -235,10 +236,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Data Loading]
   load_data(): Promise<Array<datum>[]> {
-    return this.dataloader.get(this.data_info.name)
-               .then((dataset) => this.dataset = dataset)
-               .then(() => { console.debug('loaded dataset', this.dataset) })
-               .then(() => { return this.dataset.get(this.sensor) })
+    return this.dataset.then((ds) => {return ds.get(this.sensor)})
   }
 
   start_spinner(): void {

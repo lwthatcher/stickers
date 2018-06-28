@@ -9,6 +9,7 @@ import { ModeTracker } from './modes/tool-mode';
 import { Colorer } from './types/colorer';
 import { Sensor } from './sensors/sensor';
 import { EventMap } from './types/event-types';
+import { Dataset } from '../data-loader/dataset';
 // #endregion
 
 // #region [Interfaces]
@@ -45,6 +46,7 @@ export class DataviewComponent implements OnInit {
   ds: string;
   ws: string;
   workspace: WorkspaceInfo;
+  dataset: Promise<Dataset>;
   info: DataInfo;
   sensors: Sensor[];
   zoom_transform;
@@ -74,7 +76,7 @@ export class DataviewComponent implements OnInit {
     // create list of Sensor objects
     this.sensors = this.setupSensors(this.info.channels);
     // specify which data to load
-    this.dataloader.loadDataset(this.info);
+    this.dataset = this.dataloader.loadDataset(this.info);
     // create label-streams based on event-maps
     for (let emap of this.event_maps) {
       this.addStream(emap.name, emap);

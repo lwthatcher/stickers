@@ -32,7 +32,8 @@
         </div>
         <app-databar  
             *ngIf="!sensor.hidden"
-            [data_info]="info" 
+            [data_info]="info"
+            [dataset]="dataset"
             [sensor]="sensor"
             [mode]="mode"
             [transform]="zoom_transform"
