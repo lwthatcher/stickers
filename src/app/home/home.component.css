@@ -4,6 +4,21 @@
     margin-right: 5px;
 }
 
+li.header > div {
+    font-weight: bold;
+}
+
+div.item-right {
+    width: 10%;
+    text-align: center;
+    align-content: center;
+}
+
 div.card:first-of-type {
     margin-top: 15px;
+}
+
+tr > td:last-of-type,
+tr > th:last-of-type {
+    text-align: center;
 }
