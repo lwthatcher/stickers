@@ -10,7 +10,6 @@ import { Component,
          OnChanges,
          OnDestroy } from '@angular/core';
 import { SettingsService, DownsamplingMethod } from '../../settings/settings.service';
-import { DataloaderService } from '../../data-loader/data-loader.service';
 import { Dataset } from '../../data-loader/dataset';
 import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
@@ -18,7 +17,7 @@ import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../sensors/sensor";
 import { Colorer} from '../types/colorer';
 import { Labeller } from './labeller';
-import { Label, LabelStream } from '../labelstreams/labelstream';
+import { LabelStream } from '../labelstreams/labelstream';
 import { Drawer } from './drawer';
 import { ToolMode, ModeTracker } from '../modes/tool-mode';
 import * as d3 from "d3";
