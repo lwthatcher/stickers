@@ -1,22 +1,10 @@
 // #region [Interfaces]
-export interface LabelSchemeInfo {
-    // passed in params
-    workspace?: string;
-    name: string;
-    // required params
-    event_map: TypeMap;
-    // optional params
-    path?: string;
-    video?: string;
-    null_label?: LabelKey;
-}
-
 export interface TypeMap {
     [index: number]: string;
 }
 
 type LabelKey = string |number
-type Info = DataInfo | LabelSchemeInfo
+type Info = DataInfo | LabelScheme
 // #endregion
 
 export class WorkspaceInfo {
@@ -43,8 +31,8 @@ export class WorkspaceInfo {
         return Object.entries(this._data).map(entry => new DataInfo(this.toInfo(entry)));
     }
 
-    get labelschemes(): LabelSchemeInfo[] {
-        return Object.entries(this._labels).map(entry => this.toInfo(entry)) as LabelSchemeInfo[]
+    get labelschemes(): LabelScheme[] {
+        return Object.entries(this._labels).map(entry => new LabelScheme(this.toInfo(entry)));
     }
 
     get visibleData(): DataInfo[] {
@@ -120,5 +108,27 @@ export class DataInfo {
 
     // #region [Accessors]
     get rate() { return DataInfo.MILLISECONDS / this.Hz }
+    // #endregion
+}
+
+export class LabelScheme {
+    // #region [Properties]
+    workspace: string;
+    name: string;
+    event_map: TypeMap;
+    path?: string;
+    video?: string;
+    null_label?: LabelKey;
+    // #endregion
+
+    // #region [Constructor]
+    constructor(info) {
+        this.workspace = info.workspace;
+        this.name = info.name;
+        this.event_map = info.event_map;
+        if ("path" in info) this.path = info.path;
+        if ("video" in info) this.video = info.video;
+        if ("null_label" in info) this.null_label = info.null_label;
+    }
     // #endregion
 }

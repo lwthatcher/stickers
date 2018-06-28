@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import { LabelSchemeInfo, TypeMap } from '../../data-loader/workspace-info';
+import { LabelScheme, TypeMap } from '../../data-loader/workspace-info';
 
 // #region [Interfaces]
 export type LabelKey = number | string
@@ -16,12 +16,12 @@ export class EventMap {
     name: string;
     null_label: LabelKey;
     private _emap: TypeMap;
-    private scheme: LabelSchemeInfo;
+    private scheme: LabelScheme;
     // #endregion
 
     // #region [Constructor]
     constructor(scheme: WeakScheme)
-    constructor(labelscheme: LabelSchemeInfo) {
+    constructor(labelscheme: LabelScheme) {
         this.scheme = labelscheme;
         this.name = labelscheme.name;
         this._emap = labelscheme.event_map || {};
