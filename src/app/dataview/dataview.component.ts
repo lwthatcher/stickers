@@ -42,10 +42,10 @@ type IndexMap = Map<number,number[]>
 // #endregion
 export class DataviewComponent implements OnInit {
   // #region [Properties]
-  dataset: string;
-  workspace: string;
-  info: WorkspaceInfo;
-  data_info: DataInfo;
+  ds: string;
+  ws: string;
+  workspace: WorkspaceInfo;
+  info: DataInfo;
   sensors: Sensor[];
   zoom_transform;
   labelStreams: LabelStreamMap = {};
@@ -64,24 +64,24 @@ export class DataviewComponent implements OnInit {
   ngOnInit() {
     console.groupCollapsed('dataview init')
     // get parameters
-    this.workspace = this.route.snapshot.paramMap.get('workspace');
-    this.dataset = this.route.snapshot.paramMap.get('dataset');
+    this.ws = this.route.snapshot.paramMap.get('workspace');
+    this.ds = this.route.snapshot.paramMap.get('dataset');
     // get resolved data
-    this.info = this.route.snapshot.data.workspace[0];
-    this.data_info = this.info.getDataInfo(this.dataset);
+    this.workspace = this.route.snapshot.data.workspace[0];
+    this.info = this.workspace.getDataInfo(this.ds);
     // setup helper class(es)
     this.colorer = new Colorer(this);
     // create list of Sensor objects
-    this.sensors = this.setupSensors(this.data_info.channels);
+    this.sensors = this.setupSensors(this.info.channels);
     // specify which data to load
-    this.dataloader.loadDataset(this.data_info);
+    this.dataloader.loadDataset(this.info);
     // create label-streams based on event-maps
     for (let emap of this.event_maps) {
       this.addStream(emap.name, emap);
     }
     // parse labels (when ready)
     if (this.is_labelled) {
-      let _labels = this.dataloader.labels(this.dataset);
+      let _labels = this.dataloader.labels(this.ds);
       this.parse_labels(_labels)
           .then((labels) => { this.setLabels(this.default_stream, labels) })
     }
@@ -98,33 +98,33 @@ export class DataviewComponent implements OnInit {
   // #endregion
 
   // #region [Accessors]
-  get is_labelled(): boolean { return !!this.data_info.labelled }
+  get is_labelled(): boolean { return !!this.info.labelled }
 
   get eventMap(): TypeMap {
     if (!this.is_labelled) return {}
-    const ds = this.data_info.labelled as string;
-    return this.info._labels[ds]['event-map'];
+    const ds = this.info.labelled as string;
+    return this.workspace._labels[ds]['event-map'];
   }
 
   get default_stream(): string {
     if (!this.is_labelled) return "user-labels";
-    return this.data_info.labelled as string;
+    return this.info.labelled as string;
   }
 
   get streams(): string[] { return Object.keys(this.labelStreams) }
 
-  get channels() { return this.data_info.channels }
+  get channels() { return this.info.channels }
 
   get idx_map(): IndexMap {
     if (!this._idx_map) 
-      this._idx_map = Sensor.gen_idx_map(this.data_info.channels);
+      this._idx_map = Sensor.gen_idx_map(this.info.channels);
     return this._idx_map;
   }
 
   get settings() { return this._settings; }
 
   get event_maps() {
-    return this.info.labelschemes.map((scheme) => {return new EventMap(scheme)})
+    return this.workspace.labelschemes.map((scheme) => {return new EventMap(scheme)})
   }
   // #endregion
 
@@ -204,11 +204,11 @@ export class DataviewComponent implements OnInit {
   // #region [Helper Methods]
   private logInfo() {
     console.groupCollapsed('Dataview');
-    console.log('name:', this.workspace);
+    console.log('name:', this.ws);
     console.groupCollapsed('workspace info');
-      console.log('dataset name:', this.dataset);
-      console.log('data info:', this.data_info);
-      console.log('workspace info:', this.info);
+      console.log('dataset name:', this.ds);
+      console.log('data info:', this.info);
+      console.log('workspace info:', this.workspace);
     console.groupEnd();
     console.groupCollapsed('sensors');
       console.log('sensors:', this.sensors);
