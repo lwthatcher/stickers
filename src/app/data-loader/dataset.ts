@@ -24,14 +24,15 @@ interface bdldatum {
     data: number[];
 }
   
-type Axes = Array<Axis> | ReadingsMap
-type Axis = tf.Tensor | number[]
+type Axes = Array<Axis>
+type Axis = tf.Tensor | number[] | bdldatum
 type SignalStream = (Float32Array | Int32Array | Uint8Array | number[])[]
   // #endregion
 
 export abstract class Dataset {
     // #region [Constructor]
-    axes: Axes;
+    axes?: Axes;
+    map?: ReadingsMap;
     info: DataInfo;
     constructor(info: DataInfo) { this.info = info }
     // #endregion
@@ -66,10 +67,9 @@ export class TensorDataset extends Dataset {
   
 export class CSVDataset extends Dataset {
     axes: number[][];
-    constructor(axes: number[][], info: DataInfo, transpose = true) {
+    constructor(axes: number[][], info: DataInfo) {
         super(info);
-        if (transpose) this.axes = math.transpose(axes); 
-        else this.axes = axes;
+        this.axes = math.transpose(axes);
     }
     protected format(axes): SignalStream { return axes as SignalStream }
 }
@@ -77,16 +77,25 @@ export class CSVDataset extends Dataset {
 
 export class BDLDataset extends Dataset {
     // #region [Constructor]
-    axes: ReadingsMap
-    constructor(axes: ReadingsMap, info: DataInfo) {
+    map: ReadingsMap;
+    constructor(map: ReadingsMap, info: DataInfo) {
         super(info);
-        this.axes = axes;
+        this.map = map;
     }
     // #endregion
 
     // #region [Implementation]
-    format(): (Float32Array | Int32Array | Uint8Array | number[])[] {
-        throw new Error("Method not implemented.");
+    get(sensor: SensorLike): datum[][] {
+        return this.format(this.filter(sensor))
     }
+
+    format(dims: bdldatum[]): SignalStream {
+        let toDatum = (bdl: bdldatum) => {
+            let data = bdl.data;
+            return data.map((d) => { return this.convert(d, bdl.t) })
+        }
+    }
+
+    filter(sensor: SensorLike): bdldatum[] { return this.map[sensor.channel] }
     // #endregion
 }

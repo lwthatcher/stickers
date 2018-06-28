@@ -7,7 +7,7 @@ import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
 import * as math from 'mathjs';
 import { Sensor } from '../dataview/sensors/sensor';
-import { Dataset, TensorDataset, CSVDataset } from './dataset';
+import { Dataset, TensorDataset, CSVDataset, BDLDataset } from './dataset';
 
 
 // #region [Interfaces]
@@ -64,10 +64,10 @@ export class DataloaderService {
     }
     else if (format === 'bdl') {
       let rows = d3.csvParseRows(data, (d) => { return this.bdlrow(d) });
-      let axes = d3.nest()
-                   .key((d) => { return d.token })
-                   .object(rows);
-      
+      let map = d3.nest()
+                  .key((d) => { return d.token })
+                  .object(rows);
+      return new BDLDataset(map, info);
     }
     else throw new TypeError('unrecognized or unsupported format type: ' + format);
   }
@@ -75,6 +75,7 @@ export class DataloaderService {
   private getOptions(format: string): any {
     if (format === 'tensor') return { responseType: 'arraybuffer' }
     else if (format === 'csv') return { responseType: 'text' }
+    else if (format === 'bdl') return { responseType: 'text' }
     else throw new TypeError('unrecognized or unsupported format type: ' + format);
   }
 
