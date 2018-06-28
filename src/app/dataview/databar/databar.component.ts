@@ -252,6 +252,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   downsample(data) {
     // only downsample if enabled
     if (this.downsampling === 'off') return data;
+    if (this.data_info.format === 'bdl') return data;
     // setup sampler
     const sampler = largestTriangleThreeBucket();
     sampler.x((d) => {return d.d})
