@@ -8,6 +8,10 @@ li.header > div {
     font-weight: bold;
 }
 
+div.vid-icon > i {
+    vertical-align:middle;
+}
+
 div.item-right {
     width: 10%;
     text-align: center;

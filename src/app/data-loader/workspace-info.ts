@@ -39,6 +39,10 @@ export class WorkspaceInfo {
         let visible = (data: DataInfo) => { return !data.hide }
         return this.data.filter(visible);
     }
+
+    get hasVideo(): boolean {
+        return Object.keys(this.video).length > 0
+    }
     // #endregion
 
     // #region [Public Methods]

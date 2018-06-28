@@ -1,7 +1,14 @@
 <div class="flex-container"[@workspace]="workspaces.length" >
     <div *ngFor="let workspace of workspaces" class="card bg-light">
         <div class="card-body">
-            <h5 class="card-title">{{workspace.name}}</h5>
+            <div class="card-title d-flex">
+                    <h5>{{workspace.name}}</h5>
+                    <div class="vid-icon ml-auto">
+                            <i *ngIf="workspace.hasVideo" class="material-icons">videocam</i>
+                            <i *ngIf="!workspace.hasVideo" class="material-icons">videocam_off</i>
+                    </div>
+            </div>
+            
             <ul class="list-group">
                 <li class="list-group-item d-flex header list-group-item-info">
                     <div class='mr-auto w-50 item-left'>Dataset</div>
