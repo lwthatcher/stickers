@@ -94,6 +94,7 @@ export class BDLDataset extends Dataset {
             let data = bdl.data;
             return data.map((d) => { return this.convert(d, bdl.t) })
         }
+        return math.transpose(dims.map(toDatum))
     }
 
     filter(sensor: SensorLike): bdldatum[] { return this.map[sensor.channel] }

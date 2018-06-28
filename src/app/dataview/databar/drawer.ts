@@ -345,6 +345,7 @@ export class Drawer {
 
   set_domains(axes) {
     // setup x-domains
+    console.debug('setting domains:', axes)
     let max = axes[0][axes[0].length-1].i;
     this.x.domain([0, max]);
     this.x0.domain(this.x.domain());
