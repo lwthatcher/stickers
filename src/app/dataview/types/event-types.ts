@@ -8,13 +8,10 @@ type WeakScheme = {name: string}
 // #endregion
 
 export class EventMap {
-    // #region [Constants]
-    NULL_LABEL = 'Ø'
-    // #endregion
-
     // #region [Variables]
     name: string;
     null_label: LabelKey;
+    null_event: string = LabelScheme.NULL_EVENT;
     private _emap: TypeMap;
     private scheme: LabelScheme;
     // #endregion
@@ -25,7 +22,7 @@ export class EventMap {
         this.scheme = labelscheme;
         this.name = labelscheme.name;
         this._emap = labelscheme.event_map || {};
-        this.null_label = labelscheme.null_label || 0;
+        this.null_label = labelscheme.null_label || LabelScheme.NULL_KEY;
     }
     // #endregion
 
@@ -41,7 +38,7 @@ export class EventMap {
     // #region [Public Methods]
     get(key: LabelKey): string {
         // if null-label, return special string
-        if (this.isNull(key)) return this.NULL_LABEL;
+        if (this.isNull(key)) return this.null_event;
         // check if valid key
         key = EventMap.toInt(key);
         if (!(key in this._emap)) { console.warn('unexpected label key:', key) }
@@ -77,7 +74,8 @@ export class EventMap {
     }
 
     edit(key: LabelKey, name: string) {
-        this._emap[key] = name;
+        if (this.isNull(key)) this.null_event = name ;
+        else this._emap[key] = name;
         return key;
     }
     // #endregion

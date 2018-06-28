@@ -112,13 +112,19 @@ export class DataInfo {
 }
 
 export class LabelScheme {
+    // #region [Constants]
+    static NULL_EVENT = 'Ø';
+    static NULL_KEY = 0;
+    // #endregion
+
     // #region [Properties]
     workspace: string;
     name: string;
     event_map: TypeMap;
+    null_label: LabelKey;
     path?: string;
     video?: string;
-    null_label?: LabelKey;
+    
     // #endregion
 
     // #region [Constructor]
@@ -128,7 +134,7 @@ export class LabelScheme {
         this.event_map = info.event_map;
         if ("path" in info) this.path = info.path;
         if ("video" in info) this.video = info.video;
-        if ("null_label" in info) this.null_label = info.null_label;
+        this.null_label = info.null_label || LabelScheme.NULL_KEY;
     }
     // #endregion
 }
