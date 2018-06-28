@@ -38,15 +38,11 @@ export abstract class Dataset {
     // #endregion
     
     // #region [Public Methods]
-    get(sensor: SensorLike) { return this.format(this.filter(sensor)).map((axis) => this.toArray(axis)) }
+    abstract get(sensor: SensorLike): datum[][]
     // #endregion
 
     // #region [Helper Methods]
-    protected abstract format(axes): SignalStream;
-
-    protected toArray(axis): datum[] { return Array.from(axis).map((d,i) => this.convert(d,i)) }
-
-    protected filter(sensor: SensorLike): Axes { return this.axes.filter((e,i) => sensor.idxs.includes(i)) }
+    protected abstract format(axes): SignalStream | datum[][];
 
     protected convert(d, _i) {
         let i = (_i * this.info.rate );
@@ -56,7 +52,15 @@ export abstract class Dataset {
 }
 
 // #region [Helper Classes]
-export class TensorDataset extends Dataset {
+abstract class DSVDataset extends Dataset {
+    axes: Axes;
+    get(sensor: SensorLike) { return this.format(this.filter(sensor)).map((axis) => this.toArray(axis)) }
+    protected filter(sensor: SensorLike): Axes { return this.axes.filter((e,i) => sensor.idxs.includes(i)) }
+    protected toArray(axis): datum[] { return Array.from(axis).map((d,i) => this.convert(d,i)) }
+    protected abstract format(axes: Axes): SignalStream;
+}
+
+export class TensorDataset extends DSVDataset {
     axes: Array<tf.Tensor>;
     constructor(axes: Array<tf.Tensor>, info: DataInfo) {
         super(info);
@@ -65,7 +69,7 @@ export class TensorDataset extends Dataset {
     protected format(axes: tf.Tensor[]) { return axes.map((axis) => axis.dataSync()) }
 }
   
-export class CSVDataset extends Dataset {
+export class CSVDataset extends DSVDataset {
     axes: number[][];
     constructor(axes: number[][], info: DataInfo) {
         super(info);
@@ -89,7 +93,7 @@ export class BDLDataset extends Dataset {
         return this.format(this.filter(sensor))
     }
 
-    format(dims: bdldatum[]): SignalStream {
+    format(dims: bdldatum[]): datum[][] {
         let toDatum = (bdl: bdldatum) => {
             let data = bdl.data;
             return data.map((d) => { return this.convert(d, bdl.t) })
