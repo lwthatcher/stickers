@@ -1,6 +1,10 @@
 /*#region [Menu] */
+:host {
+    display: block;
+}
+
 div.card {
-    margin-left: 1px;
+    margin-left: 0px;
 }
 /*#endregion */
 
