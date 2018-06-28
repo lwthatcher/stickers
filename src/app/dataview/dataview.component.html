@@ -1,6 +1,17 @@
-<div class="card">
+<div class="card border-primary sensor-bars">
+    <div class="card-header ws-name">
+        <div class="detail">
+            Workspace: 
+            <span class="value">{{ws}}</span>
+        </div>
+        <div class="detail">
+                Dataset: 
+                <span class="value">{{ds}}</span>
+        </div>
+        
+    </div>
     <div *ngFor="let sensor of sensors">
-        <div class='card-header d-flex'>
+        <div class='card-header d-flex toolbar'>
 
             <toolbox-sensors
                 [sensor]="sensor"
@@ -42,7 +53,7 @@
             (zoom)="onZoom($event)">
         </app-databar>
     </div>
-    <div class="card-header">
+    <div class="card-footer">
         <div class="right">
                 <button class="btn btn-info" (click)="newSensor()" title="add sensor">
                         <i class="material-icons icon">add</i>
