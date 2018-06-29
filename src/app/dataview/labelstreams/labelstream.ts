@@ -38,6 +38,8 @@ export class LabelStream {
     get lbl_type(): number { return EventMap.toInt(this._type) }
 
     get isEmpty(): boolean { return this.labels.length === 0 }
+
+    get scheme() { return this.emap.labelscheme }
     // #endregion
 
     // #region [Label Editting]
