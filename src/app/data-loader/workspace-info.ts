@@ -157,6 +157,8 @@ export class LabelScheme {
         if (!this.video) return [];
         return this.ws.vFlashes(this.video);
     }
+
+    get hasLabels() { return !!this.path }
     // #endregion
 
     // #region [Helper Methods]

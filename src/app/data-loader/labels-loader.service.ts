@@ -7,4 +7,8 @@ export class LabelsLoaderService {
 
   constructor(private http: HttpClient) { }
 
+  loadLabels(path: string, sync=[]) {
+    return this.http.get('/static/'+path) as Observable<Object[]>;
+  }
+
 }

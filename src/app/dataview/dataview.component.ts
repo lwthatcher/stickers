@@ -10,6 +10,7 @@ import { Colorer } from './types/colorer';
 import { Sensor } from './sensors/sensor';
 import { EventMap } from './types/event-types';
 import { Dataset } from '../data-loader/dataset';
+import { LabelsLoaderService } from '../data-loader/labels-loader.service';
 // #endregion
 
 // #region [Interfaces]
@@ -53,12 +54,14 @@ export class DataviewComponent implements OnInit {
   labelStreams: LabelStreamMap = {};
   mode: ModeTracker;
   colorer: Colorer;
+  loadedLbls = {}
   private _idx_map: Map<number,number[]>;
   // #endregion
 
   // #region [Constructors]
   constructor(private route: ActivatedRoute, 
               private dataloader: DataloaderService,
+              private labelsloader: LabelsLoaderService,
               private _settings: SettingsService) { 
     this.mode = new ModeTracker();
   }
@@ -77,18 +80,22 @@ export class DataviewComponent implements OnInit {
     this.sensors = this.setupSensors(this.info.channels);
     // specify which data to load
     this.dataset = this.dataloader.loadDataset(this.info);
-    // create label-streams based on event-maps
-    for (let emap of this.event_maps) {
-      this.addStream(emap.name, emap);
-    }
-    // parse labels (when ready)
+    // create label-streams
+    for (let emap of this.event_maps) { this.addStream(emap.name, emap) }
+    this.addStream('user-labels');
+    // parse labels of dataset if included
     if (this.is_labelled) {
       let _labels = this.dataloader.labels(this.ds);
       this.parse_labels(_labels)
           .then((labels) => { this.setLabels(this.default_stream, labels) })
     }
-    // add user-labels stream
-    this.addStream('user-labels');
+    // try to load labels
+    for (let scheme of this.workspace.labelschemes) {
+      if (scheme.hasLabels) {
+        let lbls = this.labelsloader.loadLabels(scheme.path);
+        lbls.subscribe((l) => { console.debug('loaded labels file:', scheme.name); this.loadedLbls[scheme.name] = l; })
+      }
+    }
     // component initialized
     console.info('dataview initialized', this);
   }
@@ -217,6 +224,7 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
     console.groupCollapsed('label streams');
       console.log('label streams:', this.labelStreams);
+      console.log('loaded:', this.loadedLbls);
       console.log('num observers:', this.getObservers());
       console.log('default label stream:', this.default_stream);
       console.log('event maps:', this.event_maps);
