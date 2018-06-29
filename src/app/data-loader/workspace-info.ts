@@ -1,4 +1,4 @@
-import {zip} from '../util/util'
+import {zip, invert} from '../util/util'
 
 // #region [Interfaces]
 export interface TypeMap {
@@ -160,9 +160,11 @@ export class LabelScheme {
     }
 
     get hasLabels() { return !!this.path }
+
+    get inv_event_map() { return invert(this.event_map) }
     // #endregion
 
-    // #region [Helper Methods]
+    // #region [Public Methods]
     sync(dataset: string) {
         let ds = this.ws.getData(dataset);
         if (!ds) return [];
@@ -170,5 +172,7 @@ export class LabelScheme {
         let syncable = zipped.filter((dv) => { let [d,v] = dv; return (d===0 || !!d) && (v===0 || !!v) });
         return syncable.map((dv) => { let [d,v] = dv; return [d,v*1000] })
     }
+
+    lblKey(type: string) { return parseInt(this.inv_event_map[type]) }
     // #endregion
 }

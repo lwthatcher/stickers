@@ -10,3 +10,12 @@ export function zip(A: Array<any>, B: Array<any>): Array<[any,any]> {
     if (!reverse) return result as [any,any][];
     else return result.map((pair) => {let [b,a] = pair; return [a,b]; }) as [any,any][];
 }
+
+/**
+ * Inverts the keys and values in an object.
+ */
+export function invert(map: object): object {
+    let result = {};
+    for (let key in map) { result[map[key]] = key }
+    return result;
+}
