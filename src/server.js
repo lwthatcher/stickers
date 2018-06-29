@@ -18,9 +18,11 @@ const app = express();
 var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
 }
-
+// CORS and body-parser
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
+// setup serving static files
+app.use(express.static(WORKSPACES_PATH));
 // #endregion
 
 // #region [API Routes]
