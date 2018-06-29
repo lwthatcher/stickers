@@ -93,7 +93,7 @@ export class DataviewComponent implements OnInit {
     // try to load labels
     for (let scheme of this.workspace.labelschemes) {
       if (scheme.hasLabels) {
-        let lbls = this.labelsloader.loadLabels(scheme.path);
+        let lbls = this.labelsloader.loadLabels(this.ds, scheme);
         lbls.subscribe((l) => { console.debug('loaded labels file:', scheme.name); this.loadedLbls[scheme.name] = l; })
       }
     }
