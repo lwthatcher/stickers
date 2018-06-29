@@ -49,6 +49,11 @@ export class WorkspaceInfo {
     getDataInfo(dataset: string): DataInfo {
         return this.data.find((d) => { return d.name === dataset })
     }
+
+    vFlashes(vid: string) {
+        if (!(vid in this.video)) return [];
+        return this.video[vid].flashes || [];
+    }
     // #endregion
 
     // #region [Helper Methods]
@@ -142,6 +147,13 @@ export class LabelScheme {
         if ("path" in info) this.path = info.path;
         if ("video" in info) this.video = info.video;
         this.null_label = info.null_label || LabelScheme.NULL_KEY;
+    }
+    // #endregion
+
+    // #region [Accessors]
+    get flashes() {
+        if (!this.video) return [];
+        return this.ws.vFlashes(this.video);
     }
     // #endregion
 }
