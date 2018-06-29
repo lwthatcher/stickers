@@ -70,7 +70,7 @@ export class DataviewComponent implements OnInit {
     this.ds = this.route.snapshot.paramMap.get('dataset');
     // get resolved data
     this.workspace = this.route.snapshot.data.workspace[0];
-    this.info = this.workspace.getDataInfo(this.ds);
+    this.info = this.workspace.getData(this.ds);
     // setup helper class(es)
     this.colorer = new Colorer(this);
     // create list of Sensor objects

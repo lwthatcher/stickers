@@ -1,3 +1,5 @@
+import {zip} from '../util/util'
+
 // #region [Interfaces]
 export interface TypeMap {
     [index: number]: string;
@@ -46,7 +48,7 @@ export class WorkspaceInfo {
     // #endregion
 
     // #region [Public Methods]
-    getDataInfo(dataset: string): DataInfo {
+    getData(dataset: string): DataInfo {
         return this.data.find((d) => { return d.name === dataset })
     }
 
@@ -154,6 +156,16 @@ export class LabelScheme {
     get flashes() {
         if (!this.video) return [];
         return this.ws.vFlashes(this.video);
+    }
+    // #endregion
+
+    // #region [Helper Methods]
+    sync(dataset: string) {
+        let ds = this.ws.getData(dataset);
+        if (!ds) return [];
+        let zipped = zip(ds.flashes, this.flashes);
+        let syncable = zipped.filter((dv) => { let [d,v] = dv; return (d===0 || !!d) && (v===0 || !!v) });
+        return syncable.map((dv) => { let [d,v] = dv; return [d,v*1000] })
     }
     // #endregion
 }
