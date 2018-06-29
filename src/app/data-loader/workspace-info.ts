@@ -42,9 +42,7 @@ export class WorkspaceInfo {
         return this.data.filter(visible);
     }
 
-    get hasVideo(): boolean {
-        return Object.keys(this.video).length > 0
-    }
+    get hasVideo(): boolean { return Object.keys(this.video).length > 0 }
     // #endregion
 
     // #region [Public Methods]
@@ -56,6 +54,9 @@ export class WorkspaceInfo {
         if (!(vid in this.video)) return [];
         return this.video[vid].flashes || [];
     }
+
+    EMPTY_SCHEME(name: string)
+    EMPTY_SCHEME(name: string, event_map:TypeMap={}): LabelScheme { return new LabelScheme(this, {name, event_map}) }
     // #endregion
 
     // #region [Helper Methods]
@@ -143,7 +144,7 @@ export class LabelScheme {
     // #region [Constructor]
     constructor(ws, info) {
         this.ws = ws;
-        this.workspace = info.workspace;
+        this.workspace = info.workspace || ws.name;
         this.name = info.name;
         this.event_map = info.event_map;
         if ("path" in info) this.path = info.path;

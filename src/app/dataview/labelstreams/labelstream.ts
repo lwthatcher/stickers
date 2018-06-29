@@ -1,5 +1,6 @@
 import { EventEmitter } from '@angular/core';
 import { EventMap, LabelKey } from '../types/event-types';
+import { LabelScheme } from '../../data-loader/workspace-info';
 
 // #region [Interfaces]
 export interface Label {
@@ -23,14 +24,12 @@ export class LabelStream {
     // #endregion
 
     // #region [Constructor]
-    constructor(name:string, labels: Label[] = [], emap: EventMap = undefined) {
-        emap = emap || new EventMap({name})
+    constructor(name:string, scheme: LabelScheme, labels: Label[] = []) {
         this.name = name;
-        this.set_labels(labels);
-        this.emap = emap;
+        this.emap = new EventMap(scheme);
         this._type = this.emap.initial;
         this.event = new EventEmitter<string>();
-        this.event.emit('init');
+        this.set_labels(labels);
     }
     // #endregion
 
@@ -46,6 +45,7 @@ export class LabelStream {
     set_labels(labels: Label[]) {
         this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl })
         this._i = this.labels.length;
+        this.event.emit('set-labels');
     }
 
     remove(lbl: Label) { 

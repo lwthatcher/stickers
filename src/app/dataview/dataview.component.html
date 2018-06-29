@@ -19,7 +19,8 @@
             </toolbox-sensors>
 
             <toolbox-labelstreams 
-                [sensor]="sensor" 
+                [sensor]="sensor"
+                [workspace]="workspace"
                 [(labelstreams)]="labelStreams" 
                 (remove)="removeStream($event)">
             </toolbox-labelstreams>

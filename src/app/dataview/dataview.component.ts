@@ -2,7 +2,7 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
-import { WorkspaceInfo, DataInfo, TypeMap } from '../data-loader/workspace-info';
+import { WorkspaceInfo, DataInfo, TypeMap, LabelScheme } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service';
 import { Label, LabelStream} from './labelstreams/labelstream';
 import { ModeTracker } from './modes/tool-mode';
@@ -81,14 +81,15 @@ export class DataviewComponent implements OnInit {
     // specify which data to load
     this.dataset = this.dataloader.loadDataset(this.info);
     // create label-streams
-    for (let emap of this.event_maps) { this.addStream(emap.name, emap) }
-    this.addStream('user-labels');
+    for (let scheme of this.labelschemes) { this.addStream(scheme.name, scheme) }
+    
     // parse labels of dataset if included
     if (this.is_labelled) {
       let _labels = this.dataloader.labels(this.ds);
       this.parse_labels(_labels)
           .then((labels) => { this.setLabels(this.default_stream, labels) })
     }
+    this.addStream('user-labels');
     // try to load labels
     for (let scheme of this.workspace.labelschemes) {
       if (scheme.hasLabels) {
@@ -132,9 +133,7 @@ export class DataviewComponent implements OnInit {
 
   get settings() { return this._settings; }
 
-  get event_maps() {
-    return this.workspace.labelschemes.map((scheme) => {return new EventMap(scheme)})
-  }
+  get labelschemes() { return this.workspace.labelschemes }
   // #endregion
 
   // #region [Sensors]
@@ -195,8 +194,9 @@ export class DataviewComponent implements OnInit {
                     .then((labels) => this.filterNullLabels(labels));
   }
 
-  private addStream(name: string, emap: EventMap = undefined) {
-    this.labelStreams[name] = new LabelStream(name, [], emap);
+  private addStream(name: string, scheme: LabelScheme = undefined) {
+    if (!scheme) scheme = this.workspace.EMPTY_SCHEME(name);
+    this.labelStreams[name] = new LabelStream(name, scheme);
   }
 
   private setLabels(name: string, labels: Label[]) {
@@ -227,7 +227,7 @@ export class DataviewComponent implements OnInit {
       console.log('loaded:', this.loadedLbls);
       console.log('num observers:', this.getObservers());
       console.log('default label stream:', this.default_stream);
-      console.log('event maps:', this.event_maps);
+      console.log('label schemes:', this.labelschemes);
     console.groupEnd();
     console.log('dataview component', this);
     console.groupEnd();
@@ -260,10 +260,7 @@ export class DataviewComponent implements OnInit {
    */
   private boundaries(lbls: ArrayLike): Label[] {
     // helper functions
-    let boundaryChange = (entry,i,arr) => {
-      if (i === 0) {console.debug('BC', entry)}
-      return arr[i-1] && entry[1].d != arr[i-1][1].d
-    }
+    let boundaryChange = (entry,i,arr) => { return arr[i-1] && entry[1].d != arr[i-1][1].d }
     let convert = (entry,j,arr) => {
       let [i1,d1] = entry;
       let [i2,d2] = arr[j+1] || lbls[lbls.length-1];

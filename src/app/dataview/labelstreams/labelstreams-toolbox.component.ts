@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angu
 import { Sensor } from '../sensors/sensor';
 import { LabelStream } from './labelstream';
 import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { WorkspaceInfo } from '../../data-loader/workspace-info';
 
 // #region [Interfaces]
 type LabelStreamMap = { [name: string]: LabelStream }
@@ -20,6 +21,7 @@ export interface StreamChange {
 export class LabelstreamToolboxComponent implements OnInit {
   // #region [Inputs]
   @Input() sensor: Sensor;
+  @Input() workspace: WorkspaceInfo;
   @Input() labelstreams: LabelStreamMap;
   @ViewChild('dropdown') dropdown: NgbDropdown;
   @ViewChild('popover') popover: NgbPopover;
@@ -63,10 +65,11 @@ export class LabelstreamToolboxComponent implements OnInit {
     this.dropdown.close();
   }
 
-  add_stream(stream: string) {
-    if (!this.valid_name(stream)) { return }
-    this.labelstreams[stream] = new LabelStream(stream);
-    this.sensor.labelstream = stream;
+  add_stream(name: string) {
+    if (!this.valid_name(name)) { return }
+    let scheme = this.workspace.EMPTY_SCHEME(name)
+    this.labelstreams[name] = new LabelStream(name, scheme);
+    this.sensor.labelstream = name;
     this.popover.close();
     this.dropdown.close();
   }

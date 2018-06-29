@@ -3,8 +3,6 @@ import { LabelScheme, TypeMap } from '../../data-loader/workspace-info';
 
 // #region [Interfaces]
 export type LabelKey = number | string
-
-type WeakScheme = {name: string}
 // #endregion
 
 export class EventMap {
@@ -17,7 +15,6 @@ export class EventMap {
     // #endregion
 
     // #region [Constructor]
-    constructor(scheme: WeakScheme)
     constructor(labelscheme: LabelScheme) {
         this.scheme = labelscheme;
         this.name = labelscheme.name;
