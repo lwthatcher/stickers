@@ -165,12 +165,12 @@ export class LabelScheme {
     // #endregion
 
     // #region [Public Methods]
-    sync(dataset: string) {
+    sync(dataset: string): [number, number][] {
         let ds = this.ws.getData(dataset);
         if (!ds) return [];
         let zipped = zip(ds.flashes, this.flashes);
         let syncable = zipped.filter((dv) => { let [d,v] = dv; return (d===0 || !!d) && (v===0 || !!v) });
-        return syncable.map((dv) => { let [d,v] = dv; return [d,v*1000] })
+        return syncable.map((dv) => { let [d,v] = dv; return [d,v*1000] }) as [number, number][]
     }
 
     lblKey(type: string) { return parseInt(this.inv_event_map[type]) }
