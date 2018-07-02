@@ -147,7 +147,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Event Handlers]
   stream_update(event) {
     if (event.type === 'change-type') { this.type_changed(event) }
-    else { console.debug('stream update', event); this.redraw_labels() }
+    else { this.redraw_labels() }
   }
 
   stream_changed(change) {

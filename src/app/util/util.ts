@@ -23,8 +23,6 @@ export function invert(map: object): object {
 export function arraysEqual(A: any[], B: any[]): boolean {
     if (!A || !B) return false;
     if (A.length !== B.length) return false;
-    for (let i = 0; i < A.length; ++i) { 
-        if (A[i] !== B[i]) {return false;}
-    }
+    for (let i = 0; i < A.length; ++i) { if (A[i] !== B[i]) return false; }
     return true;
 }

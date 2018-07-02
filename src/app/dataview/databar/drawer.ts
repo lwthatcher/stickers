@@ -150,7 +150,6 @@ export class Drawer {
     // erase labels if show-labels is false
     if (!this.domain_set) { return; }
     if (!this.show_labels) { this.clear('labels'); return; }
-    console.debug('drawing labels', this.labels, this.x.domain(), this.domain_set);
     
     // helper functions
     let key = (d,i) => { return d ? d.id : i }
@@ -350,7 +349,6 @@ export class Drawer {
   }
 
   set_domains(axes) {
-    console.debug('setting domains', axes);
     // setup x-domains
     let max = axes[0][axes[0].length-1].i;
     this.x.domain([0, max]);
