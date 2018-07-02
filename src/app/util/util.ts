@@ -19,3 +19,12 @@ export function invert(map: object): object {
     for (let key in map) { result[map[key]] = key }
     return result;
 }
+
+export function arraysEqual(A: any[], B: any[]): boolean {
+    if (!A || !B) return false;
+    if (A.length !== B.length) return false;
+    for (let i = 0; i < A.length; ++i) { 
+        if (A[i] !== B[i]) {return false;}
+    }
+    return true;
+}

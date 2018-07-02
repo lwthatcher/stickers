@@ -2,6 +2,7 @@ import { DatabarComponent } from './databar.component';
 import { Label } from '../labelstreams/labelstream';
 import { Selection, SelectionTransition } from './selection';
 import * as d3 from "d3";
+import { arraysEqual } from '../../util/util';
 
 // #region [Interfaces]
 enum Layer {
@@ -119,6 +120,8 @@ export class Drawer {
     if (D3_EVENTS.includes(event.type)) return event.sourceEvent;
     else return event;
   }
+
+  get domain_set() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
   // #endregion
 
   // #region [Public Plotting Methods]
@@ -145,8 +148,9 @@ export class Drawer {
   
   draw_labels() {
     // erase labels if show-labels is false
-    console.debug('drawing labels', this.labels, this.show_labels);
+    if (!this.domain_set) { return; }
     if (!this.show_labels) { this.clear('labels'); return; }
+    console.debug('drawing labels', this.labels, this.x.domain(), this.domain_set);
     
     // helper functions
     let key = (d,i) => { return d ? d.id : i }
@@ -346,6 +350,7 @@ export class Drawer {
   }
 
   set_domains(axes) {
+    console.debug('setting domains', axes);
     // setup x-domains
     let max = axes[0][axes[0].length-1].i;
     this.x.domain([0, max]);
