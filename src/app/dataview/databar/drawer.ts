@@ -145,7 +145,9 @@ export class Drawer {
   
   draw_labels() {
     // erase labels if show-labels is false
+    console.debug('drawing labels', this.labels, this.show_labels);
     if (!this.show_labels) { this.clear('labels'); return; }
+    
     // helper functions
     let key = (d,i) => { return d ? d.id : i }
     let middle = (d) => { return this.x(d.start + (d.end-d.start)/2) }

@@ -84,17 +84,17 @@ export class DataviewComponent implements OnInit {
     for (let scheme of this.labelschemes) { this.addStream(scheme.name, scheme) }
     
     // parse labels of dataset if included
-    if (this.is_labelled) {
-      let _labels = this.dataloader.labels(this.ds);
-      this.parse_labels(_labels)
-          .then((labels) => { this.setLabels(this.default_stream, labels) })
-    }
+    // if (this.is_labelled) {
+    //   let _labels = this.dataloader.labels(this.ds);
+    //   this.parse_labels(_labels)
+    //       .then((labels) => { this.setLabels(this.default_stream, labels) })
+    // }
     this.addStream('user-labels');
     // try to load labels
     for (let scheme of this.workspace.labelschemes) {
       if (scheme.hasLabels) {
         let lbls = this.labelsloader.loadLabels(this.ds, scheme);
-        lbls.subscribe((l) => { console.debug('loaded labels file:', scheme.name); this.loadedLbls[scheme.name] = l; })
+        lbls.subscribe((l) => { this.setLabels(scheme.name, l) })
       }
     }
     // component initialized
@@ -200,6 +200,7 @@ export class DataviewComponent implements OnInit {
   }
 
   private setLabels(name: string, labels: Label[]) {
+    console.debug('setting labels:', name, labels);
     this.labelStreams[name].set_labels(labels);
   }
 
@@ -248,7 +249,7 @@ export class DataviewComponent implements OnInit {
     let result = {}
     for (let entry of Object.entries(this.labelStreams)) {
       let [key, value] = entry;
-      result[key] = value.event.observers;
+      result[key] = value.event$.observers;
     }
     return result;
   }

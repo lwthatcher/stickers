@@ -108,7 +108,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   }
 
   stream_update(event) {
-    if (event === 'change-type') 
+    if (event.type === 'change-type') 
       this.lbl = this.labelstream.lbl_type.toString();
   }
 
@@ -137,7 +137,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   private register_lblstream() {
     if (!this.labelstream) return false;
     if (this.registration) this.registration.unsubscribe();
-    this.registration = this.labelstream.event.subscribe((e) => { this.stream_update(e) })
+    this.registration = this.labelstream.event$.subscribe((e) => { this.stream_update(e) })
     return true;
   }
   // #endregion

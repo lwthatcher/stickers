@@ -146,8 +146,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Event Handlers]
   stream_update(event) {
-    if (event === 'change-type') { this.type_changed(event) }
-    else { this.redraw_labels() }
+    if (event.type === 'change-type') { this.type_changed(event) }
+    else { console.debug('stream update', event); this.redraw_labels() }
   }
 
   stream_changed(change) {
@@ -161,7 +161,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   mode_changed(change) { this.updateMode(this.mode) }
 
   type_changed(change) {
-    console.debug('type change:', this.labelstream.lbl_type);
+    console.debug('type change:', change, this.labelstream.lbl_type);
     // todo: if selected-label -> change-type?
   }
 
@@ -218,7 +218,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   private register_lblstream() {
     if (!this.labelstream) return false;
     if (this.registration) this.registration.unsubscribe();
-    this.registration = this.labelstream.event.subscribe((e) => { this.stream_update(e) })
+    this.registration = this.labelstream.event$.subscribe((e) => { this.stream_update(e) })
     return true;
   }
 

@@ -30,7 +30,7 @@ export class Labeller {
         if (selected && this.zero_width(selected)) this.delete(selected);
         // set all labels to deselected
         for (let l of this.labels) { l.selected = false }
-        this.ls.event.emit('deselect');
+        this.ls.emit('deselect');
     }
     
     select(lbl) {
@@ -40,7 +40,7 @@ export class Labeller {
         // select this event
         lbl.selected = true;
         // redraw labels and add drag-handles
-        this.ls.event.emit('select');
+        this.ls.emit('select');
     }
     
     move(lbl, target) {
@@ -70,7 +70,7 @@ export class Labeller {
         lbl.start = xs;
         lbl.end = xe;
         // redraw labels and drag-handles
-        this.ls.event.emit('move');
+        this.ls.emit('move');
     }
     
     resize(lbl, side: 'left' | 'right') {
@@ -83,12 +83,12 @@ export class Labeller {
         if (side === 'left') lbl.start = dx;
         if (side === 'right') lbl.end = dx;
         // redraw labels and drag-handles
-        this.ls.event.emit('resize');
+        this.ls.emit('resize');
     }
 
     delete(lbl) {
         this.ls.remove(lbl);
-        this.ls.event.emit('delete');
+        this.ls.emit('delete');
     }
 
     add(px: number, label: number) {
@@ -105,13 +105,13 @@ export class Labeller {
         let lbl = { start, end, label, type } as Label
         this.ls.add(lbl);
         // notify observers
-        this.ls.event.emit('add');
+        this.ls.emit('add');
     }
 
     change_label(lbl: Label, new_label: number) {
         lbl.label = new_label;
         lbl.type = this.ls.emap.get(new_label);
-        this.ls.event.emit('change-label');
+        this.ls.emit('change-label');
     }
     // #endregion
 

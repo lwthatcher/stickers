@@ -11,13 +11,18 @@ export interface Label {
     selected?: boolean;
     id?: number;
 }
+
+export interface LabelStreamEvent {
+    type: string;
+    source: string;
+}
 // #endregion
 
 export class LabelStream {
     // #region [Variables]
     name: string;
     labels: Label[];
-    event: EventEmitter<string>;
+    event$ = new EventEmitter<LabelStreamEvent>();
     emap: EventMap;
     private _type: LabelKey;
     private _i: number;
@@ -28,7 +33,6 @@ export class LabelStream {
         this.name = name;
         this.emap = new EventMap(scheme);
         this._type = this.emap.initial;
-        this.event = new EventEmitter<string>();
         this.set_labels(labels);
     }
     // #endregion
@@ -45,7 +49,7 @@ export class LabelStream {
     set_labels(labels: Label[]) {
         this.labels = labels.map((lbl,i) => { lbl.id = i; return lbl })
         this._i = this.labels.length;
-        this.event.emit('set-labels');
+        this.emit('set-labels');
     }
 
     remove(lbl: Label) { 
@@ -63,7 +67,7 @@ export class LabelStream {
     // #region [Selected Event Type]
     change_type(type: LabelKey) {
         this._type = type;
-        this.event.emit('change-type');
+        this.emit('change-type');
     }
 
     cycle() {
@@ -71,11 +75,15 @@ export class LabelStream {
         let idx = types.findIndex((type) => {return type === this._type }) + 1
         if (idx >= types.length) idx = 0;
         this._type = types[idx];
-        this.event.emit('change-type');
+        this.emit('change-type');
     }
     // #endregion
 
     // #region [Utility Methods]
+    emit(type: string) {
+        this.event$.emit({type, source: this.name})
+    }
+
     findType(type: LabelKey) {
         let label = EventMap.toInt(type)
         return this.labels.filter((lbl) => {return lbl.label == label})

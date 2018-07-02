@@ -13,7 +13,6 @@ export class Synchronizer {
         if (!this.canSync) throw ReferenceError('cannot convert: no values to sync!');
         let [d,v] = this.syncs[0];
         let offset = d - v;
-        console.debug('v -> d', value, d, v, offset);
         return (value*1000) + offset;
     }
 
