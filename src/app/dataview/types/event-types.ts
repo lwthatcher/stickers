@@ -38,7 +38,10 @@ export class EventMap {
         if (this.isNull(key)) return this.null_event;
         // check if valid key
         key = EventMap.toInt(key);
-        if (!(key in this._emap)) { console.warn('unexpected label key:', key) }
+        if (!(key in this._emap)) { 
+            console.warn('unexpected label key:', key);
+            this._emap[key] = key.toString();
+        }
         return this._emap[key];
     }
 

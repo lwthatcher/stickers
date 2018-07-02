@@ -83,22 +83,19 @@ export class DataviewComponent implements OnInit {
     this.sensors = this.setupSensors(this.info.channels);
     // specify which data to load
     this.dataset = this.dataloader.loadDataset(this.info);
-    
-    // parse labels of dataset if included
-    // if (this.is_labelled) {
-    //   let _labels = this.dataloader.labels(this.ds);
-    //   this.parse_labels(_labels)
-    //       .then((labels) => { this.setLabels(this.default_stream, labels) })
-    // }
-    
-    // try to load labels
+    // load external labels files
     for (let scheme of this.workspace.labelschemes) {
       if (scheme.hasLabels) {
         let lbls = this.labelsloader.loadLabels(this.ds, scheme);
         lbls.subscribe((l) => { this.setLabels(scheme.name, l) })
       }
     }
-    console.info('parse labels from data?', this.is_labelled, !this.default_stream.scheme.hasLabels);
+    // load labels from dataset if no other option
+    if (this.is_labelled && !this.default_stream.scheme.hasLabels) {
+      let _labels = this.dataloader.labels(this.ds);
+      this.parse_labels(_labels)
+          .then((labels) => { this.setLabels(this.default_stream.name, labels) })
+    }
     // component initialized
     console.info('dataview initialized', this);
   }
@@ -267,8 +264,8 @@ export class DataviewComponent implements OnInit {
     let convert = (entry,j,arr) => {
       let [i1,d1] = entry;
       let [i2,d2] = arr[j+1] || lbls[lbls.length-1];
-      let result = {start:d1.i, end:d2.i, label:d1.d} as Label;
-      if (d1.d in this.eventMap) result.type = this.eventMap[d1.d];
+      let emap = this.default_stream.emap;
+      let result = {start:d1.i, end:d2.i, label:d1.d, type: emap.get(d1.d)} as Label;
       return result;
     }
     // format from ArrayLike -> array of tuples: [index, label]
