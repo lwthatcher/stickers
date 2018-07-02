@@ -50,6 +50,10 @@ export class WorkspaceInfo {
         return this.data.find((d) => { return d.name === dataset })
     }
 
+    getLabels(name: string): LabelScheme {
+        return this.labelschemes.find((d) => { return d.name === name })
+    }
+
     vFlashes(vid: string) {
         if (!(vid in this.video)) return [];
         return this.video[vid].flashes || [];

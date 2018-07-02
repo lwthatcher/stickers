@@ -76,12 +76,13 @@ export class DataviewComponent implements OnInit {
     this.info = this.workspace.getData(this.ds);
     // setup helper class(es)
     this.colorer = new Colorer(this);
+    // create label-streams
+    for (let scheme of this.labelschemes) { this.addStream(scheme.name, scheme) }
+    this.addStream('user-labels');
     // create list of Sensor objects
     this.sensors = this.setupSensors(this.info.channels);
     // specify which data to load
     this.dataset = this.dataloader.loadDataset(this.info);
-    // create label-streams
-    for (let scheme of this.labelschemes) { this.addStream(scheme.name, scheme) }
     
     // parse labels of dataset if included
     // if (this.is_labelled) {
@@ -89,7 +90,7 @@ export class DataviewComponent implements OnInit {
     //   this.parse_labels(_labels)
     //       .then((labels) => { this.setLabels(this.default_stream, labels) })
     // }
-    this.addStream('user-labels');
+    
     // try to load labels
     for (let scheme of this.workspace.labelschemes) {
       if (scheme.hasLabels) {
@@ -97,6 +98,7 @@ export class DataviewComponent implements OnInit {
         lbls.subscribe((l) => { this.setLabels(scheme.name, l) })
       }
     }
+    console.info('parse labels from data?', this.is_labelled, !this.default_stream.scheme.hasLabels);
     // component initialized
     console.info('dataview initialized', this);
   }
@@ -116,9 +118,9 @@ export class DataviewComponent implements OnInit {
     return this.workspace._labels[ds]['event-map'];
   }
 
-  get default_stream(): string {
-    if (!this.is_labelled) return "user-labels";
-    return this.info.labelled as string;
+  get default_stream(): LabelStream {
+    if (!this.is_labelled) return this.labelStreams['user-labels'];
+    return this.labelStreams[<string>this.info.labelled];
   }
 
   get streams(): string[] { return Object.keys(this.labelStreams) }
@@ -177,7 +179,7 @@ export class DataviewComponent implements OnInit {
   newSensor() {
     let id = this.next_id();
     let c = this.get_channel(id);
-    let sensor = new Sensor(c, id, this.default_stream, this.idx_map);
+    let sensor = new Sensor(c, id, this.default_stream.name, this.idx_map);
     console.debug('Adding new sensor:', sensor);
     this.sensors.push(sensor);
   }
@@ -205,7 +207,7 @@ export class DataviewComponent implements OnInit {
   }
 
   private filterNullLabels(labels: Label[]) {
-    let ls = this.labelStreams[this.default_stream];
+    let ls = this.default_stream;
     if (!this.settings.filter_nulls) return labels;
     else return labels.filter((lbl) => lbl.label !== ls.emap.null_label);
   }
@@ -288,7 +290,7 @@ export class DataviewComponent implements OnInit {
   private setupSensors(channels: string): Sensor[] {
     let topSensors = (_, i) => { return i < this.settings.max_sensors }   // limit number of sensors shown at once
     let toSensor = (channel: string, id: number): Sensor => {             // creates the Sensor object for each channel provided
-      return new Sensor(channel, id, this.default_stream, this.idx_map);
+      return new Sensor(channel, id, this.default_stream.name, this.idx_map);
     }
     return [...channels].filter(topSensors).map(toSensor)
   }
