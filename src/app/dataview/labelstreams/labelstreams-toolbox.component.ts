@@ -34,12 +34,7 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #region [Constructors]
   constructor() { }
 
-  ngOnInit() {
-    console.groupCollapsed('labelstreams-toolbox init', this.sensor.name);
-    console.debug('dropdown', this.dropdown);
-    console.info('labelstreams-toolbox initialized', this);
-    console.groupEnd();
-  }
+  ngOnInit() { }
   // #endregion
 
   // #region [Accessors]

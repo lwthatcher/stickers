@@ -1,6 +1,6 @@
 // #region [Imports]
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChildren } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo, TypeMap, LabelScheme } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service';
@@ -11,6 +11,10 @@ import { Sensor } from './sensors/sensor';
 import { EventMap } from './types/event-types';
 import { Dataset } from '../data-loader/dataset';
 import { LabelsLoaderService } from '../data-loader/labels-loader.service';
+import { TypesToolboxComponent } from './types/types-toolbox.component';
+import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
+import { ModesToolboxComponent } from './modes/modes-toolbox.component';
+import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 // #endregion
 
 // #region [Interfaces]
@@ -43,6 +47,13 @@ type IndexMap = Map<number,number[]>
 })
 // #endregion
 export class DataviewComponent implements OnInit {
+  // #region [Child Components]
+  @ViewChildren(TypesToolboxComponent) tbTypes;
+  @ViewChildren(SensorsToolboxComponent) tbSensors;
+  @ViewChildren(ModesToolboxComponent) tbModes;
+  @ViewChildren(LabelstreamToolboxComponent) tbLblStreams;
+  // #endregion
+
   // #region [Properties]
   ds: string;
   ws: string;
@@ -219,6 +230,12 @@ export class DataviewComponent implements OnInit {
       console.log('data info:', this.info);
       console.log('workspace info:', this.workspace);
     console.groupEnd();
+    console.groupCollapsed('children')
+      console.log('sensors-toolboxes', this.tbSensors.toArray());
+      console.log('labelstreams-toolboxes', this.tbLblStreams.toArray());
+      console.log('modes-toolboxes', this.tbModes.toArray());
+      console.log('types-toolboxes', this.tbTypes.toArray());
+    console.groupEnd()
     console.groupCollapsed('sensors');
       console.log('sensors:', this.sensors);
     console.groupEnd();

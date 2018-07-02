@@ -23,11 +23,7 @@ export class SensorsToolboxComponent implements OnInit {
   // #region [Constructors]
   constructor() { }
 
-  ngOnInit() {
-    console.groupCollapsed('sensors-toolbox init', this.sensor.name);
-    console.info('sensors-toolbox initialized', this);
-    console.groupEnd();
-  }
+  ngOnInit() { }
   // #endregion
 
   // #region [Accessors]

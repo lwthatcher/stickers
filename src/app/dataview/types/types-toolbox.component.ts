@@ -32,14 +32,8 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnInit() {
-    console.groupCollapsed('types-toolbox init', this.sensor.name);
     this.lbl = this.emap.initial;
-    console.debug('initial lbl:', this.lbl);
     this.register_lblstream();
-    console.log('popovers', this.addMenu, this.editMenus);
-    console.log('events', this.events);
-    console.info('types-toolbox initialized', this);
-    console.groupEnd();
   }
   // #endregion
 

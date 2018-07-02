@@ -23,11 +23,8 @@ export class ModesToolboxComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.groupCollapsed('modes-toolbox init', this.sensor.name);
     this.mode = this.tracker.current;
     this.tracker.event.subscribe((mode) => this.tracked(mode))
-    console.info('modes-toolbox initialized', this);
-    console.groupEnd();
   }
   // #endregion
 
