@@ -15,6 +15,7 @@ import { TypesToolboxComponent } from './types/types-toolbox.component';
 import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
+import { DatabarComponent } from './databar/databar.component';
 // #endregion
 
 // #region [Interfaces]
@@ -52,6 +53,7 @@ export class DataviewComponent implements OnInit {
   @ViewChildren(SensorsToolboxComponent) tbSensors;
   @ViewChildren(ModesToolboxComponent) tbModes;
   @ViewChildren(LabelstreamToolboxComponent) tbLblStreams;
+  @ViewChildren(DatabarComponent) _databars;
   // #endregion
 
   // #region [Properties]
@@ -144,6 +146,8 @@ export class DataviewComponent implements OnInit {
   get settings() { return this._settings; }
 
   get labelschemes() { return this.workspace.labelschemes }
+
+  get databars() { return this._databars.toArray() }
   // #endregion
 
   // #region [Sensors]
@@ -235,6 +239,7 @@ export class DataviewComponent implements OnInit {
       console.log('labelstreams-toolboxes', this.tbLblStreams.toArray());
       console.log('modes-toolboxes', this.tbModes.toArray());
       console.log('types-toolboxes', this.tbTypes.toArray());
+      console.log('databars', this.databars);
     console.groupEnd()
     console.groupCollapsed('sensors');
       console.log('sensors:', this.sensors);
@@ -248,6 +253,7 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
     console.log('dataview component', this);
     console.groupEnd();
+    for (let databar of this.databars) { databar.logInfo(); }
   }
 
   /**

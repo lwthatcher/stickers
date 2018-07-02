@@ -185,8 +185,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   @HostListener('document:keypress', ['$event'])
   keyPress(event) {
-    if (event.key === 'i') this.logInfo();
-    else if (event.key === 'Delete' && this.selected_label) this.labeller.delete(this.selected_label);
+    if (event.key === 'Delete' && this.selected_label) this.labeller.delete(this.selected_label);
   }
   // #endregion
 
