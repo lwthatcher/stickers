@@ -1,6 +1,6 @@
 // #region [Imports]
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, HostListener, ViewChildren } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChildren, ViewChild } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo, TypeMap, LabelScheme } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service';
@@ -16,6 +16,7 @@ import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 import { DatabarComponent } from './databar/databar.component';
+import { SaveMenuComponent } from './save-menu/save-menu.component';
 // #endregion
 
 // #region [Interfaces]
@@ -54,6 +55,7 @@ export class DataviewComponent implements OnInit {
   @ViewChildren(ModesToolboxComponent) tbModes;
   @ViewChildren(LabelstreamToolboxComponent) tbLblStreams;
   @ViewChildren(DatabarComponent) _databars;
+  @ViewChild(SaveMenuComponent) saveMenu;
   // #endregion
 
   // #region [Properties]
@@ -239,7 +241,7 @@ export class DataviewComponent implements OnInit {
       console.log('labelstreams-toolboxes', this.tbLblStreams.toArray());
       console.log('modes-toolboxes', this.tbModes.toArray());
       console.log('types-toolboxes', this.tbTypes.toArray());
-      console.log('databars', this.databars);
+      console.log('save-menu', this.saveMenu);
     console.groupEnd()
     console.groupCollapsed('sensors');
       console.log('sensors:', this.sensors);

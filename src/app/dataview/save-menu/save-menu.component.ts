@@ -26,10 +26,7 @@ export class SaveMenuComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.groupCollapsed('save-menu');
     this.selected_stream = this.default;
-    console.info('save-menu initialized', this);
-    console.groupEnd();
   }
   // #endregion
 
