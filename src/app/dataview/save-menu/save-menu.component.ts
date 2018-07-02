@@ -15,7 +15,7 @@ type LabelStreamMap = { [name: string]: LabelStream }
 export class SaveMenuComponent implements OnInit {
   // #region [Inputs]
   @Input() labelstreams: LabelStreamMap;
-  @Input() default: string;
+  @Input() default: LabelStream;
   // #endregion
 
   // #region [Variables]
@@ -26,7 +26,7 @@ export class SaveMenuComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.selected_stream = this.default;
+    this.selected_stream = this.default.name;
   }
   // #endregion
 
