@@ -154,46 +154,10 @@ export class Drawer {
     // erase labels if show-labels is false
     if (!this.domain_set) { return; }
     if (!this.show_labels) { this.clear('labels'); return; }
-    
-    // helper functions
-    let key = (d,i) => { return d ? d.id : i }
-    let middle = (d) => { return this.x(d.start + (d.end-d.start)/2) }
-    let width = (d) => { return this.x(d.end) - this.x(d.start) }
     // updated elements
-    let rects = this.layers[Layer.Labels].selectAll('rect.label')
-                    .data(this.labels, key)
-                    .attr('x', (d) => { return this.x(d.start) })
-                    .attr('width', width)
-                    .attr('fill', (d) => { return this.databar.colorer.labels(this.ls.name).get(d.label) })
-                    .classed('selected', (d) => d.selected )
-    // exit (remove) elements
-    rects.exit()
-          .transition()
-          .duration(250)
-          .attr('width', 0)
-          .attr('x', middle)
-          .remove();
-    // entering (new) elements
-    let enter = rects.enter()
-                      .append('rect')
-                      .attr('y', 0)
-                      .attr('height', this.databar.height)
-                      .attr("clip-path", "url(#clip)")
-                      .classed('label', true)
-                      .on('click', (d) => { this.lbl_clicked(d) })
-                      .call(this.move)
-                      .attr('x', middle)
-                      .attr('width', 0)
-                      .classed('selected', (d) => d.selected )
-                      .attr('fill', (d) => { return this.databar.colorer.labels(this.ls.name).get(d.label) })
-    // add title pop-over
-    enter.append('svg:title')
-          .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
-    // transition for creation
-    enter.transition()
-          .duration(250)
-          .attr('x', (d) => { return this.x(d.start) })
-          .attr('width', width)
+    let lbls = this.select_labels();
+    this.exiting_labels(lbls);
+    this.entering_labels(lbls);
   }
   
   draw_handles(lbl?: Label) {
@@ -334,6 +298,56 @@ export class Drawer {
                     .call(this.resize[side])
                     .merge(selection)
                     .attr('x', callback)
+  }
+
+  private select_labels() {
+    let key = (d,i) => { return d ? d.id : i }
+    let width = (d) => { return this.x(d.end) - this.x(d.start) }
+    let fill = (d) =>  { return this.databar.colorer.labels(this.ls.name).get(d.label) }
+    let rects = this.layers[Layer.Labels]
+                    .selectAll('rect.label')
+                    .data(this.labels, key)
+                    .attr('x', (d) => { return this.x(d.start) })
+                    .attr('width', width)
+                    .attr('fill', fill)
+                    .classed('selected', (d) => d.selected )
+    return rects;
+  }
+
+  private exiting_labels(lbls) {
+    let middle = (d) => { return this.x(d.start + (d.end-d.start)/2) }
+    lbls.exit()
+        .transition()
+        .duration(250)
+        .attr('width', 0)
+        .attr('x', middle)
+        .remove();
+  }
+
+  private entering_labels(lbls) {
+    let width = (d) => { return this.x(d.end) - this.x(d.start) }
+    let middle = (d) => { return this.x(d.start + (d.end-d.start)/2) }
+    let fill = (d) =>  { return this.databar.colorer.labels(this.ls.name).get(d.label) }
+    let enter = lbls.enter()
+                    .append('rect')
+                    .attr('y', 0)
+                    .attr('height', this.databar.height)
+                    .attr("clip-path", "url(#clip)")
+                    .classed('label', true)
+                    .on('click', (d) => { this.lbl_clicked(d) })
+                    .call(this.move)
+                    .attr('x', middle)
+                    .attr('width', 0)
+                    .classed('selected', (d) => d.selected )
+                    .attr('fill', fill)
+    // add title pop-over
+    enter.append('svg:title')
+         .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
+    // transition
+    enter.transition()
+         .duration(250)
+         .attr('x', (d) => { return this.x(d.start) })
+         .attr('width', width)
   }
   // #endregion
 
