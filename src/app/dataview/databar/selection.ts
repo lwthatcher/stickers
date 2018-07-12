@@ -20,6 +20,7 @@ export interface Selection {
     call(value: any): Selection
     filter(filter: any): Selection
     merge(selection: Selection): Selection
+    each(callback: any): Selection
     transition(): SelectionTransition
     node(): any
     remove()

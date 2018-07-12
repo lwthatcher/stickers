@@ -33,6 +33,8 @@ export class WorkspaceInfo {
         return Object.entries(this._data).map(entry => new DataInfo(this, this.toInfo(entry)));
     }
 
+    get energy_data(): DataInfo[] { return this.data.filter((data) => data.isEnergy) }
+
     get labelschemes(): LabelScheme[] {
         return Object.entries(this._labels).map(entry => new LabelScheme(this, this.toInfo(entry)));
     }

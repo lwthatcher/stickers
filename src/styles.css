@@ -29,6 +29,24 @@ rect.drag-handle.warn {
 }
 /*#endregion */
 
+/*#region [Signals] */
+.line {
+    stroke-width: 2px;
+    stroke-opacity: 0.8;
+}
+
+.line--fade {
+    stroke-width: 1.8px;
+    stroke-opacity: 0.5;
+    stroke-dasharray: 1,3;
+}
+
+.line--hover {
+    stroke-width: 3px;
+    stroke-opacity: 1.0;
+}
+/*#endregion */
+
 /*#region [SVG Background] */
 rect.zoom {
     fill: none;

@@ -311,9 +311,10 @@ export class Drawer {
         .attr("clip-path", "url(#clip)")
         .attr("class", "line line-" + j.toString())
         .attr("stroke", this.databar.colorer.lines.get(j+1))
-        .attr("stroke-width", 1.5)
-        .attr("stroke-opacity", 0.7)
-        .attr("d", this.getLine(j));
+        .attr("idx", j)
+        .attr("d", this.getLine(j))
+        .on("mouseover", () => this.mouseover(j))
+        .on("mouseout", () => this.mouseout())
   }
   
   private _add_handle(selection: Selection, side: 'left' | 'right') {
@@ -517,6 +518,27 @@ export class Drawer {
   }
   // #endregion
 
+  // #region [Highlight Behaviors]
+  mouseover(j) {
+    let signals = this.signals;
+    let results = []
+    signals.each((d,i,nodes) => {
+      let self = d3.select(nodes[i]);
+      let idx = self.attr('idx');
+      self.classed('line--hover', () => idx == j);
+      self.classed('line--fade', () => idx != j);
+      results.push(self.attr('class'));
+    })
+    console.debug('mouseover', j, results, d3.event);
+  }
+
+  mouseout() {
+    console.debug('mouseout');
+    this.signals.classed('line--hover', false)
+                .classed('line--fade', false);
+  }
+  // #endregion
+
   // #region [Click Handlers]
 
   /** general click call-back bound to the SVG */
@@ -581,6 +603,7 @@ export class Drawer {
   // #endregion
 }
 
+// #region [Time Format]
 function time_format(ms: number) {
   let secs = Math.floor(ms % (1000 * 60) / 1000);
   let mins = Math.floor(ms % (1000 * 60 * 60) / (1000 * 60));
@@ -591,3 +614,4 @@ function time_format(ms: number) {
   result += ':' + secs.toString().padStart(2, '0');
   return result;
 }
+// #endregion
