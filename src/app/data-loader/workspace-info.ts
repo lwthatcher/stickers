@@ -38,7 +38,7 @@ export class WorkspaceInfo {
     }
 
     get visibleData(): DataInfo[] {
-        let visible = (data: DataInfo) => { return !data.hide }
+        let visible = (data: DataInfo) => { return !data.hide && !data.isEnergy }
         return this.data.filter(visible);
     }
 
@@ -101,6 +101,7 @@ export class DataInfo {
     path: string;
     flashes: number[];
     hide: boolean;
+    type: string;
     crop?: number[];
     private ws: WorkspaceInfo;
     // #endregion
@@ -120,12 +121,15 @@ export class DataInfo {
         // optional properties
         this.flashes = info.flashes || [];
         this.hide = info.hide || false;
+        this.type = info.type || 'data';
         if ('crop' in info) this.crop = info.crop;
     }
     // #endregion
 
     // #region [Accessors]
     get rate() { return DataInfo.MILLISECONDS / this.Hz }
+
+    get isEnergy() { return this.type === 'energy' }
     // #endregion
 }
 
