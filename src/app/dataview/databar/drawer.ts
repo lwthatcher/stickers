@@ -161,8 +161,8 @@ export class Drawer {
     
     let lbls = this.select_labels();
     this.exiting_labels(lbls);
-    this.entering_labels(lbls);
-    console.debug('draw labels', lbls);
+    let enter = this.entering_labels(lbls);
+    console.debug('draw labels', lbls, enter);
   }
   
   draw_handles(lbl?: Label) {
@@ -316,6 +316,7 @@ export class Drawer {
                     .attr('width', width)
                     .attr('fill', fill)
                     .classed('selected', (d) => d.selected )
+    console.debug('selected', rects, this.labels, rects.nodes())
     return rects;
   }
 
@@ -342,7 +343,7 @@ export class Drawer {
                     .on('click', (d) => { this.lbl_clicked(d) })
                     .call(this.move)
                     .attr('x', middle)
-                    .attr('width', 0)
+                    .attr('width', width)
                     .classed('selected', (d) => d.selected )
                     .attr('fill', fill)
     // add title pop-over
@@ -353,6 +354,7 @@ export class Drawer {
          .duration(250)
          .attr('x', (d) => { return this.x(d.start) })
          .attr('width', width)
+    return enter;
   }
   // #endregion
 
