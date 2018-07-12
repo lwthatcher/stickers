@@ -45,6 +45,8 @@ export class WorkspaceInfo {
     }
 
     get hasVideo(): boolean { return Object.keys(this.video).length > 0 }
+
+    get hasEnergy(): boolean { return Object.keys(this.energy_data).length > 0 }
     // #endregion
 
     // #region [Public Methods]
