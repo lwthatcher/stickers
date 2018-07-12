@@ -527,11 +527,9 @@ export class Drawer {
   mouseover(j) {
     this.highlight_signal(j);
     this.display_tooltip(j);
-    console.debug('mouseover', j, d3.event);
   }
 
   mouseout() {
-    console.debug('mouseout');
     this.signals.classed('line--hover', false)
                 .classed('line--fade', false);
     this.div.transition()
@@ -553,7 +551,7 @@ export class Drawer {
     	      .duration(200)
     	      .style("opacity", 1);
     this.div.html(this.sensor.name + ' - ' + this.sensor.dims[j])
-    	      .style("left", (d3.event.pageX - 70) + "px")
+    	      .style("left", (d3.event.pageX - 55) + "px")
             .style("top", (d3.event.pageY - 40) + "px");
   }
   // #endregion
