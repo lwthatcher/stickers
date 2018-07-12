@@ -48,6 +48,7 @@ export class Drawer {
   move: DragBehavior;
   resize: DragBehavior = {};
   mouse: MouseBehavior;
+  div: Selection;
   // #endregion
 
   // #region [Private Variables]
@@ -88,7 +89,11 @@ export class Drawer {
     this.layers[Layer.SVG].call(this.mouse);
     this.layers[Layer.SVG].call(this.zoom)
                           .on("dblclick.zoom", null);
-                          
+    // create tooltip div
+    this.div = d3.select('body')
+                 .append('div')
+                 .attr('class', 'tooltip')
+                 .style('opacity', 0);
   }
   // #endregion
 
@@ -520,22 +525,36 @@ export class Drawer {
 
   // #region [Highlight Behaviors]
   mouseover(j) {
-    let signals = this.signals;
-    let results = []
-    signals.each((d,i,nodes) => {
-      let self = d3.select(nodes[i]);
-      let idx = self.attr('idx');
-      self.classed('line--hover', () => idx == j);
-      self.classed('line--fade', () => idx != j);
-      results.push(self.attr('class'));
-    })
-    console.debug('mouseover', j, results, d3.event);
+    this.highlight_signal(j);
+    this.display_tooltip(j);
+    console.debug('mouseover', j, d3.event);
   }
 
   mouseout() {
     console.debug('mouseout');
     this.signals.classed('line--hover', false)
                 .classed('line--fade', false);
+    this.div.transition()
+            .duration(500)
+            .style('opacity', 0);
+  }
+
+  private highlight_signal(j) {
+    this.signals.each((d,i,nodes) => {
+      let self = d3.select(nodes[i]);
+      let idx = self.attr('idx');
+      self.classed('line--hover', () => idx == j);
+      self.classed('line--fade', () => idx != j);
+    })
+  }
+
+  private display_tooltip(j) {
+    this.div.transition()
+    	      .duration(200)
+    	      .style("opacity", 1);
+    this.div.html(this.sensor.name + ' - ' + this.sensor.dims[j])
+    	      .style("left", (d3.event.pageX - 70) + "px")
+            .style("top", (d3.event.pageY - 40) + "px");
   }
   // #endregion
 

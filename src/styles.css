@@ -47,6 +47,35 @@ rect.drag-handle.warn {
 }
 /*#endregion */
 
+/*#region [Tooltip] */
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    pointer-events: none;
+
+    line-height: 1;
+    font-weight: bold;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border-radius: 2px;
+  }
+    
+/* Creates a small triangle extender for the tooltip */
+div.tooltip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 11px;
+    top: 95%;
+    left: 50%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.6);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+  }
+/*#endregion */
+
 /*#region [SVG Background] */
 rect.zoom {
     fill: none;
