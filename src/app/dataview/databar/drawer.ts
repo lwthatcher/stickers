@@ -128,6 +128,10 @@ export class Drawer {
   get domain_set() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
   // #endregion
 
+  // #region [Callbacks]
+
+  // #endregion
+
   // #region [Public Plotting Methods]
   async draw() {
     // set the respective ranges for x/y
@@ -151,13 +155,14 @@ export class Drawer {
   }
   
   draw_labels() {
-    // erase labels if show-labels is false
-    if (!this.domain_set) { return; }
+    // if (!this.labels) { return }
+    if (!this.domain_set) { return }
     if (!this.show_labels) { this.clear('labels'); return; }
-    // updated elements
+    
     let lbls = this.select_labels();
     this.exiting_labels(lbls);
     this.entering_labels(lbls);
+    console.debug('draw labels', lbls);
   }
   
   draw_handles(lbl?: Label) {
