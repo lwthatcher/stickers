@@ -16,7 +16,7 @@ import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../sensors/sensor";
 import { Colorer} from '../types/colorer';
-import { Labeller } from './labeller';
+import { Labeller } from './labeller/labeller';
 import { LabelStream } from '../labelstreams/labelstream';
 import { Drawer } from './drawer/drawer';
 import { ModeTracker } from '../modes/tool-mode';
