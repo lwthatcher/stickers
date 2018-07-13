@@ -40,6 +40,7 @@ export class LayerMap {
         this.host = host;
         this.addLayer('svg', 'div > svg')
         this.addLayer('transform', 'svg > g.transform')
+        this.addLayer('energy')
         this.addLayer('signals')
         this.addLayer('axes')
         this.addLayer('x-axis', 'g.transform > g.axes').subbed('g.x-axis');
@@ -63,6 +64,8 @@ export class LayerMap {
     get transform() { return this.layers['transform'].selection }
 
     get clip() { return this.layers['clip'].selection }
+
+    get energy() { return this.layers['energy'].selection }
 
     get signals() { return this.layers['signals'].selection }
 

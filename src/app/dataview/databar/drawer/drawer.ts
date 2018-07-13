@@ -27,6 +27,7 @@ export class Drawer {
   databar: DatabarComponent;
   layers: LayerMap;
   x; x0;
+  xe; ye;
   Y = [];
   lines = [];
   zoom: ZoomBehavior;
@@ -107,6 +108,8 @@ export class Drawer {
   }
 
   get domain_set() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
+
+  get has_energy() { return this.databar.has_energy }
   // #endregion
 
   // #region [Callbacks]
@@ -128,6 +131,7 @@ export class Drawer {
     this.draw_xAxis();
     this.draw_yAxis();
     this.plot_signals(data);
+    this.draw_energy();
     this.draw_labels();
     this.draw_handles();
   }
@@ -209,9 +213,20 @@ export class Drawer {
              .attr('d', cursor);
   }
 
-  async draw_energy(data) {
-    data = await Promise.resolve(data);
-
+  async draw_energy() {
+    if (!this.has_energy) { return }
+    let area = d3.area()
+                 .x((d) => this.xe(d.i))
+                 .y1((d) => this.ye(d.d));
+    let data = await Promise.resolve(this.databar._energy);
+    this.energy_domains(data);
+    let datum = data[0];
+    this.layers.energy.append('path')
+                      .datum(datum)
+                      .attr('class', 'energy')
+                      .attr('fill', 'steelblue')
+                      .attr('opacity', 0.5)
+                      .attr('d', area);
   }
   // #endregion
 
@@ -324,14 +339,16 @@ export class Drawer {
     // set x-ranges
     this.x = d3.scaleLinear().rangeRound([0, this.w]);
     this.x0 = d3.scaleLinear().rangeRound([0, this.w]);
+    this.xe = d3.scaleLinear().rangeRound([0, this.w]);
     // set y-ranges
     for (let j of this.yDims()) {
       this.Y[j] = d3.scaleLinear().rangeRound([this.h, 0]);
     }
+    this.ye = d3.scaleLinear().rangeRound([this.h, 0]);
     // setup line-drawing method(s)
     for (let j of this.yDims()) {
-      this.lines[j] = d3.line().x((d,i) => this.x(d.i))
-                               .y((d,i) => this.Y[j](d.d))
+      this.lines[j] = d3.line().x((d) => this.x(d.i))
+                               .y((d) => this.Y[j](d.d))
     }
   }
 
@@ -350,6 +367,13 @@ export class Drawer {
       this.Y[j].domain([d3.min(axes[j], (d) => d.d), 
                         d3.max(axes[j], (d) => d.d)])
     }
+  }
+
+  energy_domains(axes) {
+    let max = axes[0][axes[0].length-1].i;
+    this.xe.domain([0, max]);
+    this.ye.domain([d3.min(axes, (ax) => d3.min(ax, (d) => d.d)), 
+                    d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
   }
 
   private yDims() {
