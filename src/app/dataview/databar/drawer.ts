@@ -524,6 +524,7 @@ export class Drawer {
     let buttons = this.mouse_event.buttons
     console.debug('mouse down', buttons);
     if ((buttons & 16) === 16) { this.forward_click() }
+    if ((buttons & 8) === 8) { this.backward_click() }
     if ((buttons & 4) === 4) { this.middle_click() }
   }
 
@@ -594,14 +595,15 @@ export class Drawer {
 
   /** call-back for pressing the middle scroll-wheel button */
   middle_click() {
-    this.ls.cycle();
-  }
-
-  /** call-back for pressing the "page-forward" button on the mouse */
-  forward_click() {
     this.mode.cycle();    // cycle through mode
     this.mouse_move();    // redraw mouse
   }
+
+  /** call-back for pressing the "page-forward" button on the mouse */
+  forward_click() { this.ls.cycle() }
+
+  /** call-back for pressing the "page-backward" button on the mouse */
+  backward_click() { this.ls.cycleDown() }
   // #endregion
 
   // #region [Helper Methods]
