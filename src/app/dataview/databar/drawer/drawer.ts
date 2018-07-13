@@ -49,7 +49,6 @@ export class Drawer {
     // setup selection layers
     let host = d3.select(databar.element.nativeElement);
     this.layers = new LayerMap(host);
-
     this.layers.svg
         .attr('height', databar._height);
     this.layers.transform
@@ -122,24 +121,15 @@ export class Drawer {
 
   // #region [Public Plotting Methods]
   async draw() {
-    // set the respective ranges for x/y
     this.set_ranges();
-    // wait for data to load
     let data = await this.databar._data;
-    // stop loading-spinner once the domains are updated
     this.set_domains(data);
     this.databar.stop_spinner();
-    // draw axes
     this.draw_xAxis();
     this.draw_yAxis();
-    // draw each signal
     this.plot_signals(data);
-    // draw labels
-    if (this.labels) 
-      this.draw_labels();
-    // draw handles if label selected
-    if (this.selected_label)
-      this.draw_handles();
+    this.draw_labels();
+    this.draw_handles();
   }
   
   draw_labels() {
@@ -154,6 +144,7 @@ export class Drawer {
   
   draw_handles(lbl?: Label) {
     // erase handles if show-labels is false
+    if (!this.selected_label) { this.clear('handles'); return; }
     if (!this.show_labels) { this.clear('handles'); return; }
     // if no label is selected, clear the handles and return
     if (!lbl) { lbl = this.selected_label as Label }
@@ -161,18 +152,13 @@ export class Drawer {
     // selections
     let left = this.layers.handles.selectAll('rect.drag-handle.left').data([lbl]);
     let right = this.layers.handles.selectAll('rect.drag-handle.right').data([lbl]);
+    let both = this.layers.handles.selectAll('rect.drag-handle');
     // draw left/right handles
     left = this._add_handle(left, 'left');
     right = this._add_handle(right, 'right');
     // conditionally format if width == 0
-    if (lbl.start === lbl.end) {
-      left.classed('warn', true);
-      right.classed('warn', true);
-    }
-    else {
-      left.classed('warn', false);
-      right.classed('warn', false);
-    }
+    if (lbl.start === lbl.end) { both.classed('warn', true) }
+    else { both.classed('warn', false) }
   }
   
   clear(...layers) {
@@ -223,6 +209,13 @@ export class Drawer {
              .attr('d', cursor);
   }
 
+  async draw_energy(data) {
+    data = await Promise.resolve(data);
+
+  }
+  // #endregion
+
+  // #region [Update Methods]
   updateSignals() {
     if (this.yDims().length === 1) {
       this.signals.attr("d", this.lines[0])
@@ -603,6 +596,7 @@ export class Drawer {
   logInfo() {
     console.groupCollapsed('drawer');
     console.log('domains/ranges', this.domains_and_ranges());
+    console.log('layers:', this.layers);
     console.log('line(s):', this.lines);
     console.log('drawer:', this);
     console.groupEnd();
