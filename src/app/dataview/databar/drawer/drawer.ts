@@ -4,25 +4,9 @@ import * as d3 from "d3";
 import { arraysEqual } from '../../../util/util';
 import { Selection } from './selection.interface';
 import { time_format } from './time-format';
+import { LayerMap } from './layers';
 
 // #region [Interfaces]
-enum Layer {
-  Host = 'host',
-  SVG = 'svg',
-  Transform = 'transform',
-  Clip = 'clip',
-  Signals = 'signals',
-  Axes = 'axes',
-  XAxis = 'x-axis',
-  YAxis = 'y-axis',
-  Labels = 'labels',
-  DragHandles = 'handles',
-  Zoom = 'zoom',
-  Ghost = 'ghost',
-  Cursor = 'cursor'
-}
-
-type LayerMap = {[layer: string]: Selection}
 
 type side = 'left' | 'right'
 
@@ -41,7 +25,7 @@ const D3_EVENTS = ['zoom', 'drag', 'start', 'end']
 export class Drawer {
   // #region [Variables]
   databar: DatabarComponent;
-  layers: LayerMap = {};
+  layers: LayerMap;
   x; x0;
   Y = [];
   lines = [];
@@ -64,20 +48,16 @@ export class Drawer {
     this.databar = databar;
     // setup selection layers
     let host = d3.select(databar.element.nativeElement);
-    this.layers[Layer.Host] = host;
-    this.layers[Layer.SVG] = host.select("div > svg").attr('height', databar._height);
-    this.layers[Layer.Transform] = host.select("svg > g.transform")
+    this.layers = new LayerMap(host);
+
+    this.layers.svg
+        .attr('height', databar._height);
+    this.layers.transform
         .attr("transform", "translate(" + databar.margin.left + "," + databar.margin.top + ")");
-    this.layers[Layer.Signals] = host.select("g.transform > g.signals");
-    this.layers[Layer.Axes] = host.select("g.transform > g.axes");
-    this.layers[Layer.Labels] = host.select("g.transform > g.labels");
-    this.layers[Layer.DragHandles] = host.select("g.transform > g.handles");
-    this.layers[Layer.Ghost] = host.select("g.transform > g.ghost");
-    this.layers[Layer.Cursor] = host.select("g.transform > g.cursor");
-    this.layers[Layer.Zoom] = host.select("g.transform > rect.zoom")
+    this.layers.zoom
         .attr('width', databar.width)
         .attr('height', databar.height);
-    this.layers[Layer.Clip] = host.select('#clip > rect.clip-rect')
+    this.layers.clip
         .attr('width', databar.width)
         .attr('height', databar.height);
     // setup behaviors
@@ -87,9 +67,9 @@ export class Drawer {
     this.resize.left = this.setup_resize('left');
     this.resize.right = this.setup_resize('right');
     // register non-local behaviors
-    this.layers[Layer.SVG].call(this.mouse);
-    this.layers[Layer.SVG].call(this.zoom)
-                          .on("dblclick.zoom", null);
+    this.layers.svg.call(this.mouse);
+    this.layers.svg.call(this.zoom)
+                   .on("dblclick.zoom", null);
     // create tooltip div
     this.div = d3.select('body')
                  .append('div')
@@ -107,7 +87,7 @@ export class Drawer {
 
   get show_labels() { return this.databar.sensor.show_labels }
 
-  get signals() { return this.layers[Layer.Host].selectAll('g.signals > path.line') }
+  get signals() { return this.layers.host.selectAll('g.signals > path.line') }
 
   get w() { return this.databar.width }
 
@@ -179,8 +159,8 @@ export class Drawer {
     if (!lbl) { lbl = this.selected_label as Label }
     if (!lbl) { this.clear('handles'); return; }
     // selections
-    let left = this.layers[Layer.DragHandles].selectAll('rect.drag-handle.left').data([lbl]);
-    let right = this.layers[Layer.DragHandles].selectAll('rect.drag-handle.right').data([lbl]);
+    let left = this.layers.handles.selectAll('rect.drag-handle.left').data([lbl]);
+    let right = this.layers.handles.selectAll('rect.drag-handle.right').data([lbl]);
     // draw left/right handles
     left = this._add_handle(left, 'left');
     right = this._add_handle(right, 'right');
@@ -198,27 +178,16 @@ export class Drawer {
   clear(...layers) {
     // if no parameters given, clear everything
     if (layers.length === 0) {
-      this.layers[Layer.Signals].selectAll("*").remove();
-      this.layers[Layer.Axes].selectAll("*").remove();
-      this.layers[Layer.Labels].selectAll("*").remove();
-      this.layers[Layer.DragHandles].selectAll("*").remove();
-      this.layers[Layer.Ghost].selectAll("*").remove();
-      this.layers[Layer.Cursor].selectAll("*").remove();
-      return;
+      for (let p of this.layers.primaries) { p.all.remove() }
     }
-    // otherwise clear specified layers
-    if (layers.includes('signals')) this.layers[Layer.Signals].selectAll("*").remove();
-    if (layers.includes('axes')) this.layers[Layer.Axes].selectAll("*").remove();
-    if (layers.includes('labels')) this.layers[Layer.Labels].selectAll("*").remove();
-    if (layers.includes('handles')) this.layers[Layer.DragHandles].selectAll("*").remove();
-    if (layers.includes('x-axis')) this.layers[Layer.Axes].selectAll("g.x-axis").remove();
-    if (layers.includes('y-axis')) this.layers[Layer.Axes].selectAll("g.y-axis").remove();
-    if (layers.includes('ghost')) this.layers[Layer.Ghost].selectAll("*").remove();
-    if (layers.includes('cursor')) this.layers[Layer.Cursor].selectAll("*").remove();
+    else for (let l of layers) {
+      let layer = this.layers.get(l);
+      layer.all.remove();
+    }
   }
   
   draw_xAxis() {
-    this.layers[Layer.Axes].append('g')
+    this.layers.axes.append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + this.databar.height + ')')
         .call(d3.axisBottom(this.x)
@@ -226,11 +195,11 @@ export class Drawer {
   }
 
   draw_yAxis() {
-    this.layers[Layer.Axes].append('g')
+    this.layers.axes.append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this.Y[0]));
     if (this.yDims().length > 1) {
-      this.layers[Layer.Axes].append('g')
+      this.layers.axes.append('g')
         .attr('class', 'y-axis')
         .attr("transform", "translate( " +this.w + ", 0 )")
         .call(d3.axisRight(this.Y[1]));
@@ -242,7 +211,7 @@ export class Drawer {
     if (!cursor) { return }
     // only draws cursor
     let [x,y] = this.xy();
-    let selection = this.layers[Layer.Cursor];
+    let selection = this.layers.cursor;
     selection.append('svg')
              .attr('class', 'cursor')
              .attr('width', 24)
@@ -259,14 +228,14 @@ export class Drawer {
       this.signals.attr("d", this.lines[0])
     }
     else for (let j of this.yDims()) {
-      let dim_sigs = this.layers[Layer.Host].selectAll('g.signals > path.line.line-' + j.toString());
+      let dim_sigs = this.layers.host.selectAll('g.signals > path.line.line-' + j.toString());
       dim_sigs.attr("d", this.lines[j]);
     }
   }
 
   updateLabels() {
     let width = (d) => { return this.x(d.end) - this.x(d.start) }
-    let rects = this.layers[Layer.Labels]
+    let rects = this.layers.labels
                     .selectAll('rect.label')
                     .attr('x', (d) => { return this.x(d.start) })
                     .attr('width', width)
@@ -285,7 +254,7 @@ export class Drawer {
   }
   
   private plot_signal(signal, j) {
-    this.layers[Layer.Signals].append("path")
+    this.layers.signals.append("path")
         .datum(signal)
         .attr("fill", "none")
         .attr("clip-path", "url(#clip)")
@@ -313,7 +282,7 @@ export class Drawer {
   }
 
   private select_labels() {
-    let rects = this.layers[Layer.Labels]
+    let rects = this.layers.labels
                     .selectAll('rect.label')
                     .data(this.labels, this.key)
                     .attr('x', (d) => { return this.x(d.start) })
@@ -513,12 +482,12 @@ export class Drawer {
     // get the custom cursor path, or null if no custom cursor applies to this setting
     let overlaps = this.overlaps();
     let cursor = this.custom_cursor(this.region(), this.mode, overlaps);
-    this.layers[Layer.SVG].classed('custom-cursor', !!cursor);
+    this.layers.svg.classed('custom-cursor', !!cursor);
     this.draw_cursor(cursor);
   }
 
   private mouse_leave() {
-    this.layers[Layer.SVG].classed('custom-cursor', false);
+    this.layers.svg.classed('custom-cursor', false);
     this.clear('cursor');
   }
 
@@ -610,8 +579,8 @@ export class Drawer {
 
   // #region [Helper Methods]
   private xy(event?): number[] {
-    if (event) return d3.clientPoint(this.layers[Layer.Zoom].node(), event);
-    else return d3.mouse(this.layers[Layer.Zoom].node());
+    if (event) return d3.clientPoint(this.layers.zoom.node(), event);
+    else return d3.mouse(this.layers.zoom.node());
   }
 
   private overlaps(event?: MouseEvent): boolean {
