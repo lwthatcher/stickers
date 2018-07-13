@@ -42,8 +42,8 @@ export class LayerMap {
         this.addLayer('transform', 'svg > g.transform')
         this.addLayer('signals')
         this.addLayer('axes')
-        this.addLayer('x-axis').subbed('g.x-axis');
-        this.addLayer('y-axis').subbed('g.y-axis');
+        this.addLayer('x-axis', 'g.transform > g.axes').subbed('g.x-axis');
+        this.addLayer('y-axis', 'g.transform > g.axes').subbed('g.y-axis');
         this.addLayer('labels')
         this.addLayer('handles')
         this.addLayer('ghost')
