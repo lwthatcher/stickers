@@ -2,6 +2,7 @@ import { DatabarComponent } from '../databar.component';
 import { Label } from '../../labelstreams/labelstream';
 import * as d3 from "d3";
 import { arraysEqual } from '../../../util/util';
+import { Selection, SelectionTransition } from './selection.interface';
 
 // #region [Interfaces]
 enum Layer {
@@ -649,40 +650,5 @@ function time_format(ms: number) {
   else result += mins.toString();
   result += ':' + secs.toString().padStart(2, '0');
   return result;
-}
-// #endregion
-
-// #region [Selection Interface]
-export interface Selection {
-  select(selector: string): Selection
-  selectAll(selector: string): Selection
-  attr(attribute: string): any
-  attr(attribue: string, value: any): Selection
-  classed(attribute: string): Selection
-  classed(attribue: string, value: any): Selection
-  style(attribute: string, value: any): Selection
-  append(element: string): Selection
-  data(data: any): Selection
-  data(data: any, key: any): Selection
-  datum(data: any): Selection
-  enter(): Selection
-  exit(): Selection
-  on(event: string): any
-  on(event: string, callback): Selection
-  on(event: string, callback, capture: boolean): Selection
-  text(value): Selection
-  call(value: any): Selection
-  filter(filter: any): Selection
-  merge(selection: Selection): Selection
-  each(callback: any): Selection
-  html(html: string): Selection
-  transition(): SelectionTransition
-  node(): any
-  nodes(): any[]
-  remove()
-}
-
-export interface SelectionTransition extends Selection {
-  duration(length: number)
 }
 // #endregion
