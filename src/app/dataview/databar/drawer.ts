@@ -155,14 +155,13 @@ export class Drawer {
   }
   
   draw_labels() {
-    // if (!this.labels) { return }
+    if (!this.labels) { return }
     if (!this.domain_set) { return }
     if (!this.show_labels) { this.clear('labels'); return; }
     
     let lbls = this.select_labels();
     this.exiting_labels(lbls);
     let enter = this.entering_labels(lbls);
-    console.debug('draw labels', lbls, enter);
   }
   
   draw_handles(lbl?: Label) {
@@ -316,7 +315,6 @@ export class Drawer {
                     .attr('width', width)
                     .attr('fill', fill)
                     .classed('selected', (d) => d.selected )
-    console.debug('selected', rects, this.labels, rects.nodes())
     return rects;
   }
 
@@ -679,6 +677,7 @@ export interface Selection {
   html(html: string): Selection
   transition(): SelectionTransition
   node(): any
+  nodes(): any[]
   remove()
 }
 

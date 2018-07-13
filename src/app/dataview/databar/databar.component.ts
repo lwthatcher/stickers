@@ -287,7 +287,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private redraw_labels() {
-    console.debug('redrawing labels');
     this.drawer.draw_labels();
     this.drawer.draw_handles();
   }
