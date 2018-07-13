@@ -2,7 +2,8 @@ import { DatabarComponent } from '../databar.component';
 import { Label } from '../../labelstreams/labelstream';
 import * as d3 from "d3";
 import { arraysEqual } from '../../../util/util';
-import { Selection, SelectionTransition } from './selection.interface';
+import { Selection } from './selection.interface';
+import { time_format } from './time-format';
 
 // #region [Interfaces]
 enum Layer {
@@ -639,16 +640,3 @@ export class Drawer {
   }
   // #endregion
 }
-
-// #region [Time Format]
-function time_format(ms: number) {
-  let secs = Math.floor(ms % (1000 * 60) / 1000);
-  let mins = Math.floor(ms % (1000 * 60 * 60) / (1000 * 60));
-  let hours = Math.floor(ms / (1000 * 60 * 60));
-  let result = ""
-  if (hours > 0) result += hours.toString() + ":" + mins.toString().padStart(2,'0');
-  else result += mins.toString();
-  result += ':' + secs.toString().padStart(2, '0');
-  return result;
-}
-// #endregion
