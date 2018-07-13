@@ -129,13 +129,20 @@ export class Drawer {
     this.set_ranges();
     let data = await this.databar._data;
     this.set_domains(data);
+    
+    
     this.databar.stop_spinner();
     this.draw_xAxis();
     this.draw_yAxis();
     this.plot_signals(data);
-    this.draw_energy();
     this.draw_labels();
     this.draw_handles();
+
+    if (this.has_energy) {
+      let edata = await this.databar._energy;
+      this.energy_domains(edata);
+      this.draw_energy(edata);
+    }
   }
   
   draw_labels() {
@@ -215,19 +222,15 @@ export class Drawer {
              .attr('d', cursor);
   }
 
-  async draw_energy() {
+  async draw_energy(data) {
     if (!this.has_energy) { return }
-    this.area = d3.area()
-                  .x((d) => this.xe(d.i))
-                  .y1((d) => this.ye(d.d));
-    let data = await Promise.resolve(this.databar._energy);
-    this.energy_domains(data);
     let datum = data[0];
     this.layers.energy.append('path')
                       .datum(datum)
                       .attr('class', 'energy')
                       .attr('fill', 'steelblue')
                       .attr('opacity', 0.5)
+                      .attr("clip-path", "url(#clip)")
                       .attr('d', this.area);
   }
   // #endregion
@@ -244,16 +247,15 @@ export class Drawer {
   }
 
   updateEnergy() {
-    console.debug('updating energy', this.area);
     this.energyWells.attr("d", this.area);
   }
 
   updateLabels() {
     let width = (d) => { return this.x(d.end) - this.x(d.start) }
-    let rects = this.layers.labels
-                    .selectAll('rect.label')
-                    .attr('x', (d) => { return this.x(d.start) })
-                    .attr('width', width)
+    this.layers.labels
+        .selectAll('rect.label')
+        .attr('x', (d) => { return this.x(d.start) })
+        .attr('width', width)
   }
   // #endregion
 
@@ -357,6 +359,10 @@ export class Drawer {
       this.lines[j] = d3.line().x((d) => this.x(d.i))
                                .y((d) => this.Y[j](d.d))
     }
+    // setup area-drawing method
+    this.area = d3.area()
+                  .x((d) => this.xe(d.i))
+                  .y1((d) => this.ye(d.d));
   }
 
   set_domains(axes) {
@@ -377,10 +383,11 @@ export class Drawer {
   }
 
   energy_domains(axes) {
+    if (!this.has_energy) { return }
     let max = axes[0][axes[0].length-1].i;
     this.xe.domain([0, max]);
-    this.ye.domain([d3.min(axes, (ax) => d3.min(ax, (d) => d.d)), 
-                    d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
+    this.ye.domain([0, d3.max(axes[0], (d) => d.d)]);
+    this.area.y0(this.ye(0));
   }
 
   private yDims() {
