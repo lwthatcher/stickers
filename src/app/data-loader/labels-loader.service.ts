@@ -15,7 +15,7 @@ export class LabelsLoaderService {
   // #region [Public Methods]
   loadLabels(dataset: string, scheme: LabelScheme) {
     let flashes = scheme.sync(dataset);
-    console.log('FLASHES', scheme.name, flashes, scheme.flashes);
+    console.log('FLASHES', scheme.name, flashes, scheme.flashes, scheme);
     let sync = new Synchronizer(flashes);
     return this.http.get('/static/' + scheme.path).pipe(
       map((labels) => {return this.format(labels, scheme)}),
@@ -34,7 +34,7 @@ export class LabelsLoaderService {
 
   private syncTimes(lbls, sync: Synchronizer) {
     if (!sync.canSync) return lbls;
-    console.log('sync', sync);
+    console.debug('sync', lbls, sync);
     return lbls.map((lbl) => {
       lbl.start = sync.vidToData(lbl.start);
       lbl.end = sync.vidToData(lbl.end);

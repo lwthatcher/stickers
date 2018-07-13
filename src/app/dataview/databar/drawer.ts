@@ -107,9 +107,9 @@ export class Drawer {
 
   get signals() { return this.layers[Layer.Host].selectAll('g.signals > path.line') }
 
-  get width() { return this.databar.width }
+  get w() { return this.databar.width }
 
-  get height() { return this.databar.height }
+  get h() { return this.databar.height }
 
   get mode() { return this.databar.mode }
 
@@ -126,6 +126,16 @@ export class Drawer {
   }
 
   get domain_set() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
+  // #endregion
+
+  // #region [Callbacks]
+  get key() { return (d,i) => { return d ? d.id : i } }
+
+  get width() { return (d) => { return this.x(d.end) - this.x(d.start) } }
+
+  get middle() { return (d) => { return this.x(d.start + (d.end-d.start)/2) }  }
+
+  get fill() { return (d) =>  { return this.databar.colorer.labels(this.ls.name).get(d.label) } }
   // #endregion
 
   // #region [Public Plotting Methods]
@@ -151,49 +161,13 @@ export class Drawer {
   }
   
   draw_labels() {
-    // erase labels if show-labels is false
-    if (!this.domain_set) { return; }
+    if (!this.labels) { return }
+    if (!this.domain_set) { return }
     if (!this.show_labels) { this.clear('labels'); return; }
     
-    // helper functions
-    let key = (d,i) => { return d ? d.id : i }
-    let middle = (d) => { return this.x(d.start + (d.end-d.start)/2) }
-    let width = (d) => { return this.x(d.end) - this.x(d.start) }
-    // updated elements
-    let rects = this.layers[Layer.Labels].selectAll('rect.label')
-                    .data(this.labels, key)
-                    .attr('x', (d) => { return this.x(d.start) })
-                    .attr('width', width)
-                    .attr('fill', (d) => { return this.databar.colorer.labels(this.ls.name).get(d.label) })
-                    .classed('selected', (d) => d.selected )
-    // exit (remove) elements
-    rects.exit()
-          .transition()
-          .duration(250)
-          .attr('width', 0)
-          .attr('x', middle)
-          .remove();
-    // entering (new) elements
-    let enter = rects.enter()
-                      .append('rect')
-                      .attr('y', 0)
-                      .attr('height', this.databar.height)
-                      .attr("clip-path", "url(#clip)")
-                      .classed('label', true)
-                      .on('click', (d) => { this.lbl_clicked(d) })
-                      .call(this.move)
-                      .attr('x', middle)
-                      .attr('width', 0)
-                      .classed('selected', (d) => d.selected )
-                      .attr('fill', (d) => { return this.databar.colorer.labels(this.ls.name).get(d.label) })
-    // add title pop-over
-    enter.append('svg:title')
-          .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
-    // transition for creation
-    enter.transition()
-          .duration(250)
-          .attr('x', (d) => { return this.x(d.start) })
-          .attr('width', width)
+    let lbls = this.select_labels();
+    this.exiting_labels(lbls);
+    let enter = this.entering_labels(lbls);
   }
   
   draw_handles(lbl?: Label) {
@@ -256,7 +230,7 @@ export class Drawer {
     if (this.yDims().length > 1) {
       this.layers[Layer.Axes].append('g')
         .attr('class', 'y-axis')
-        .attr("transform", "translate( " +this.width + ", 0 )")
+        .attr("transform", "translate( " +this.w + ", 0 )")
         .call(d3.axisRight(this.Y[1]));
     }
   }
@@ -335,16 +309,60 @@ export class Drawer {
                     .merge(selection)
                     .attr('x', callback)
   }
+
+  private select_labels() {
+    let rects = this.layers[Layer.Labels]
+                    .selectAll('rect.label')
+                    .data(this.labels, this.key)
+                    .attr('x', (d) => { return this.x(d.start) })
+                    .attr('width', this.width)
+                    .attr('fill', this.fill)
+                    .classed('selected', (d) => d.selected )
+    return rects;
+  }
+
+  private exiting_labels(lbls) {
+    lbls.exit()
+        .transition()
+        .duration(250)
+        .attr('width', 0)
+        .attr('x', this.middle)
+        .remove();
+  }
+
+  private entering_labels(lbls) {
+    let enter = lbls.enter()
+                    .append('rect')
+                    .attr('y', 0)
+                    .attr('height', this.databar.height)
+                    .attr("clip-path", "url(#clip)")
+                    .classed('label', true)
+                    .on('click', (d) => { this.lbl_clicked(d) })
+                    .call(this.move)
+                    .attr('x', this.middle)
+                    .attr('width', 0)
+                    .classed('selected', (d) => d.selected )
+                    .attr('fill', this.fill)
+    // add title pop-over
+    enter.append('svg:title')
+         .text((d) => {return d.type + ' event' || 'event ' + d.label.toString()})
+    // transition
+    enter.transition()
+         .duration(250)
+         .attr('x', (d) => { return this.x(d.start) })
+         .attr('width', this.width)
+    return enter;
+  }
   // #endregion
 
   // #region [Domains and Ranges]
   set_ranges() {
     // set x-ranges
-    this.x = d3.scaleLinear().rangeRound([0, this.width]);
-    this.x0 = d3.scaleLinear().rangeRound([0, this.width]);
+    this.x = d3.scaleLinear().rangeRound([0, this.w]);
+    this.x0 = d3.scaleLinear().rangeRound([0, this.w]);
     // set y-ranges
     for (let j of this.yDims()) {
-      this.Y[j] = d3.scaleLinear().rangeRound([this.height, 0]);
+      this.Y[j] = d3.scaleLinear().rangeRound([this.h, 0]);
     }
     // setup line-drawing method(s)
     for (let j of this.yDims()) {
@@ -388,8 +406,8 @@ export class Drawer {
     // return region based on precedence
     if (x < 0) return 'y-axis';
     if (y < 0) return 'margin-top';
-    if (x > this.width) return 'margin-right';
-    if (y > this.height) return 'x-axis';
+    if (x > this.w) return 'margin-right';
+    if (y > this.h) return 'x-axis';
     return 'frame';
   }
   // #endregion
@@ -397,8 +415,8 @@ export class Drawer {
   // #region [Zoom Behaviors]
   setup_zoom() {
     return d3.zoom().scaleExtent([1, 50])
-                    .translateExtent([[0, 0], [this.width, this.height]])
-                    .extent([[0, 0], [this.width, this.height]])
+                    .translateExtent([[0, 0], [this.w, this.h]])
+                    .extent([[0, 0], [this.w, this.h]])
                     .on('zoom', () => this.zoomed())
                     .on('start', () => this.zoom_start())
                     .on('end', () => this.zoom_end())
@@ -506,6 +524,7 @@ export class Drawer {
     let buttons = this.mouse_event.buttons
     console.debug('mouse down', buttons);
     if ((buttons & 16) === 16) { this.forward_click() }
+    if ((buttons & 8) === 8) { this.backward_click() }
     if ((buttons & 4) === 4) { this.middle_click() }
   }
 
@@ -576,14 +595,15 @@ export class Drawer {
 
   /** call-back for pressing the middle scroll-wheel button */
   middle_click() {
-    this.ls.cycle();
-  }
-
-  /** call-back for pressing the "page-forward" button on the mouse */
-  forward_click() {
     this.mode.cycle();    // cycle through mode
     this.mouse_move();    // redraw mouse
   }
+
+  /** call-back for pressing the "page-forward" button on the mouse */
+  forward_click() { this.ls.cycle() }
+
+  /** call-back for pressing the "page-backward" button on the mouse */
+  backward_click() { this.ls.cycleDown() }
   // #endregion
 
   // #region [Helper Methods]
@@ -658,6 +678,7 @@ export interface Selection {
   html(html: string): Selection
   transition(): SelectionTransition
   node(): any
+  nodes(): any[]
   remove()
 }
 
