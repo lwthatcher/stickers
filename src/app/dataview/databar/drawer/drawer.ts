@@ -27,7 +27,7 @@ export class Drawer {
   databar: DatabarComponent;
   layers: LayerMap;
   x; x0;
-  xe; ye;
+  xe; ye; area;
   Y = [];
   lines = [];
   zoom: ZoomBehavior;
@@ -88,6 +88,8 @@ export class Drawer {
   get show_labels() { return this.databar.sensor.show_labels }
 
   get signals() { return this.layers.host.selectAll('g.signals > path.line') }
+
+  get energyWells() { return this.layers.host.selectAll('g.energy > path.energy') }
 
   get w() { return this.databar.width }
 
@@ -215,9 +217,9 @@ export class Drawer {
 
   async draw_energy() {
     if (!this.has_energy) { return }
-    let area = d3.area()
-                 .x((d) => this.xe(d.i))
-                 .y1((d) => this.ye(d.d));
+    this.area = d3.area()
+                  .x((d) => this.xe(d.i))
+                  .y1((d) => this.ye(d.d));
     let data = await Promise.resolve(this.databar._energy);
     this.energy_domains(data);
     let datum = data[0];
@@ -226,7 +228,7 @@ export class Drawer {
                       .attr('class', 'energy')
                       .attr('fill', 'steelblue')
                       .attr('opacity', 0.5)
-                      .attr('d', area);
+                      .attr('d', this.area);
   }
   // #endregion
 
@@ -239,6 +241,11 @@ export class Drawer {
       let dim_sigs = this.layers.host.selectAll('g.signals > path.line.line-' + j.toString());
       dim_sigs.attr("d", this.lines[j]);
     }
+  }
+
+  updateEnergy() {
+    console.debug('updating energy', this.area);
+    this.energyWells.attr("d", this.area);
   }
 
   updateLabels() {

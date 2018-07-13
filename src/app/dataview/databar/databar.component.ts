@@ -206,9 +206,11 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   private updateZoom(t) {
     // rescale x-domain to zoom level
-    this.x.domain(t.rescaleX(this.x0).domain());
+    this.drawer.x.domain(t.rescaleX(this.x0).domain());
+    this.drawer.xe.domain(t.rescaleX(this.x0).domain());
     // redraw signals
     this.drawer.updateSignals();
+    this.drawer.updateEnergy();
     // redraw x-axis
     this.drawer.clear('x-axis');
     this.drawer.draw_xAxis();
