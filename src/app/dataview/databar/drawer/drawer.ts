@@ -224,14 +224,16 @@ export class Drawer {
 
   async draw_energy(data) {
     if (!this.has_energy) { return }
-    let datum = data[0];
-    this.layers.energy.append('path')
-                      .datum(datum)
-                      .attr('class', 'energy')
-                      .attr('fill', this.databar.colorer.wells.get(1))
-                      .attr('opacity', 0.5)
-                      .attr("clip-path", "url(#clip)")
-                      .attr('d', this.area);
+    for (let j = 0; j < data.length; j++) {
+      this.layers.energy.append('path')
+                        .datum(data[j])
+                        .attr('class', 'energy')
+                        .attr('fill', this.databar.colorer.wells.get(j+1))
+                        .attr('opacity', 0.3)
+                        .attr("clip-path", "url(#clip)")
+                        .attr('d', this.area);
+    }
+    
   }
   // #endregion
 
