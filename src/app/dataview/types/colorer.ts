@@ -15,13 +15,15 @@ export class Colorer {
     // #region [Variables]
     dataview: DataviewComponent;
     lines: ColorMap;
+    wells: ColorMap;
     private _lbls: LabelstreamColorMap = {};
     // #endregion
 
     // #region [Constructor]
     constructor(dataview: DataviewComponent) {
         this.dataview = dataview;
-        this.lines = new ColorMap(this.scale(this.settings.line_scheme))
+        this.lines = new ColorMap(this.scale(this.settings.line_scheme));
+        this.wells = new ColorMap(this.scale(this.settings.well_scheme));
     }
     // #endregion
 

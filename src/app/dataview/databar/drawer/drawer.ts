@@ -228,7 +228,7 @@ export class Drawer {
     this.layers.energy.append('path')
                       .datum(datum)
                       .attr('class', 'energy')
-                      .attr('fill', 'steelblue')
+                      .attr('fill', this.databar.colorer.wells.get(1))
                       .attr('opacity', 0.5)
                       .attr("clip-path", "url(#clip)")
                       .attr('d', this.area);
