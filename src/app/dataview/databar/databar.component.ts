@@ -19,8 +19,7 @@ import { Colorer} from '../types/colorer';
 import { Labeller } from './labeller';
 import { LabelStream } from '../labelstreams/labelstream';
 import { Drawer } from './drawer';
-import { ToolMode, ModeTracker } from '../modes/tool-mode';
-import * as d3 from "d3";
+import { ModeTracker } from '../modes/tool-mode';
 // #endregion
 
  // #region [Interfaces]
@@ -46,6 +45,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() mode: ModeTracker;
   @Input() colorer: Colorer;
   @Input() dataset: Promise<Dataset>;
+  @Input() energy: Promise<Dataset>;
   // #endregion
 
   // #region [Outputs]

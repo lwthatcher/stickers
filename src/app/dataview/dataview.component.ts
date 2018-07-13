@@ -69,7 +69,7 @@ export class DataviewComponent implements OnInit {
   labelStreams: LabelStreamMap = {};
   mode: ModeTracker;
   colorer: Colorer;
-  loadedLbls = {}
+  energy: Promise<Dataset>;
   private _idx_map: Map<number,number[]>;
   // #endregion
 
@@ -111,6 +111,10 @@ export class DataviewComponent implements OnInit {
       this.parse_labels(_labels)
           .then((labels) => { this.setLabels(this.default_stream.name, labels) })
     }
+    // load energy if available
+    if (this.workspace.hasEnergy) {
+      this.energy = this.dataloader.loadDataset(this.workspace.energy_data[0])
+    }
     // component initialized
     console.info('dataview initialized', this);
   }
@@ -137,15 +141,15 @@ export class DataviewComponent implements OnInit {
 
   get streams(): string[] { return Object.keys(this.labelStreams) }
 
-  get channels() { return this.info.channels }
+  get channels(): string { return this.info.channels }
 
   get idx_map(): IndexMap {
     if (!this._idx_map) 
-      this._idx_map = Sensor.gen_idx_map(this.info.channels);
+      this._idx_map = Sensor.gen_idx_map(this.channels);
     return this._idx_map;
   }
 
-  get settings() { return this._settings; }
+  get settings() { return this._settings }
 
   get labelschemes() { return this.workspace.labelschemes }
 
@@ -232,7 +236,7 @@ export class DataviewComponent implements OnInit {
     console.groupCollapsed('Dataview');
     console.log('name:', this.ws);
     console.groupCollapsed('workspace info');
-      console.log('dataset name:', this.ds);
+      
       console.log('data info:', this.info);
       console.log('workspace info:', this.workspace);
     console.groupEnd();
@@ -248,11 +252,15 @@ export class DataviewComponent implements OnInit {
     console.groupEnd();
     console.groupCollapsed('label streams');
       console.log('label streams:', this.labelStreams);
-      console.log('loaded:', this.loadedLbls);
       console.log('num observers:', this.getObservers());
       console.log('default label stream:', this.default_stream);
       console.log('label schemes:', this.labelschemes);
     console.groupEnd();
+    console.groupCollapsed('data')
+      console.log('dataset name:', this.ds);
+      console.log('dataset:', this.dataset);
+      console.log('energy:', this.energy);
+    console.groupEnd()
     console.log('dataview component', this);
     console.groupEnd();
     for (let databar of this.databars) { databar.logInfo(); }

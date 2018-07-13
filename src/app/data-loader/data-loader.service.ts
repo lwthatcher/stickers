@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { DataInfo } from './workspace-info';
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";
-import * as math from 'mathjs';
-import { Sensor } from '../dataview/sensors/sensor';
 import { Dataset, TensorDataset, CSVDataset, BDLDataset } from './dataset';
 
 
