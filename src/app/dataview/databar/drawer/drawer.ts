@@ -1,7 +1,7 @@
-import { DatabarComponent } from './databar.component';
-import { Label } from '../labelstreams/labelstream';
+import { DatabarComponent } from '../databar.component';
+import { Label } from '../../labelstreams/labelstream';
 import * as d3 from "d3";
-import { arraysEqual } from '../../util/util';
+import { arraysEqual } from '../../../util/util';
 
 // #region [Interfaces]
 enum Layer {

@@ -18,7 +18,7 @@ import { Sensor } from "../sensors/sensor";
 import { Colorer} from '../types/colorer';
 import { Labeller } from './labeller';
 import { LabelStream } from '../labelstreams/labelstream';
-import { Drawer } from './drawer';
+import { Drawer } from './drawer/drawer';
 import { ModeTracker } from '../modes/tool-mode';
 // #endregion
 
