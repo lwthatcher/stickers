@@ -359,7 +359,9 @@ export class Drawer {
     for (let j of this.yDims()) {
       this.Y[j] = d3.scaleLinear().rangeRound([this.h, 0]);
     }
-    this.ye = d3.scaleLinear().rangeRound([this.h, 0]);
+    this.ye = d3.scaleLog()
+                .clamp(true)
+                .rangeRound([this.h, 0]);
     // setup line-drawing method(s)
     for (let j of this.yDims()) {
       this.lines[j] = d3.line().x((d) => this.x(d.i))
@@ -392,7 +394,7 @@ export class Drawer {
     if (!this.has_energy) { return }
     let max = axes[0][axes[0].length-1].i;
     this.xe.domain([0, max]);
-    this.ye.domain([0, d3.max(axes[0], (d) => d.d)]);
+    this.ye.domain([1, d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
     this.area.y0(this.ye(0));
   }
 
