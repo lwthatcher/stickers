@@ -113,7 +113,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     // load data
     this._data = this.load_data();
     if (this.has_energy)
-      this._energy = this.load_data();
+      this._energy = this.load_energy();
     // selectors
     this.container = document.querySelector('div.card');
     console.debug('container', this.container);
@@ -174,6 +174,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     console.debug('sensor update detected:', event, this.sensor);
     if (event === 'redraw') {
       this._data = this.load_data();
+      this._energy = this.load_energy();
       this.drawer.clear();
       this.drawer.draw();
     }

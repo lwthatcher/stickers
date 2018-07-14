@@ -129,20 +129,17 @@ export class Drawer {
     this.set_ranges();
     let data = await this.databar._data;
     this.set_domains(data);
-    
-    
     this.databar.stop_spinner();
-    this.draw_xAxis();
-    this.draw_yAxis();
-    this.plot_signals(data);
-    this.draw_labels();
-    this.draw_handles();
-
     if (this.has_energy) {
       let edata = await this.databar._energy;
       this.energy_domains(edata);
       this.draw_energy(edata);
     }
+    this.draw_xAxis();
+    this.draw_yAxis();
+    this.plot_signals(data);
+    this.draw_labels();
+    this.draw_handles();
   }
   
   draw_labels() {
@@ -203,6 +200,12 @@ export class Drawer {
         .attr("transform", "translate( " +this.w + ", 0 )")
         .call(d3.axisRight(this.Y[1]));
     }
+    if (this.has_energy) {
+      this.layers.axes.append('g')
+          .attr('class', 'y-axis')
+          .attr("transform", "translate( " +this.w + ", 0 )")
+          .call(d3.axisLeft(this.ye));
+    }
   }
 
   draw_cursor(cursor) {
@@ -224,6 +227,7 @@ export class Drawer {
 
   async draw_energy(data) {
     if (!this.has_energy) { return }
+    console.log('ENERGY', data);
     for (let j = 0; j < data.length; j++) {
       this.layers.energy.append('path')
                         .datum(data[j])
