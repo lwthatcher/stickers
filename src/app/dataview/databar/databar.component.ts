@@ -244,7 +244,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   load_energy(): Promise<datum[][]> {
-    return this.energy.then((ds) => { return ds.get(this.sensor) })
+    return this.energy.then((ds) => { return ds.all() })
   }
 
   start_spinner(): void {
