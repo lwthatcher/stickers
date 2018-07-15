@@ -9,6 +9,7 @@ import { TypesToolboxComponent } from './types/types-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { SaveMenuComponent } from './save-menu/save-menu.component';
+import { EnergyWellToolkitComponent } from './energy/energy-well-toolkit.component';
 
 @NgModule({
   imports: [
@@ -22,7 +23,7 @@ import { SaveMenuComponent } from './save-menu/save-menu.component';
     ModesToolboxComponent, 
     TypesToolboxComponent, 
     LabelstreamToolboxComponent, 
-    SensorsToolboxComponent, SaveMenuComponent],
+    SensorsToolboxComponent, SaveMenuComponent, EnergyWellToolkitComponent],
   providers: []
 })
 export class DataviewModule { }
