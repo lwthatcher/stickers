@@ -229,7 +229,7 @@ export class Drawer {
     if (!this.energy.has_energy) { return }
     if (!this.energy.visible) { this.clear('energy'); return; }
     let stack = d3.stack();
-    // console.log('ENERGY', data, stack(data));
+    console.log('ENERGY', data, stack(data));
     for (let j = 0; j < data.length; j++) {
       this.layers.energy.append('path')
                         .datum(data[j])

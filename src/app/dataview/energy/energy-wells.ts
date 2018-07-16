@@ -3,6 +3,7 @@ import { DataInfo } from "../../data-loader/workspace-info";
 import { DataloaderService } from "../../data-loader/data-loader.service";
 import { EventEmitter } from "@angular/core";
 import { Sensor } from "../sensors/sensor";
+import * as math from 'mathjs';
 
 // #region [Interfaces]
 type EnergyMap = {[name: string]: DataInfo}
@@ -15,6 +16,8 @@ interface datum {
 interface EnergyUpdate {
     type: string;
 }
+
+type FormattedData = any
 // #endregion
 
 export class EnergyWellsTracker {
@@ -48,6 +51,18 @@ export class EnergyWellsTracker {
         if (this.has_energy)
             return this.ds.then((ds) => { return ds.all() })
         else return Promise.resolve([])
+    }
+
+    get formatted() {
+        if (!this.has_energy) return Promise.reject('No energy data available.')
+        else return this.ds.then((ds) => { return ds.all()})
+        .then((axes) => {
+            let sd = this.short_dims;
+            let ax2 = math.transpose(axes);
+            let rowmap = (acc,cur,i) => { acc[sd[i]] = cur; return acc; }
+            let data = ax2.map((row) => row.reduce(rowmap, {}))
+            return data;
+        })
     }
 
     get channels() { return this.current.channels }
