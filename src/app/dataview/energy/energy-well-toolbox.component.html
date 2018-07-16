@@ -9,5 +9,22 @@
           <i *ngIf='!energy.visible' class="material-icons">visibility_off</i>
         </span>
     </button>
+    <div class='btn-group'
+      ngbDropdown
+      role="group"
+      #dropdown="ngbDropdown">
+        <button class="btn btn-outline-secondary" ngbDropdownToggle title="select energy dataset">
+          {{name}}
+        </button>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <div *ngFor="let ds of datasets" class="dropdown-item" (click)="energy.select(ds)">
+            {{ds}}
+          </div>
+        </div>
+    </div>
+    <button type="button"
+    class="btn btn-secondary">
+      <span><i class="material-icons icon">settings</i></span>
+    </button>
   </div>
 </div>

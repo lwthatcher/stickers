@@ -18,4 +18,16 @@ export class EnergyWellToolkitComponent implements OnInit {
   ngOnInit() {
   }
   // #endregion
+
+  // #region [Accessors]
+  get name() {
+    if (!this.energy.has_energy) {return 'No Energy Data'}
+    else return this.energy.name;
+  }
+
+  get datasets() {
+    if (!this.energy.has_energy) {return []}
+    else return this.energy.availableEnergySets;
+  }
+  // #endregion
 }
