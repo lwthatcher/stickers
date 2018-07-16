@@ -2,6 +2,7 @@ import { Dataset } from "../../data-loader/dataset";
 import { DataInfo } from "../../data-loader/workspace-info";
 import { DataloaderService } from "../../data-loader/data-loader.service";
 import { EventEmitter } from "@angular/core";
+import { Sensor } from "../sensors/sensor";
 
 // #region [Interfaces]
 type EnergyMap = {[name: string]: DataInfo}
@@ -23,6 +24,7 @@ export class EnergyWellsTracker {
     energyMap: EnergyMap;
     event$ = new EventEmitter<EnergyUpdate>();
     private dataloader: DataloaderService;
+    private current: DataInfo;
     // #endregion
 
     // #region [Constructor]
@@ -47,12 +49,17 @@ export class EnergyWellsTracker {
             return this.ds.then((ds) => { return ds.all() })
         else return Promise.resolve([])
     }
+
+    get channels() { return this.current.channels }
+
+    get short_dims() { return Sensor.short_names(this.channels) }
     // #endregion
 
     // #region [Public Methods]
     select(name: string) {
         if (!(name in this.energyMap)) throw ReferenceError('Given name not a valid energy set:' + name);
         console.log('using energy dataset:', name);
+        this.current = this.energyMap[name];
         this.ds = this.dataloader.loadDataset(this.energyMap[name]);
     }
 
