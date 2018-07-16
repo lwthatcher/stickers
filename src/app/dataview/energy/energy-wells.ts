@@ -1,32 +1,67 @@
 import { Dataset } from "../../data-loader/dataset";
 import { DataInfo } from "../../data-loader/workspace-info";
+import { DataloaderService } from "../../data-loader/data-loader.service";
+
+// #region [Interfaces]
+type EnergyMap = {[name: string]: DataInfo}
+
+interface datum {
+    d: number;
+    i: number;
+  }
+// #endregion
 
 export class EnergyWellsTracker {
     // #region [Properties]
     ds: Promise<Dataset>;
     visible: boolean;
-    energySets: DataInfo[];
+    energyMap: EnergyMap;
+    private dataloader: DataloaderService;
     // #endregion
 
     // #region [Constructor]
-    constructor(energySets: DataInfo[]) {
-        this.energySets = energySets;
+    constructor(dataloader: DataloaderService,energySets: DataInfo[]) {
+        this.dataloader = dataloader;
+        this.visible = false;
+        this.energyMap = this.toEnergyMap(energySets);
+        if (this.availableEnergySets.length > 0) {
+            let default_set = this.availableEnergySets[0];
+            this.select(default_set);
+        }
     }
     // #endregion
 
     // #region [Accessors]
     get has_energy() { return !!this.ds }
 
-    get data() {
+    get availableEnergySets() { return Object.keys(this.energyMap) }
+
+    get data(): Promise<datum[][]> {
         if (this.has_energy)
             return this.ds.then((ds) => { return ds.all() })
-
+        else return Promise.resolve([])
     }
     // #endregion
 
     // #region [Public Methods]
-    set(dataset: Promise<Dataset>) {
-        this.ds = dataset;
+    select(name: string) {
+        if (!(name in this.energyMap)) throw ReferenceError('Given name not a valid energy set:' + name);
+        console.log('using energy dataset:', name);
+        this.ds = this.dataloader.loadDataset(this.energyMap[name]);
+    }
+
+    toggle() {
+        this.visible = !this.visible;
+    }
+    // #endregion
+
+    // #region [Helper Methods]
+    private toEnergyMap(infos: DataInfo[]) {
+        let result = {}
+        for (let info of infos) {
+            result[info.name] = info;
+        }
+        return result;
     }
     // #endregion
 }

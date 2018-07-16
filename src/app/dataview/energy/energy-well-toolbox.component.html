@@ -1,9 +1,13 @@
 <div class="energy-wells tools-box">
   <div class="btn-group">
-    <button type="button" class="btn btn-outline-secondary" title='toggle energy wells visibility'>
-      <span>
-        <i class="material-icons">visibility</i>
-      </span>
+    <button type="button" 
+      class="btn btn-outline-secondary" 
+      (click)="energy.toggle()"
+      title='toggle energy wells visibility'>
+        <span>
+          <i *ngIf='energy.visible' class="material-icons">visibility</i>
+          <i *ngIf='!energy.visible' class="material-icons">visibility_off</i>
+        </span>
     </button>
   </div>
 </div>

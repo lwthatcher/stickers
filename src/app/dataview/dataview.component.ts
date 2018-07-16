@@ -114,7 +114,7 @@ export class DataviewComponent implements OnInit {
           .then((labels) => { this.setLabels(this.default_stream.name, labels) })
     }
     // load energy if available
-    this.wells = new EnergyWellsTracker(this.workspace.energy_data)
+    this.wells = new EnergyWellsTracker(this.dataloader, this.workspace.energy_data)
     if (this.workspace.hasEnergy) {
       this.energy = this.dataloader.loadDataset(this.workspace.energy_data[0])
     }

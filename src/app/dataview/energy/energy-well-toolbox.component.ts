@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Dataset } from '../../data-loader/dataset';
+import { EnergyWellsTracker } from './energy-wells';
 
 @Component({
   selector: 'toolbox-energy',
@@ -9,7 +9,7 @@ import { Dataset } from '../../data-loader/dataset';
 export class EnergyWellToolkitComponent implements OnInit {
 
   // #region [Inputs]
-  @Input() energy: Dataset;
+  @Input() energy: EnergyWellsTracker;
   // #endregion
 
   // #region [Constructors]
