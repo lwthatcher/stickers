@@ -2,9 +2,9 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Dataset } from '../../data-loader/dataset';
 
 @Component({
-  selector: 'app-energy-well-toolkit',
-  templateUrl: './energy-well-toolkit.component.html',
-  styleUrls: ['./energy-well-toolkit.component.css']
+  selector: 'toolbox-energy',
+  templateUrl: './energy-well-toolbox.component.html',
+  styleUrls: ['./energy-well-toolbox.component.css']
 })
 export class EnergyWellToolkitComponent implements OnInit {
 
