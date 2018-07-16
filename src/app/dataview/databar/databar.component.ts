@@ -20,6 +20,7 @@ import { Labeller } from './labeller/labeller';
 import { LabelStream } from '../labelstreams/labelstream';
 import { Drawer } from './drawer/drawer';
 import { ModeTracker } from '../modes/tool-mode';
+import { EnergyWellsTracker } from '../energy/energy-wells';
 // #endregion
 
  // #region [Interfaces]
@@ -45,7 +46,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() mode: ModeTracker;
   @Input() colorer: Colorer;
   @Input() dataset: Promise<Dataset>;
-  @Input() energy: Promise<Dataset>;
+  @Input() energy: EnergyWellsTracker;
   // #endregion
 
   // #region [Outputs]
@@ -59,7 +60,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   _zoom;
   // data references
   _data: Promise<datum[][]>;
-  _energy: Promise<datum[][]>;
   // loading spinner
   spinner: Spinner;
   // helpers
@@ -98,7 +98,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   get element() { return this.el }
 
-  get has_energy() { return !!this.energy }
+  get has_energy() { return this.energy.has_energy }
   // #endregion
 
   // #region [Constructors]
@@ -112,8 +112,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     console.groupCollapsed('databar init', this.sensor.name);
     // load data
     this._data = this.load_data();
-    if (this.has_energy)
-      this._energy = this.load_energy();
     // selectors
     this.container = document.querySelector('div.card');
     console.debug('container', this.container);
@@ -174,7 +172,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     console.debug('sensor update detected:', event, this.sensor);
     if (event === 'redraw') {
       this._data = this.load_data();
-      this._energy = this.load_energy();
       this.drawer.clear();
       this.drawer.draw();
     }
@@ -241,10 +238,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Data Loading]
   load_data(): Promise<datum[][]> {
     return this.dataset.then((ds) => { return ds.get(this.sensor) })
-  }
-
-  load_energy(): Promise<datum[][]> {
-    return this.energy.then((ds) => { return ds.all() })
   }
 
   start_spinner(): void {

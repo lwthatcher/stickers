@@ -70,8 +70,7 @@ export class DataviewComponent implements OnInit {
   labelStreams: LabelStreamMap = {};
   mode: ModeTracker;
   colorer: Colorer;
-  energy: Promise<Dataset>;
-  wells: EnergyWellsTracker;
+  energy: EnergyWellsTracker;
   private _idx_map: Map<number,number[]>;
   // #endregion
 
@@ -114,10 +113,7 @@ export class DataviewComponent implements OnInit {
           .then((labels) => { this.setLabels(this.default_stream.name, labels) })
     }
     // load energy if available
-    this.wells = new EnergyWellsTracker(this.dataloader, this.workspace.energy_data)
-    if (this.workspace.hasEnergy) {
-      this.energy = this.dataloader.loadDataset(this.workspace.energy_data[0])
-    }
+    this.energy = new EnergyWellsTracker(this.dataloader, this.workspace.energy_data)
     // component initialized
     console.info('dataview initialized', this);
   }
@@ -263,7 +259,6 @@ export class DataviewComponent implements OnInit {
       console.log('dataset name:', this.ds);
       console.log('dataset:', this.dataset);
       console.log('energy:', this.energy);
-      console.log('wells:', this.wells);
     console.groupEnd()
     console.log('dataview component', this);
     console.groupEnd();

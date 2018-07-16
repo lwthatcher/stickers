@@ -111,7 +111,7 @@ export class Drawer {
 
   get domain_set() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
 
-  get has_energy() { return this.databar.has_energy }
+  get energy() { return this.databar.energy }
   // #endregion
 
   // #region [Callbacks]
@@ -130,8 +130,8 @@ export class Drawer {
     let data = await this.databar._data;
     this.set_domains(data);
     this.databar.stop_spinner();
-    if (this.has_energy) {
-      let edata = await this.databar._energy;
+    if (this.energy.has_energy) {
+      let edata = await this.energy.data;
       this.energy_domains(edata);
       this.draw_energy(edata);
     }
@@ -200,7 +200,7 @@ export class Drawer {
         .attr("transform", "translate( " +this.w + ", 0 )")
         .call(d3.axisRight(this.Y[1]));
     }
-    if (this.has_energy) {
+    if (this.energy.has_energy) {
       this.layers.axes.append('g')
           .attr('class', 'y-axis')
           .attr("transform", "translate( " +this.w + ", 0 )")
@@ -226,7 +226,7 @@ export class Drawer {
   }
 
   async draw_energy(data) {
-    if (!this.has_energy) { return }
+    if (!this.energy.has_energy) { return }
     console.log('ENERGY', data);
     for (let j = 0; j < data.length; j++) {
       this.layers.energy.append('path')
@@ -391,7 +391,7 @@ export class Drawer {
   }
 
   energy_domains(axes) {
-    if (!this.has_energy) { return }
+    if (!this.energy.has_energy) { return }
     let max = axes[0][axes[0].length-1].i;
     this.xe.domain([0, max]);
     this.ye.domain([1, d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
