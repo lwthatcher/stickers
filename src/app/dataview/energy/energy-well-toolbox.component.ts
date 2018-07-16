@@ -1,5 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { EnergyWellsTracker } from './energy-wells';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'toolbox-energy',
@@ -10,12 +11,14 @@ export class EnergyWellToolkitComponent implements OnInit {
 
   // #region [Inputs]
   @Input() energy: EnergyWellsTracker;
+  @ViewChild('settingsMenu') menu: NgbPopover;
   // #endregion
 
   // #region [Constructors]
   constructor() { }
 
   ngOnInit() {
+    console.log('settings menu', this.menu);
   }
   // #endregion
 

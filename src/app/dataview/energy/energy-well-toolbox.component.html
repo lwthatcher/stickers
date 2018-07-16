@@ -23,8 +23,38 @@
         </div>
     </div>
     <button type="button"
-    class="btn btn-secondary">
+    class="btn btn-secondary"
+    [ngbPopover]="settingsPopover"
+    placement="right"
+    #settingsMenu="ngbPopover"
+    title='settings'
+    popoverTitle="Energy Wells Settings:">
       <span><i class="material-icons icon">settings</i></span>
     </button>
   </div>
 </div>
+
+<ng-template #settingsPopover>
+    <form>
+        <div class="form-group row">
+            <label for="event-type" class="col-form-label">Name:</label>
+            <div class="col">
+                <input type="text" 
+                    class="form-control" 
+                    #textbox 
+                    id="event-type"
+                    placeholder="event name"
+                    required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class='col'>
+                <button class="btn btn-success btn-block"
+                    type="button"
+                    title="create">
+                    <i class="material-icons icon">done</i>
+                </button>
+            </div>
+        </div>
+    </form>
+</ng-template>
