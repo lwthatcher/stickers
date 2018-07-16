@@ -28,6 +28,8 @@ export class EnergyWellsTracker {
     event$ = new EventEmitter<EnergyUpdate>();
     private dataloader: DataloaderService;
     private current: DataInfo;
+    private overlayedMap = new Map();
+    private stackedMap = new Map();
     // #endregion
 
     // #region [Constructor]
@@ -48,26 +50,24 @@ export class EnergyWellsTracker {
     get availableEnergySets() { return Object.keys(this.energyMap) }
 
     get data(): Promise<datum[][]> {
-        if (this.has_energy)
-            return this.ds.then((ds) => { return ds.all() })
-        else return Promise.resolve([])
+        if (!this.has_energy) return Promise.reject('No energy data available.')
+        else if (!this.overlayedMap.has(this.name))
+            this.overlayedMap.set(this.name, this.overlayedFormat(this.ds))
+        return this.overlayedMap.get(this.name);
     }
 
     get formatted() {
         if (!this.has_energy) return Promise.reject('No energy data available.')
-        else return this.ds.then((ds) => { return ds.all()})
-        .then((axes) => {
-            let sd = this.short_dims;
-            let ax2 = math.transpose(axes);
-            let rowmap = (acc,cur,i) => { acc[sd[i]] = cur; return acc; }
-            let data = ax2.map((row) => row.reduce(rowmap, {}))
-            return data;
-        })
+        else if (!this.stackedMap.has(this.name))
+            this.stackedMap.set(this.name, this.stackFormat(this.ds))
+        return this.stackedMap.get(this.name);
     }
 
     get channels() { return this.current.channels }
 
     get short_dims() { return Sensor.short_names(this.channels) }
+
+    get name() { return this.current.name }
     // #endregion
 
     // #region [Public Methods]
@@ -76,6 +76,10 @@ export class EnergyWellsTracker {
         console.log('using energy dataset:', name);
         this.current = this.energyMap[name];
         this.ds = this.dataloader.loadDataset(this.energyMap[name]);
+        if (!this.overlayedMap.has(name))
+            this.overlayedMap.set(name, this.overlayedFormat(this.ds));
+        if (!this.stackedMap.has(name))
+            this.stackedMap.set(name, this.stackFormat(this.ds));
     }
 
     toggle() {
@@ -91,6 +95,16 @@ export class EnergyWellsTracker {
             result[info.name] = info;
         }
         return result;
+    }
+
+    private overlayedFormat(dataset) { return dataset.then((ds) => ds.all()) }
+
+    private stackFormat(dataset) {
+        return dataset.then((ds) => ds.all())
+        .then((axes) => {
+            let rowmap = (acc,cur,i) => { acc[this.short_dims[i]] = cur; return acc; }
+            return math.transpose(axes).map((row) => row.reduce(rowmap, {}));
+        })
     }
     // #endregion
 }
