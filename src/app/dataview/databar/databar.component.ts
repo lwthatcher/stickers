@@ -126,6 +126,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.register_lblstream();
     this.register_sensor();
     this.register_mode();
+    this.register_energy();
     // log when finished
     this.initialized = true;
     console.debug('width/height', this.width, this.height);
@@ -151,6 +152,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   stream_update(event) {
     if (event.type === 'change-type') { this.type_changed(event) }
     else { this.redraw_labels() }
+  }
+
+  energy_update(event) {
+    if (event.type === 'toggle') { this.redraw_energy() }
   }
 
   stream_changed(change) {
@@ -233,6 +238,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   private register_mode() {
     this.mode.event.subscribe((mode) => { this.mode_changed(mode) })
   }
+
+  private register_energy() {
+    this.energy.event$.subscribe((e) => { this.energy_update(e) })
+  }
   // #endregion
 
   // #region [Data Loading]
@@ -294,6 +303,11 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   private redraw_labels() {
     this.drawer.draw_labels();
     this.drawer.draw_handles();
+  }
+
+  private async redraw_energy() {
+    let edata = await this.energy.data;
+    this.drawer.draw_energy(edata);
   }
   // #endregion
 }

@@ -1,6 +1,7 @@
 import { Dataset } from "../../data-loader/dataset";
 import { DataInfo } from "../../data-loader/workspace-info";
 import { DataloaderService } from "../../data-loader/data-loader.service";
+import { EventEmitter } from "@angular/core";
 
 // #region [Interfaces]
 type EnergyMap = {[name: string]: DataInfo}
@@ -8,7 +9,11 @@ type EnergyMap = {[name: string]: DataInfo}
 interface datum {
     d: number;
     i: number;
-  }
+}
+
+interface EnergyUpdate {
+    type: string;
+}
 // #endregion
 
 export class EnergyWellsTracker {
@@ -16,6 +21,7 @@ export class EnergyWellsTracker {
     ds: Promise<Dataset>;
     visible: boolean;
     energyMap: EnergyMap;
+    event$ = new EventEmitter<EnergyUpdate>();
     private dataloader: DataloaderService;
     // #endregion
 
@@ -52,6 +58,7 @@ export class EnergyWellsTracker {
 
     toggle() {
         this.visible = !this.visible;
+        this.event$.emit({type: 'toggle'});
     }
     // #endregion
 

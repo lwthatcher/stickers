@@ -227,6 +227,7 @@ export class Drawer {
 
   async draw_energy(data) {
     if (!this.energy.has_energy) { return }
+    if (!this.energy.visible) { this.clear('energy'); return; }
     console.log('ENERGY', data);
     for (let j = 0; j < data.length; j++) {
       this.layers.energy.append('path')
