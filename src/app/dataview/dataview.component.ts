@@ -17,6 +17,7 @@ import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 import { DatabarComponent } from './databar/databar.component';
 import { SaveMenuComponent } from './save-menu/save-menu.component';
+import { EnergyWellsTracker } from './energy/energy-wells';
 // #endregion
 
 // #region [Interfaces]
@@ -70,6 +71,7 @@ export class DataviewComponent implements OnInit {
   mode: ModeTracker;
   colorer: Colorer;
   energy: Promise<Dataset>;
+  wells: EnergyWellsTracker;
   private _idx_map: Map<number,number[]>;
   // #endregion
 
@@ -112,6 +114,7 @@ export class DataviewComponent implements OnInit {
           .then((labels) => { this.setLabels(this.default_stream.name, labels) })
     }
     // load energy if available
+    this.wells = new EnergyWellsTracker(this.workspace.energy_data)
     if (this.workspace.hasEnergy) {
       this.energy = this.dataloader.loadDataset(this.workspace.energy_data[0])
     }
@@ -260,6 +263,7 @@ export class DataviewComponent implements OnInit {
       console.log('dataset name:', this.ds);
       console.log('dataset:', this.dataset);
       console.log('energy:', this.energy);
+      console.log('wells:', this.wells);
     console.groupEnd()
     console.log('dataview component', this);
     console.groupEnd();
