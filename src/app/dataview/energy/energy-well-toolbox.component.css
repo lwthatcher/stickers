@@ -1,3 +1,22 @@
-:host { 
-    padding-left: 20px; 
+/*#region [Toolbox] */
+:host {
+    display: contents;
 }
+
+:host > .tools-box {
+    float: left;
+    display: inline-flex;
+    padding-left: 20px;
+}
+/*#endregion */
+
+/*#region [Icons] */
+button > i.material-icons,
+span > i.material-icons {
+    vertical-align:middle;
+}
+
+.icon {
+    cursor: pointer;
+}
+/*#endregion */
