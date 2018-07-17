@@ -46,5 +46,7 @@ export class EnergyWellToolboxComponent implements OnInit {
   tracked(event: EnergyUpdate) {
     if (event.type === 'display-mode') this.displayMode = event.mode;
   }
+
+  close() { this.menu.close() }
   // #endregion
 }
