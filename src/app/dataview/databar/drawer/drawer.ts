@@ -28,7 +28,7 @@ export class Drawer {
   databar: DatabarComponent;
   layers: LayerMap;
   x; x0;
-  xe; ye; xs; ys;
+  xe; ye; ys;
   area; stacked_area;
   Y = [];
   lines = [];
@@ -242,26 +242,11 @@ export class Drawer {
     if (!this.energy.visible) { this.clear('energy'); return; }
     if (this.energy.displayMode === DisplayMode.Stacked) {
       let series = await this.stackedSeries();
-      this.layers.energy.selectAll('path')
-          .data(series)
-          .enter().append('path')
-            .attr('class', 'energy')
-            .attr('opacity', 0.3)
-            .attr("clip-path", "url(#clip)")
-            .attr('d', this.stacked_area)
-            .attr('fill', (d,i) => this.databar.colorer.wells.get(i))
+      this.plotStacked(series);
     }
     else if (this.energy.displayMode === DisplayMode.Overlayed) {
       let data = await this.energy.data;
-      for (let j = 0; j < data.length; j++) {
-        this.layers.energy.append('path')
-                          .datum(data[j])
-                          .attr('class', 'energy')
-                          .attr('fill', this.databar.colorer.wells.get(j+1))
-                          .attr('opacity', 0.3)
-                          .attr("clip-path", "url(#clip)")
-                          .attr('d', this.area);
-      }
+      this.plotOverlayed(data);
     }
     
   }
@@ -294,7 +279,7 @@ export class Drawer {
   }
   // #endregion
 
-  // #region [Helper Plotting Methods]
+  // #region [Signal Plotting Helpers]
   private async plot_signals(_data) {
     // downsample first
     _data = await Promise.resolve(_data);
@@ -317,7 +302,9 @@ export class Drawer {
         .on("mouseover", () => this.mouseover(j))
         .on("mouseout", () => this.mouseout())
   }
+  // #endregion
   
+  // #region [Drag Handle Plotting Helpers]
   private _add_handle(selection: Selection, side: 'left' | 'right') {
     let callback;
     if (side === 'left') callback = (d) => { return this.x(d.start) - 5 }
@@ -332,7 +319,9 @@ export class Drawer {
                     .merge(selection)
                     .attr('x', callback)
   }
+  // #endregion
 
+  // #region [Labels Plotting Helpers]
   private select_labels() {
     let rects = this.layers.labels
                     .selectAll('rect.label')
@@ -378,13 +367,37 @@ export class Drawer {
   }
   // #endregion
 
+  // #region [Energy Wells Plotting Helpers]
+  private plotStacked(series) {
+    this.layers.energy.selectAll('path')
+        .data(series)
+        .enter().append('path')
+          .attr('class', 'energy')
+          .attr('opacity', 0.3)
+          .attr("clip-path", "url(#clip)")
+          .attr('d', this.stacked_area)
+          .attr('fill', (d,i) => this.databar.colorer.wells.get(i))
+  }
+
+  private plotOverlayed(data) {
+    for (let j = 0; j < data.length; j++) {
+      this.layers.energy.append('path')
+                        .datum(data[j])
+                        .attr('class', 'energy')
+                        .attr('fill', this.databar.colorer.wells.get(j+1))
+                        .attr('opacity', 0.3)
+                        .attr("clip-path", "url(#clip)")
+                        .attr('d', this.area);
+    }
+  }
+  // #endregion
+
   // #region [Domains and Ranges]
   set_ranges() {
     // set x-ranges
     this.x = d3.scaleLinear().rangeRound([0, this.w]);
     this.x0 = d3.scaleLinear().rangeRound([0, this.w]);
     this.xe = d3.scaleLinear().rangeRound([0, this.w]);
-    this.xs = d3.scaleLinear().rangeRound([0, this.w]);
     // set y-ranges
     for (let j of this.yDims()) {
       this.Y[j] = d3.scaleLinear().rangeRound([this.h, 0]);
@@ -440,7 +453,6 @@ export class Drawer {
     let seriesMax = (layer) => { return d3.max(layer, (d) => d[1]+1) };
     // set domains
     this.xe.domain([0, imax]);
-    this.xs.domain([0, imax]);
     this.ye.domain([1, d3.max(axes, (ax) => d3.max(ax, (d) => d.d+1))]);
     this.ys.domain([1, d3.max(series, seriesMax)])
 
