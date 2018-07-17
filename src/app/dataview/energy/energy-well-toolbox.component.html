@@ -37,14 +37,17 @@
 <ng-template #settingsPopover>
     <form>
         <div class="form-group row">
-            <label for="event-type" class="col-form-label">Name:</label>
-            <div class="col">
-                <input type="text" 
-                    class="form-control" 
-                    #textbox 
-                    id="event-type"
-                    placeholder="event name"
-                    required>
+            <div class="col btn-group btn-group-toggle" 
+              ngbRadioGroup 
+              name="radiomode" 
+              [(ngModel)]="displayMode"
+              (ngModelChange)="changed($event)">
+                <label ngbButtonLabel class="btn-primary">
+                  <input ngbButton type="radio" [value]="DISPLAY_MODE.Stacked"> Stacked
+                </label>
+                <label ngbButtonLabel class="btn-primary">
+                  <input ngbButton type="radio" [value]="DISPLAY_MODE.Overlayed"> Overlayed
+                </label>
             </div>
         </div>
         <div class="form-group row">

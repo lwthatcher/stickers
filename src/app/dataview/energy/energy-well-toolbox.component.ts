@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { EnergyWellsTracker } from './energy-wells';
+import { EnergyWellsTracker, DisplayMode, EnergyUpdate } from './energy-wells';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { ToolMode } from '../modes/tool-mode';
 
 @Component({
   selector: 'toolbox-energy',
@@ -8,6 +9,10 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./energy-well-toolbox.component.css']
 })
 export class EnergyWellToolkitComponent implements OnInit {
+  // #region [Properties]
+  displayMode: DisplayMode;
+  DISPLAY_MODE = DisplayMode;
+  // #endregion
 
   // #region [Inputs]
   @Input() energy: EnergyWellsTracker;
@@ -18,7 +23,8 @@ export class EnergyWellToolkitComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log('settings menu', this.menu);
+    this.displayMode = this.energy.displayMode;
+    this.energy.event$.subscribe((event) => this.tracked(event));
   }
   // #endregion
 
@@ -31,6 +37,14 @@ export class EnergyWellToolkitComponent implements OnInit {
   get datasets() {
     if (!this.energy.has_energy) {return []}
     else return this.energy.availableEnergySets;
+  }
+  // #endregion
+
+  // #region [Event Handlers]
+  changed(mode: DisplayMode) { console.log('changing display mode', mode); this.energy.updateMode(mode) }
+
+  tracked(event: EnergyUpdate) {
+    if (event.type === 'display-mode') this.displayMode = event.mode;
   }
   // #endregion
 }

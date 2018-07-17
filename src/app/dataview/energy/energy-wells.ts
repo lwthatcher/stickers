@@ -4,6 +4,7 @@ import { DataloaderService } from "../../data-loader/data-loader.service";
 import { EventEmitter } from "@angular/core";
 import { Sensor } from "../sensors/sensor";
 import * as math from 'mathjs';
+import { mod } from "@tensorflow/tfjs-core";
 
 // #region [Interfaces]
 type EnergyMap = {[name: string]: DataInfo}
@@ -13,11 +14,15 @@ interface datum {
     i: number;
 }
 
-interface EnergyUpdate {
+export interface EnergyUpdate {
     type: string;
+    mode?: DisplayMode;
 }
 
-type FormattedData = any
+export enum DisplayMode {
+    Overlayed,
+    Stacked
+}
 // #endregion
 
 export class EnergyWellsTracker {
@@ -26,6 +31,7 @@ export class EnergyWellsTracker {
     visible: boolean;
     energyMap: EnergyMap;
     event$ = new EventEmitter<EnergyUpdate>();
+    displayMode: DisplayMode;
     private dataloader: DataloaderService;
     private current: DataInfo;
     private overlayedMap = new Map();
@@ -41,6 +47,7 @@ export class EnergyWellsTracker {
             let default_set = this.availableEnergySets[0];
             this.select(default_set);
         }
+        this.displayMode = DisplayMode.Overlayed;
     }
     // #endregion
 
@@ -85,6 +92,11 @@ export class EnergyWellsTracker {
     toggle() {
         this.visible = !this.visible;
         this.event$.emit({type: 'toggle'});
+    }
+
+    updateMode(mode: DisplayMode) {
+        this.displayMode = mode;
+        this.event$.emit({type: 'display-mode', mode: mode});
     }
     // #endregion
 

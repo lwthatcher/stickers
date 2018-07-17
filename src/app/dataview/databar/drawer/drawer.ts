@@ -228,8 +228,11 @@ export class Drawer {
   async draw_energy(data) {
     if (!this.energy.has_energy) { return }
     if (!this.energy.visible) { this.clear('energy'); return; }
-    let stack = d3.stack();
-    console.log('ENERGY', data, stack(data));
+    // let formatted = await this.energy.formatted;
+    // let stack = d3.stack()
+    //               .keys(this.energy.short_dims)
+    //               .order(d3.stackOrderAscending);
+    // console.log('ENERGY', data, formatted, stack(formatted));
     for (let j = 0; j < data.length; j++) {
       this.layers.energy.append('path')
                         .datum(data[j])
