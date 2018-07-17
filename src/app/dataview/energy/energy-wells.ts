@@ -114,7 +114,7 @@ export class EnergyWellsTracker {
     private stackFormat(dataset) {
         return dataset.then((ds) => ds.all())
         .then((axes) => {
-            let rowmap = (acc,cur,i) => { acc[this.short_dims[i]] = cur; return acc; }
+            let rowmap = (acc,cur,i) => { acc[this.short_dims[i]] = cur.d; acc.i = cur.i; return acc; }
             return math.transpose(axes).map((row) => row.reduce(rowmap, {}));
         })
     }

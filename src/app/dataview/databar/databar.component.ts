@@ -155,7 +155,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   energy_update(event) {
-    if (event.type === 'toggle') { this.redraw_energy() }
+    if (event.type === 'toggle' || event.type === 'display-mode') { this.drawer.draw_energy() }
   }
 
   stream_changed(change) {
@@ -303,11 +303,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   private redraw_labels() {
     this.drawer.draw_labels();
     this.drawer.draw_handles();
-  }
-
-  private async redraw_energy() {
-    let edata = await this.energy.data;
-    this.drawer.draw_energy(edata);
   }
   // #endregion
 }

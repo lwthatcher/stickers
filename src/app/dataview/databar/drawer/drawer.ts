@@ -5,6 +5,7 @@ import { arraysEqual } from '../../../util/util';
 import { Selection } from './selection.interface';
 import { time_format } from './time-format';
 import { LayerMap } from './layers';
+import { DisplayMode } from '../../energy/energy-wells';
 
 // #region [Interfaces]
 
@@ -27,7 +28,8 @@ export class Drawer {
   databar: DatabarComponent;
   layers: LayerMap;
   x; x0;
-  xe; ye; area;
+  xe; ye; xs; ys;
+  area; stacked_area;
   Y = [];
   lines = [];
   zoom: ZoomBehavior;
@@ -124,6 +126,16 @@ export class Drawer {
   get fill() { return (d) =>  { return this.databar.colorer.labels(this.ls.name).get(d.label) } }
   // #endregion
 
+  // #region [Data Loading]
+  async stackedSeries() {
+    let formatted = await this.energy.formatted;
+    let stack = d3.stack()
+                  .keys(this.energy.short_dims)
+                  .order(d3.stackOrderAscending);
+    return stack(formatted);
+  }
+  // #endregion
+
   // #region [Public Plotting Methods]
   async draw() {
     this.set_ranges();
@@ -131,9 +143,8 @@ export class Drawer {
     this.set_domains(data);
     this.databar.stop_spinner();
     if (this.energy.has_energy) {
-      let edata = await this.energy.data;
-      this.energy_domains(edata);
-      this.draw_energy(edata);
+      this.energy_domains();
+      this.draw_energy();
     }
     this.draw_xAxis();
     this.draw_yAxis();
@@ -225,22 +236,32 @@ export class Drawer {
              .attr('d', cursor);
   }
 
-  async draw_energy(data) {
+  async draw_energy() {
     if (!this.energy.has_energy) { return }
     if (!this.energy.visible) { this.clear('energy'); return; }
-    // let formatted = await this.energy.formatted;
-    // let stack = d3.stack()
-    //               .keys(this.energy.short_dims)
-    //               .order(d3.stackOrderAscending);
-    // console.log('ENERGY', data, formatted, stack(formatted));
-    for (let j = 0; j < data.length; j++) {
-      this.layers.energy.append('path')
-                        .datum(data[j])
-                        .attr('class', 'energy')
-                        .attr('fill', this.databar.colorer.wells.get(j+1))
-                        .attr('opacity', 0.3)
-                        .attr("clip-path", "url(#clip)")
-                        .attr('d', this.area);
+    if (this.energy.displayMode === DisplayMode.Stacked) {
+      let series = await this.stackedSeries();
+      this.layers.energy.selectAll('path')
+          .data(series)
+          .enter().append('path')
+            .attr('class', 'energy')
+            .attr('opacity', 0.3)
+            .attr("clip-path", "url(#clip)")
+            .attr('d', this.stacked_area)
+            .attr('fill', (d,i) => this.databar.colorer.wells.get(i))
+    }
+    
+    else if (this.energy.displayMode === DisplayMode.Overlayed) {
+      let data = await this.energy.data;
+      for (let j = 0; j < data.length; j++) {
+        this.layers.energy.append('path')
+                          .datum(data[j])
+                          .attr('class', 'energy')
+                          .attr('fill', this.databar.colorer.wells.get(j+1))
+                          .attr('opacity', 0.3)
+                          .attr("clip-path", "url(#clip)")
+                          .attr('d', this.area);
+      }
     }
     
   }
@@ -258,7 +279,10 @@ export class Drawer {
   }
 
   updateEnergy() {
-    this.energyWells.attr("d", this.area);
+    if (this.energy.displayMode === DisplayMode.Overlayed)
+      this.energyWells.attr('d', this.area);
+    else if (this.energy.displayMode === DisplayMode.Stacked)
+      this.energyWells.attr('d', this.stacked_area);
   }
 
   updateLabels() {
@@ -360,11 +384,15 @@ export class Drawer {
     this.x = d3.scaleLinear().rangeRound([0, this.w]);
     this.x0 = d3.scaleLinear().rangeRound([0, this.w]);
     this.xe = d3.scaleLinear().rangeRound([0, this.w]);
+    this.xs = d3.scaleLinear().rangeRound([0, this.w]);
     // set y-ranges
     for (let j of this.yDims()) {
       this.Y[j] = d3.scaleLinear().rangeRound([this.h, 0]);
     }
     this.ye = d3.scaleLog()
+                .clamp(true)
+                .rangeRound([this.h, 0]);
+    this.ys = d3.scaleLog()
                 .clamp(true)
                 .rangeRound([this.h, 0]);
     // setup line-drawing method(s)
@@ -373,9 +401,16 @@ export class Drawer {
                                .y((d) => this.Y[j](d.d))
     }
     // setup area-drawing method
-    this.area = d3.area()
-                  .x((d) => this.xe(d.i))
-                  .y1((d) => this.ye(d.d));
+    this.area = 
+        d3.area()
+          .x((d) => this.xe(d.i))
+          .y1((d) => this.ye(d.d+1));
+    this.stacked_area = 
+        d3.area()
+          .x((d) => this.xe(d.data.i))
+          .y0((d) => this.ys(d[0]+1))
+          .y1((d) => this.ys(d[1]+1))
+
   }
 
   set_domains(axes) {
@@ -395,11 +430,20 @@ export class Drawer {
     }
   }
 
-  energy_domains(axes) {
+  async energy_domains() {
     if (!this.energy.has_energy) { return }
-    let max = axes[0][axes[0].length-1].i;
-    this.xe.domain([0, max]);
-    this.ye.domain([1, d3.max(axes, (ax) => d3.max(ax, (d) => d.d))]);
+    // await data
+    let axes = await this.energy.data;
+    let series = await this.stackedSeries();
+    // helper methods
+    let imax = axes[0][axes[0].length-1].i;
+    let seriesMax = (layer) => { return d3.max(layer, (d) => d[1]+1) };
+    // set domains
+    this.xe.domain([0, imax]);
+    this.xs.domain([0, imax]);
+    this.ye.domain([1, d3.max(axes, (ax) => d3.max(ax, (d) => d.d+1))]);
+    this.ys.domain([1, d3.max(series, seriesMax)])
+
     this.area.y0(this.ye(0));
   }
 
@@ -649,6 +693,7 @@ export class Drawer {
     console.log('domains/ranges', this.domains_and_ranges());
     console.log('layers:', this.layers);
     console.log('line(s):', this.lines);
+    console.log('stacked series:', this.stackedSeries());
     console.log('drawer:', this);
     console.groupEnd();
   }
