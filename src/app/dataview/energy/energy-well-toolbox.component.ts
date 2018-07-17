@@ -8,7 +8,7 @@ import { ToolMode } from '../modes/tool-mode';
   templateUrl: './energy-well-toolbox.component.html',
   styleUrls: ['./energy-well-toolbox.component.css']
 })
-export class EnergyWellToolkitComponent implements OnInit {
+export class EnergyWellToolboxComponent implements OnInit {
   // #region [Properties]
   displayMode: DisplayMode;
   DISPLAY_MODE = DisplayMode;
