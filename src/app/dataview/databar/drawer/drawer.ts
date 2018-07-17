@@ -141,13 +141,11 @@ export class Drawer {
     this.set_ranges();
     let data = await this.databar._data;
     this.set_domains(data);
+    this.energy_domains();
     this.databar.stop_spinner();
-    if (this.energy.has_energy) {
-      this.energy_domains();
-      this.draw_energy();
-    }
     this.draw_xAxis();
     this.draw_yAxis();
+    this.draw_energy();
     this.plot_signals(data);
     this.draw_labels();
     this.draw_handles();
@@ -369,23 +367,29 @@ export class Drawer {
 
   // #region [Energy Wells Plotting Helpers]
   private plotStacked(series) {
-    this.layers.energy.selectAll('path')
-        .data(series)
-        .enter().append('path')
+    // update selection
+    console.debug('series', series);
+    let wells = this.layers.energy.selectAll('path').data(series)
+    // exit selection
+    wells.exit()
+         .remove()
+    // entering selection
+    wells = wells.enter().append('path')
+          .merge(wells)
           .attr('class', 'energy')
-          .attr('opacity', 0.3)
           .attr("clip-path", "url(#clip)")
-          .attr('d', this.stacked_area)
           .attr('fill', (d,i) => this.databar.colorer.wells.get(i))
+          .attr('d', this.stacked_area)
+          .append('svg:title').text((d,i) => {return d.key})
   }
 
   private plotOverlayed(data) {
+    console.debug('plotting overlayed', data);
     for (let j = 0; j < data.length; j++) {
       this.layers.energy.append('path')
                         .datum(data[j])
                         .attr('class', 'energy')
                         .attr('fill', this.databar.colorer.wells.get(j+1))
-                        .attr('opacity', 0.3)
                         .attr("clip-path", "url(#clip)")
                         .attr('d', this.area);
     }
@@ -414,16 +418,13 @@ export class Drawer {
                                .y((d) => this.Y[j](d.d))
     }
     // setup area-drawing method
-    this.area = 
-        d3.area()
+    this.area = d3.area()
           .x((d) => this.xe(d.i))
           .y1((d) => this.ye(d.d+1));
-    this.stacked_area = 
-        d3.area()
+    this.stacked_area = d3.area()
           .x((d) => this.xe(d.data.i))
           .y0((d) => this.ys(d[0]+1))
-          .y1((d) => this.ys(d[1]+1))
-
+          .y1((d) => this.ys(d[1]+1));
   }
 
   set_domains(axes) {

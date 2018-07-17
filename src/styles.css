@@ -47,6 +47,16 @@ rect.drag-handle.warn {
 }
 /*#endregion */
 
+/*#region [Energy Wells] */
+path.energy {
+    opacity: 0.3;
+}
+
+path.energy:hover {
+    opacity: 0.5;
+}
+/*#endregion */
+
 /*#region [Tooltip] */
 div.tooltip {
     position: absolute;

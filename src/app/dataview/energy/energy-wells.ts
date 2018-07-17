@@ -47,7 +47,7 @@ export class EnergyWellsTracker {
             let default_set = this.availableEnergySets[0];
             this.select(default_set);
         }
-        this.displayMode = DisplayMode.Overlayed;
+        this.displayMode = DisplayMode.Stacked;
     }
     // #endregion
 
