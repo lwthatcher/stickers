@@ -212,10 +212,11 @@ export class Drawer {
         .call(d3.axisRight(this.Y[1]));
     }
     if (this.energy.has_energy) {
+      let y = this.eyAxis();
       this.layers.axes.append('g')
           .attr('class', 'y-axis')
           .attr("transform", "translate( " +this.w + ", 0 )")
-          .call(d3.axisLeft(this.ye));
+          .call(d3.axisLeft(y));
     }
   }
 
@@ -250,7 +251,6 @@ export class Drawer {
             .attr('d', this.stacked_area)
             .attr('fill', (d,i) => this.databar.colorer.wells.get(i))
     }
-    
     else if (this.energy.displayMode === DisplayMode.Overlayed) {
       let data = await this.energy.data;
       for (let j = 0; j < data.length; j++) {
@@ -455,6 +455,11 @@ export class Drawer {
   private getLine(j) {
     if (this.sensor.channel !== 'B') return this.lines[0];
     else return this.lines[j];
+  }
+
+  private eyAxis() {
+    if (this.energy.displayMode === DisplayMode.Overlayed) return this.ye;
+    else return this.ys;
   }
   // #endregion
 

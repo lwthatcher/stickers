@@ -41,7 +41,7 @@ export class EnergyWellToolkitComponent implements OnInit {
   // #endregion
 
   // #region [Event Handlers]
-  changed(mode: DisplayMode) { console.log('changing display mode', mode); this.energy.updateMode(mode) }
+  changed(mode: DisplayMode) { this.energy.updateMode(mode) }
 
   tracked(event: EnergyUpdate) {
     if (event.type === 'display-mode') this.displayMode = event.mode;

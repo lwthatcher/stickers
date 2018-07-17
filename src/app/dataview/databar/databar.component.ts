@@ -155,7 +155,11 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   energy_update(event) {
-    if (event.type === 'toggle' || event.type === 'display-mode') { this.drawer.draw_energy() }
+    if (event.type === 'display-mode') { 
+      this.drawer.clear('energy', 'y-axis');
+      this.drawer.draw_yAxis();
+    }
+    this.drawer.draw_energy();
   }
 
   stream_changed(change) {
