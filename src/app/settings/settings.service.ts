@@ -46,6 +46,7 @@ export class SettingsService {
 
   // #region [Properties]
   line_scheme: ColorScheme = ColorScheme.Accent;
+  well_scheme: ColorScheme = ColorScheme.Accent;
   label_scheme: ColorScheme = ColorScheme.Paired;
   databar_height: number = 200;
   downsampling: DownsamplingMethod = 'dynamic';

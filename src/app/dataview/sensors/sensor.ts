@@ -22,6 +22,14 @@ export class Sensor {
         'L': 'Light',
         'B': 'Barometer'
     }
+
+    static SHORT_NAMES = {
+        'A': ['Ax', 'Ay', 'Az'],
+        'G': ['Gx', 'Gy', 'Gz'],
+        'C': ['Cx', 'Cy', 'Cz'],
+        'L': ['Lt', 'Li'],
+        'B': ['alt', 'temp'], 
+    }
     // #endregion
 
     // #region [Properties]
@@ -96,6 +104,11 @@ export class Sensor {
         let entries = [...channels].map(getIdxs) as IdxEntries
         // convert entries to Map
         return new Map<number,number[]>(entries);
+    }
+
+    static short_names(channels: string) {
+        let append = (acc, cur) => { return acc.concat(Sensor.SHORT_NAMES[cur]) }
+        return [...channels].reduce(append, []);
     }
     // #endregion
 }

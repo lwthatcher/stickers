@@ -39,6 +39,7 @@ export abstract class Dataset {
     
     // #region [Public Methods]
     abstract get(sensor: SensorLike): datum[][]
+    abstract all(): datum[][]
     // #endregion
 
     // #region [Helper Methods]
@@ -55,6 +56,7 @@ export abstract class Dataset {
 abstract class DSVDataset extends Dataset {
     axes: Axes;
     get(sensor: SensorLike) { return this.format(this.filter(sensor)).map((axis) => this.toArray(axis)) }
+    all() { return this.format(this.axes).map((axis) => this.toArray(axis)) }
     protected filter(sensor: SensorLike): Axes { return this.axes.filter((e,i) => sensor.idxs.includes(i)) }
     protected toArray(axis): datum[] { return Array.from(axis).map((d,i) => this.convert(d,i)) }
     protected abstract format(axes: Axes): SignalStream;
@@ -91,6 +93,10 @@ export class BDLDataset extends Dataset {
     // #region [Implementation]
     get(sensor: SensorLike): datum[][] {
         return this.format(this.filter(sensor))
+    }
+
+    all() {
+        return [];
     }
 
     format(dims: bdldatum[]): datum[][] {
