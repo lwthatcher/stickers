@@ -704,7 +704,8 @@ export class Drawer {
     this.pour_timer = d3.interval((t) => this.pour_tick(t), 100);
     let e;
     if (this.energy.has_energy) {
-      e = this.ys(x);
+      let xt = this.x.invert(x);
+      e = this.energy.at(xt);
     }
     console.log('POURING', [x,y], e);
   }
