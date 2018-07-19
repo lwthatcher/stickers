@@ -37,6 +37,8 @@ export class Drawer {
   resize: DragBehavior = {};
   mouse: MouseBehavior;
   div: Selection;
+  particles = [];
+  simulation;
   // #endregion
 
   // #region [Private Variables]
@@ -699,14 +701,12 @@ export class Drawer {
   // #endregion
 
   // #region [Pouring]
-  start_pour() {
+  async start_pour() {
+    if (!this.energy.has_energy) return;
     let [x,y] = this.xy();
     this.pour_timer = d3.interval((t) => this.pour_tick(t), 100);
-    let e;
-    if (this.energy.has_energy) {
-      let xt = this.x.invert(x);
-      e = this.energy.at(xt);
-    }
+    let xt = this.x.invert(x);
+    let e = await this.energy.at(xt);
     console.log('POURING', [x,y], e);
   }
 
