@@ -43,6 +43,9 @@ export class ModeTracker {
                 next = ToolMode.Click;
                 break;
             case ToolMode.Click:
+                next = ToolMode.Pour;
+                break;
+            case ToolMode.Pour:
                 next = ToolMode.Selection;
                 break;
             default:
