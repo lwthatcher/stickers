@@ -409,10 +409,10 @@ export class Drawer {
     }
     this.ye = d3.scaleLog()
                 .clamp(true)
-                .rangeRound([this.h, 0]);
+                .rangeRound([0, this.h]);
     this.ys = d3.scaleLog()
                 .clamp(true)
-                .rangeRound([this.h, 0]);
+                .rangeRound([0, this.h]);
     // setup line-drawing method(s)
     for (let j of this.yDims()) {
       this.lines[j] = d3.line().x((d) => this.x(d.i))

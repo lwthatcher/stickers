@@ -107,7 +107,7 @@ export class EnergyWellsTracker {
             for (let i of this.short_dims) {result += d[i]}
             return result;
         }
-        return this.closest(x,data);
+        return sum(this.closest(x,data));
     }
     // #endregion
 
