@@ -44,6 +44,7 @@ export class Drawer {
   private r_start;
   private z_start;
   private cursor;
+  private pour_timer;
   // #endregion
 
   // #region [Constructor]
@@ -523,6 +524,7 @@ export class Drawer {
   }
 
   private zoom_end() {
+    if (this.mode.pour) { this.end_pour() }
     let Δt = Date.now() - this.z_start;
     this.z_start = undefined;
     console.debug('zoom end:', Δt);
@@ -595,6 +597,7 @@ export class Drawer {
   private mouse_leave() {
     this.layers.svg.classed('custom-cursor', false);
     this.clear('cursor');
+    this.end_pour();
   }
 
   private mouse_down() {
@@ -603,6 +606,8 @@ export class Drawer {
     if ((buttons & 16) === 16) { this.forward_click() }
     if ((buttons & 8) === 8) { this.backward_click() }
     if ((buttons & 4) === 4) { this.middle_click() }
+    if ((buttons & 2) === 2) { this.right_click() }
+    if ((buttons & 1) === 1) { this.left_click() }
   }
 
   private mouse_up() {
@@ -614,6 +619,10 @@ export class Drawer {
     // prevent page-backwards
     if (this.mouse_event.button === 3) {
       this.mouse_event.preventDefault();
+    }
+    // for pour behaviour
+    if (this.mouse_event.button === 0) {
+      this.end_pour();
     }
   }
   // #endregion
@@ -681,6 +690,30 @@ export class Drawer {
 
   /** call-back for pressing the "page-backward" button on the mouse */
   backward_click() { this.ls.cycleDown() }
+
+  right_click() { }
+
+  left_click() {
+    if (this.mode.pour) {this.start_pour()}
+  }
+  // #endregion
+
+  // #region [Pouring]
+  start_pour() {
+    let xy = this.xy();
+    this.pour_timer = d3.interval((t) => this.pour_tick(t), 100);
+    console.log('POURING', xy)
+  }
+
+  end_pour() {
+    console.log('END POUR')
+    if (this.pour_timer)
+      this.pour_timer.stop();
+  }
+
+  pour_tick(t) {
+    console.debug('pour', t)
+  }
   // #endregion
 
   // #region [Helper Methods]
