@@ -527,7 +527,7 @@ export class Drawer {
     if (this.mode.pour) { this.end_pour() }
     let Δt = Date.now() - this.z_start;
     this.z_start = undefined;
-    console.debug('zoom end:', Δt);
+    // console.debug('zoom end:', Δt);
   }
   // #endregion
 
@@ -700,9 +700,13 @@ export class Drawer {
 
   // #region [Pouring]
   start_pour() {
-    let xy = this.xy();
+    let [x,y] = this.xy();
     this.pour_timer = d3.interval((t) => this.pour_tick(t), 100);
-    console.log('POURING', xy)
+    let e;
+    if (this.energy.has_energy) {
+      e = this.ys(x);
+    }
+    console.log('POURING', [x,y], e);
   }
 
   end_pour() {
