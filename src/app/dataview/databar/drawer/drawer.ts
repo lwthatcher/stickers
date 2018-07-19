@@ -704,20 +704,45 @@ export class Drawer {
   async start_pour() {
     if (!this.energy.has_energy) return;
     let [x,y] = this.xy();
-    this.pour_timer = d3.interval((t) => this.pour_tick(t), 100);
-    let xt = this.x.invert(x);
-    let e = await this.energy.at(xt);
-    console.log('POURING', [x,y], e);
+    this.pour_timer = d3.interval((t) => this.pour_tick(t, x, y), 100);
+    let xt = (x) => this.x.invert(x);
+    let formatted = await this.energy.formatted;
+    let e = (x) => {return this.energy.atSycn(xt(x), formatted)}
+    console.log('POURING', [x,y], e(x), this.ys(e(x)));
+    this.simulation = d3.forceSimulation(this.particles)
+        .force('collide', d3.forceCollide(5))
+        .force('fall', d3.forceY((d) => {return this.ys(e(d.x))}))
+        .alphaDecay(0.001)
+        .on('tick', () => this.ticked());
   }
 
   end_pour() {
     console.log('END POUR')
     if (this.pour_timer)
       this.pour_timer.stop();
+    if (this.simulation)
+      this.simulation.stop();
+    // TODO: get bounding rect
   }
 
-  pour_tick(t) {
-    console.debug('pour', t)
+  pour_tick(t, x, y) {
+    console.debug('pour', t, x, y);
+    let point = {x, y}
+    let nodes = this.simulation.nodes();
+    nodes.push(point);
+    this.simulation.nodes(nodes);
+    this.simulation.restart();
+  }
+
+  private ticked() {
+    let u = this.layers.ghost.selectAll('circle').data(this.particles);
+    u.enter()
+      .append('circle')
+      .attr('r', 2)
+      .merge(u)
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
+    u.exit().remove();
   }
   // #endregion
 

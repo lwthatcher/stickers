@@ -102,6 +102,10 @@ export class EnergyWellsTracker {
 
     async at(x) {
         let data = await this.formatted;
+        return this.atSycn(x, data);
+    }
+
+    atSycn(x, data) {
         let sum = (d) => {
             let result = 0;
             for (let i of this.short_dims) {result += d[i]}
