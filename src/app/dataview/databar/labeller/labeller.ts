@@ -90,21 +90,33 @@ export class Labeller {
         this.ls.emit('delete');
     }
 
-    add(px: number, label: number) {
+    add(px: number, label: number, size=this.NEW_LABEL_WIDTH) {
         let dx = this.x.invert(px);
         // initial start/end times
-        let start = this.x.invert(px - this.NEW_LABEL_WIDTH/2);
-        let end = this.x.invert(px + this.NEW_LABEL_WIDTH/2);
+        let start = this.x.invert(px - size/2);
+        let end = this.x.invert(px + size/2);
         // adjust start/end times for overlap
         let temp = {label, start:dx, end:dx}
-        start = this.overlaps(start, temp, "left");
-        end = this.overlaps(end, temp, "right");
+        start = this.overlaps(start, temp, 'left');
+        end = this.overlaps(end, temp, 'right');
         // add label
         let type = this.ls.emap.get(label);
         let lbl = { start, end, label, type } as Label
-        this.ls.add(lbl);
+        lbl = this.ls.add(lbl);
         // notify observers
         this.ls.emit('add');
+        return lbl;
+    }
+
+    grow(lbl: Label, sx, ex) {
+        sx = this.x.invert(sx);
+        ex = this.x.invert(ex);
+        let start = this.overlaps(sx, lbl, 'left');
+        let end = this.overlaps(ex, lbl, 'right');
+        lbl.start = Math.min(start, lbl.start);
+        lbl.end = Math.max(end, lbl.end);
+        this.ls.emit('grow', lbl);
+        return lbl;
     }
 
     change_label(lbl: Label, new_label: number) {

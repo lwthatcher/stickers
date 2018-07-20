@@ -151,6 +151,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Event Handlers]
   stream_update(event) {
     if (event.type === 'change-type') { this.type_changed(event) }
+    else if (event.type === 'grow') { this.drawer.updateLabel(event.target) }
     else { this.redraw_labels() }
   }
 
@@ -207,6 +208,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     let background = this.drawer.layers['zoom'];
     background.classed('selection-mode', mode.selection);
     background.classed('click-mode', mode.click);
+    background.classed('pour-mode', mode.pour);
     console.debug('mode update:', mode.current);
     if (mode.click) { this.labeller.deselect() }
   }

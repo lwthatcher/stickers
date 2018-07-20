@@ -3,7 +3,8 @@ import { EventEmitter } from '@angular/core';
 // #region [Interfaces]
 export enum ToolMode {
     Selection,
-    Click
+    Click,
+    Pour
 }
 // #endregion
 
@@ -25,6 +26,8 @@ export class ModeTracker {
     get selection() { return this.current === ToolMode.Selection }
 
     get click() { return this.current === ToolMode.Click }
+
+    get pour() { return this.current === ToolMode.Pour }
     // #endregion
 
     // #region [Public Methods]
@@ -40,6 +43,9 @@ export class ModeTracker {
                 next = ToolMode.Click;
                 break;
             case ToolMode.Click:
+                next = ToolMode.Pour;
+                break;
+            case ToolMode.Pour:
                 next = ToolMode.Selection;
                 break;
             default:

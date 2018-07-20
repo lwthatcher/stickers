@@ -4,7 +4,8 @@ import { DataloaderService } from "../../data-loader/data-loader.service";
 import { EventEmitter } from "@angular/core";
 import { Sensor } from "../sensors/sensor";
 import * as math from 'mathjs';
-import { mod } from "@tensorflow/tfjs-core";
+import * as d3 from "d3";
+
 
 // #region [Interfaces]
 type EnergyMap = {[name: string]: DataInfo}
@@ -98,6 +99,20 @@ export class EnergyWellsTracker {
         this.displayMode = mode;
         this.event$.emit({type: 'display-mode', mode: mode});
     }
+
+    async at(x) {
+        let data = await this.formatted;
+        return this.atSycn(x, data);
+    }
+
+    atSycn(x, data) {
+        let sum = (d) => {
+            let result = 0;
+            for (let i of this.short_dims) {result += d[i]}
+            return result;
+        }
+        return sum(this.closest(x,data));
+    }
     // #endregion
 
     // #region [Helper Methods]
@@ -117,6 +132,12 @@ export class EnergyWellsTracker {
             let rowmap = (acc,cur,i) => { acc[this.short_dims[i]] = cur.d; acc.i = cur.i; return acc; }
             return math.transpose(axes).map((row) => row.reduce(rowmap, {}));
         })
+    }
+
+    private closest(x, data) {
+        let Δi = (d) => Math.abs(d.i - x)
+        let i = d3.scan(data, (a,b) => {return Δi(a) - Δi(b) })
+        return data[i];
     }
     // #endregion
 }

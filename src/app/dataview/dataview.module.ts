@@ -4,6 +4,9 @@ import { DataviewComponent } from './dataview.component';
 import { DatabarComponent } from './databar/databar.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconRegistry, MatIconModule } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { TypesToolboxComponent } from './types/types-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
@@ -15,7 +18,9 @@ import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.compone
   imports: [
     CommonModule,
     NgbModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MatIconModule
   ],
   declarations: [
     DataviewComponent, 
@@ -26,4 +31,8 @@ import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.compone
     SensorsToolboxComponent, SaveMenuComponent, EnergyWellToolboxComponent],
   providers: []
 })
-export class DataviewModule { }
+export class DataviewModule { 
+  constructor(matIconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) {
+    matIconRegistry.addSvgIconSet(domSanitizer.bypassSecurityTrustResourceUrl('./assets/mdi.svg'));
+  }
+}

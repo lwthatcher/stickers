@@ -1,4 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+/*#region [Material Icons] */
+button.mat-menu-item {
+    line-height: 24px !important;
+  }
+  a.mat-menu-item > mat-icon {
+    margin-bottom: 14px;
+  }
+  .mat-icon svg {
+    height: 24px;
+    width: 24px;
+  }
+/*#endregion */
+
 /*#region [Labels] */
 rect.label {
     opacity: 0.5;
@@ -131,6 +144,7 @@ svg.databar.custom-cursor * {
 /*#endregion */
 
 /*#region [Icons] */
+.mat-icon,
 i.icon {
     vertical-align:middle;
 }
