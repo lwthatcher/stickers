@@ -75,8 +75,6 @@ export class Drawer {
     this.layers.svg.call(this.mouse);
     this.layers.svg.call(this.zoom)
                    .on("dblclick.zoom", null);
-    // create tooltip div
-    
   }
   // #endregion
 
@@ -111,7 +109,7 @@ export class Drawer {
     else return event;
   }
 
-  get domain_set() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
+  get isDomainSet() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
 
   get energy() { return this.databar.energy }
   // #endregion
@@ -153,7 +151,7 @@ export class Drawer {
   
   draw_labels() {
     if (!this.labels) { return }
-    if (!this.domain_set) { return }
+    if (!this.isDomainSet) { return }
     if (!this.show_labels) { this.clear('labels'); return; }
     
     let lbls = this.select_labels();
