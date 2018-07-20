@@ -71,7 +71,7 @@ export class PourBehavior {
         if (this.pour_timer) this.pour_timer.stop();
         if (this.simulation) this.simulation.stop();
         this.current_lbl = undefined;
-        this.particles = [];
+        this.clearParticles();
     }
     // #endregion
     
@@ -96,10 +96,10 @@ export class PourBehavior {
             .append('circle')
             .attr('r', this.PARTICLE_RADIUS)
             .attr('fill', this.color)
+            .attr('opacity', .9)
             .merge(u)
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);
-        u.exit().remove();
     }
 
     private createSimulation(ys, roll) {
@@ -109,6 +109,17 @@ export class PourBehavior {
                  .force('roll', d3.forceX((d) => {return roll(d.x) }))
                  .alphaDecay(this.ALPHA_DECAY)
                  .on('tick', () => this.ticked());
+    }
+
+    private clearParticles() {
+        
+        this.drawer.layers.ghost
+            .selectAll('circle')
+            .transition()
+            .duration(750)
+            .attr('opacity', 0)
+            .remove();
+        this.particles = [];
     }
 
     private extents() {
