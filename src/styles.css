@@ -42,6 +42,16 @@ rect.drag-handle.warn {
 }
 /*#endregion */
 
+/*#region [Ghosts] */
+g.ghost > rect.ghost-label {
+    opacity: .1;
+}
+
+/* g.ghost > circle {
+    opacity: .9;
+} */
+/*#endregion */
+
 /*#region [Signals] */
 .line {
     stroke-width: 2px;

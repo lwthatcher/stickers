@@ -28,6 +28,8 @@ export class MouseBehavior {
         if (this.D3_EVENTS.includes(event.type)) return event.sourceEvent;
         else return event;
     }
+
+    get mode() { return this.drawer.mode }
     // #endregion
 
     // #region [Mouse Behaviors]
@@ -44,9 +46,10 @@ export class MouseBehavior {
     private mouse_move() {
         // get the custom cursor path, or null if no custom cursor applies to this setting
         let overlaps = this.overlaps();
-        let cursor = this.custom_cursor(this.drawer.region(), this.drawer.mode, overlaps);
+        let cursor = this.custom_cursor(this.drawer.region(), this.mode, overlaps);
         this.drawer.layers.svg.classed('custom-cursor', !!cursor);
         this.drawer.draw_cursor(cursor);
+        if (!overlaps) this.drawer.draw_ghost();
     }
     
     private mouse_leave() {
@@ -89,7 +92,7 @@ export class MouseBehavior {
         if (this.overlaps(event)) { return }    // ignore clicks on labels
         this.drawer.labeller.deselect();               // deselect any selected labels
         // if label-creation mode, add an event
-        if (this.drawer.mode.click) {
+        if (this.mode.click) {
             let [x,y] = this.drawer.xy(event);
             this.drawer.labeller.add(x, this.drawer.label_type);
         }
@@ -97,13 +100,13 @@ export class MouseBehavior {
 
     /** click call-back for when a label has been clicked */
     lbl_clicked(lbl) {
-        if (this.drawer.mode.selection) this.drawer.labeller.select(lbl)
-        if (this.drawer.mode.click)     this.drawer.labeller.change_label(lbl, this.drawer.label_type)
+        if (this.mode.selection) this.drawer.labeller.select(lbl)
+        if (this.mode.click)     this.drawer.labeller.change_label(lbl, this.drawer.label_type)
     }
 
     /** call-back for pressing the middle scroll-wheel button */
     middle_click() {
-        this.drawer.mode.cycle();    // cycle through mode
+        this.mode.cycle();    // cycle through mode
         this.mouse_move();    // redraw mouse
     }
 
@@ -118,7 +121,7 @@ export class MouseBehavior {
 
     /** call-back for performing a left-click on the mouse */
     left_click() {
-        if (this.drawer.mode.pour) {this.drawer.behaviors.pour.start()}
+        if (this.mode.pour) {this.drawer.behaviors.pour.start()}
     }
     // #endregion
 

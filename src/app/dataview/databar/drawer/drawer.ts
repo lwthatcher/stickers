@@ -203,6 +203,22 @@ export class Drawer {
              .attr('d', cursor);
   }
 
+  draw_ghost() {
+    this.clear('ghost');
+    if (!this.mode.click) { return }
+    let [x,y] = this.xy();
+    let [start,end] = this.labeller.bounds(x);
+    let label = this.label_type;
+    this.layers.ghost.append('rect')
+        .datum({start, end, label})
+        .attr('class', 'ghost-label')
+        .attr('y', 0)
+        .attr('height', this.databar.height)
+        .attr('x', (d) => { return this.x(d.start) })
+        .attr('width', this.width)
+        .attr('fill', this.fill);
+  }
+
   async draw_energy() {
     if (!this.energy.has_energy) { return }
     if (!this.energy.visible) { this.clear('energy'); return; }
@@ -214,7 +230,6 @@ export class Drawer {
       let data = await this.energy.data;
       this.plotOverlayed(data);
     }
-    
   }
   // #endregion
 
@@ -456,10 +471,6 @@ export class Drawer {
   }
   // #endregion
 
-  // #region [Click Handlers]
-  clicked(event) { this.behaviors.mouse.clicked(event) }
-  // #endregion
-
   // #region [Utility Methods]
   xy(event?): number[] {
     if (event) return d3.clientPoint(this.layers.zoom.node(), event);
@@ -476,6 +487,9 @@ export class Drawer {
     if (y > this.h) return 'x-axis';
     return 'frame';
   }
+
+  /** alias method for drawer.behaviors.mouse.clicked() */
+  clicked(event) { this.behaviors.mouse.clicked(event) }
   // #endregion
 
   // #region [Helper Methods]
