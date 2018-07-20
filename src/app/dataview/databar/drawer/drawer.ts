@@ -249,8 +249,7 @@ export class Drawer {
                   .transition()
                   .duration(100)
                   .attr('x', (d) => { return this.x(d.start) })
-                  .attr('width', this.width)
-    console.log('label', lbl, label);
+                  .attr('width', this.width);
   }
   // #endregion
 

@@ -7,6 +7,7 @@ export class PourBehavior {
     PARTICLE_RADIUS = 2;
     COLLIDE_RADIUS = 5;
     DX = 10;
+    TICK = 100;
     // #endregion
     
     // #region [Properties]
@@ -58,22 +59,19 @@ export class PourBehavior {
     async start() {
         if (!this.energy.has_energy) return;
         let [x,y] = this.drawer.xy();
-        this.pour_timer = d3.interval((t) => this.pour_tick(x), 100);
+        this.pour_timer = d3.interval((t) => this.pour_tick(x), this.TICK);
         let formatted = await this.energy.formatted;
         let ys = this.yDepth(formatted);
         let roll = this.roll(ys);
-    
         this.current_lbl = this.drawer.labeller.add(x, this.label_type, 1);
-    
-        console.log('POURING', [x,y], ys(x), this.current_lbl, this.particles);
         this.simulation = this.createSimulation(ys, roll);
     }
     
     end() {
-        console.log('END POUR')
         if (this.pour_timer) this.pour_timer.stop();
         if (this.simulation) this.simulation.stop();
         this.current_lbl = undefined;
+        this.particles = [];
     }
     // #endregion
     

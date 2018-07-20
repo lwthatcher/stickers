@@ -111,8 +111,10 @@ export class Labeller {
     grow(lbl: Label, sx, ex) {
         sx = this.x.invert(sx);
         ex = this.x.invert(ex);
-        lbl.start = this.overlaps(sx, lbl, 'left');
-        lbl.end = this.overlaps(ex, lbl, 'right');
+        let start = this.overlaps(sx, lbl, 'left');
+        let end = this.overlaps(ex, lbl, 'right');
+        lbl.start = Math.min(start, lbl.start);
+        lbl.end = Math.max(end, lbl.end);
         this.ls.emit('grow', lbl);
         return lbl;
     }
