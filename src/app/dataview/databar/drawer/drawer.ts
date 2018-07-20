@@ -708,10 +708,11 @@ export class Drawer {
     let xt = (x) => this.x.invert(x);
     let formatted = await this.energy.formatted;
     let e = (x) => {return this.energy.atSycn(xt(x), formatted)}
+    let ys = (x) => {return this.ys(e(x)) }
     console.log('POURING', [x,y], e(x), this.ys(e(x)));
     this.simulation = d3.forceSimulation(this.particles)
         .force('collide', d3.forceCollide(5))
-        .force('fall', d3.forceY((d) => {return this.ys(e(d.x))}))
+        .force('fall', d3.forceY((d) => {return ys(d.x) }))
         .alphaDecay(0.001)
         .on('tick', () => this.ticked());
   }
@@ -727,7 +728,7 @@ export class Drawer {
 
   pour_tick(t, x, y) {
     console.debug('pour', t, x, y);
-    let point = {x, y}
+    let point = {x, y: 0}
     let nodes = this.simulation.nodes();
     nodes.push(point);
     this.simulation.nodes(nodes);
