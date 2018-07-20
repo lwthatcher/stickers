@@ -6,6 +6,7 @@ import { Selection } from './selection.interface';
 import { time_format } from './time-format';
 import { LayerMap } from './layers';
 import { DisplayMode } from '../../energy/energy-wells';
+import { HighlightBehavior } from './behaviors/highlight';
 
 // #region [Interfaces]
 
@@ -39,6 +40,7 @@ export class Drawer {
   div: Selection;
   particles = [];
   simulation;
+  behaviors;
   // #endregion
 
   // #region [Private Variables]
@@ -50,7 +52,7 @@ export class Drawer {
   // #endregion
 
   // #region [Constructor]
-  constructor(databar: DatabarComponent) { 
+  constructor(databar: DatabarComponent) {
     this.databar = databar;
     // setup selection layers
     let host = d3.select(databar.element.nativeElement);
@@ -66,6 +68,8 @@ export class Drawer {
         .attr('width', databar.width)
         .attr('height', databar.height);
     // setup behaviors
+    this.behaviors = {};
+    this.behaviors.highlight = new HighlightBehavior(this);
     this.zoom = this.setup_zoom();
     this.move = this.setup_move();
     this.mouse = this.setup_mouse();
@@ -76,10 +80,7 @@ export class Drawer {
     this.layers.svg.call(this.zoom)
                    .on("dblclick.zoom", null);
     // create tooltip div
-    this.div = d3.select('body')
-                 .append('div')
-                 .attr('class', 'tooltip')
-                 .style('opacity', 0);
+    
   }
   // #endregion
 
@@ -300,8 +301,8 @@ export class Drawer {
         .attr("stroke", this.databar.colorer.lines.get(j+1))
         .attr("idx", j)
         .attr("d", this.getLine(j))
-        .on("mouseover", () => this.mouseover(j))
-        .on("mouseout", () => this.mouseout())
+        .on("mouseover", () => this.behaviors.highlight.mouseover(j))
+        .on("mouseout", () => this.behaviors.highlight.mouseout())
   }
   // #endregion
   
@@ -628,38 +629,38 @@ export class Drawer {
   }
   // #endregion
 
-  // #region [Highlight Behaviors]
-  mouseover(j) {
-    this.highlight_signal(j);
-    this.display_tooltip(j);
-  }
+  // // #region [Highlight Behaviors]
+  // mouseover(j) {
+  //   this.highlight_signal(j);
+  //   this.display_tooltip(j);
+  // }
 
-  mouseout() {
-    this.signals.classed('line--hover', false)
-                .classed('line--fade', false);
-    this.div.transition()
-            .duration(500)
-            .style('opacity', 0);
-  }
+  // mouseout() {
+  //   this.signals.classed('line--hover', false)
+  //               .classed('line--fade', false);
+  //   this.div.transition()
+  //           .duration(500)
+  //           .style('opacity', 0);
+  // }
 
-  private highlight_signal(j) {
-    this.signals.each((d,i,nodes) => {
-      let self = d3.select(nodes[i]);
-      let idx = self.attr('idx');
-      self.classed('line--hover', () => idx == j);
-      self.classed('line--fade', () => idx != j);
-    })
-  }
+  // private highlight_signal(j) {
+  //   this.signals.each((d,i,nodes) => {
+  //     let self = d3.select(nodes[i]);
+  //     let idx = self.attr('idx');
+  //     self.classed('line--hover', () => idx == j);
+  //     self.classed('line--fade', () => idx != j);
+  //   })
+  // }
 
-  private display_tooltip(j) {
-    this.div.transition()
-    	      .duration(200)
-    	      .style("opacity", 1);
-    this.div.html(this.sensor.name + ' - ' + this.sensor.dims[j])
-    	      .style("left", (d3.event.pageX - 55) + "px")
-            .style("top", (d3.event.pageY - 40) + "px");
-  }
-  // #endregion
+  // private display_tooltip(j) {
+  //   this.div.transition()
+  //   	      .duration(200)
+  //   	      .style("opacity", 1);
+  //   this.div.html(this.sensor.name + ' - ' + this.sensor.dims[j])
+  //   	      .style("left", (d3.event.pageX - 55) + "px")
+  //           .style("top", (d3.event.pageY - 40) + "px");
+  // }
+  // // #endregion
 
   // #region [Click Handlers]
 

@@ -97,7 +97,6 @@ export class Labeller {
         let end = this.x.invert(px + size/2);
         // adjust start/end times for overlap
         let temp = {label, start:dx, end:dx}
-        console.debug('temp', temp);
         start = this.overlaps(start, temp, "left");
         end = this.overlaps(end, temp, "right");
         // add label
