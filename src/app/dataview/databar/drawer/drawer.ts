@@ -709,10 +709,22 @@ export class Drawer {
     let formatted = await this.energy.formatted;
     let e = (x) => {return this.energy.atSycn(xt(x), formatted)}
     let ys = (x) => {return this.ys(e(x)) }
+    const DX = 10;
+    let roll = (x) => {
+      let x0 = ys(x);
+      let x1 = ys(x+DX);
+      let x2 = ys(x-DX);
+      let left = (x0-x2)/(DX*2)
+      let right = (x0-x1)/(DX*2)
+      return x+left-right;
+    }
+
+
     console.log('POURING', [x,y], e(x), this.ys(e(x)));
     this.simulation = d3.forceSimulation(this.particles)
         .force('collide', d3.forceCollide(5))
         .force('fall', d3.forceY((d) => {return ys(d.x) }))
+        .force('roll', d3.forceX((d) => {return roll(d.x) }))
         .alphaDecay(0.001)
         .on('tick', () => this.ticked());
   }
