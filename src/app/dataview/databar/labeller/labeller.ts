@@ -90,11 +90,11 @@ export class Labeller {
         this.ls.emit('delete');
     }
 
-    add(px: number, label: number) {
+    add(px: number, label: number, size=this.NEW_LABEL_WIDTH) {
         let dx = this.x.invert(px);
         // initial start/end times
-        let start = this.x.invert(px - this.NEW_LABEL_WIDTH/2);
-        let end = this.x.invert(px + this.NEW_LABEL_WIDTH/2);
+        let start = this.x.invert(px - size/2);
+        let end = this.x.invert(px + size/2);
         // adjust start/end times for overlap
         let temp = {label, start:dx, end:dx}
         start = this.overlaps(start, temp, "left");
