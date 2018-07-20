@@ -1,6 +1,5 @@
 import { DatabarComponent } from '../databar.component';
 import { Label } from '../../labelstreams/labelstream';
-import * as d3 from "d3";
 import { arraysEqual } from '../../../util/util';
 import { Selection } from './selection.interface';
 import { time_format } from './time-format';
@@ -9,20 +8,11 @@ import { DisplayMode } from '../../energy/energy-wells';
 import { HighlightBehavior } from './behaviors/highlight';
 import { DragBehavior } from './behaviors/drag';
 import { PourBehavior } from './behaviors/pour'
+import { MouseBehavior } from './behaviors/mouse';
+import * as d3 from "d3";
 
 // #region [Interfaces]
-
-type side = 'left' | 'right'
-
 type ZoomBehavior = any
-type MouseBehavior = any
-// #endregion
-
-// #region [Constants]
-const POINTER = 'M10,2A2,2 0 0,1 12,4V8.5C12,8.5 14,8.25 14,9.25C14,9.25 16,9 16,10C16,10 18,9.75 18,10.75C18,10.75 20,10.5 20,11.5V15C20,16 17,21 17,22H9C9,22 7,15 4,13C4,13 3,7 8,12V4A2,2 0 0,1 10,2Z'
-const BRUSH = 'M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z'
-
-const D3_EVENTS = ['zoom', 'drag', 'start', 'end']
 // #endregion
 
 export class Drawer {
@@ -35,7 +25,6 @@ export class Drawer {
   Y = [];
   lines = [];
   zoom: ZoomBehavior;
-  mouse: MouseBehavior;
   div: Selection;
   particles = [];
   simulation;
@@ -44,8 +33,6 @@ export class Drawer {
 
   // #region [Private Variables]
   private z_start;
-  private cursor;
-  private pour_timer;
   // #endregion
 
   // #region [Constructor]
@@ -69,10 +56,10 @@ export class Drawer {
     this.behaviors.highlight = new HighlightBehavior(this);
     this.behaviors.drag = new DragBehavior(this);
     this.behaviors.pour = new PourBehavior(this);
+    this.behaviors.mouse = new MouseBehavior(this);
     this.zoom = this.setup_zoom();
-    this.mouse = this.setup_mouse();
     // register non-local behaviors
-    this.layers.svg.call(this.mouse);
+    this.layers.svg.call(this.behaviors.mouse.mouse);
     this.layers.svg.call(this.zoom)
                    .on("dblclick.zoom", null);
   }
@@ -102,12 +89,6 @@ export class Drawer {
   get label_type() { return this.ls.lbl_type }
 
   get ls() { return this.databar.labelstream }
-
-  get mouse_event(): MouseEvent {
-    let event = d3.event;
-    if (D3_EVENTS.includes(event.type)) return event.sourceEvent;
-    else return event;
-  }
 
   get isDomainSet() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
 
@@ -345,7 +326,7 @@ export class Drawer {
                     .attr('height', this.databar.height)
                     .attr("clip-path", "url(#clip)")
                     .classed('label', true)
-                    .on('click', (d) => { this.lbl_clicked(d) })
+                    .on('click', (d) => { this.behaviors.mouse.lbl_clicked(d) })
                     .call(this.behaviors.drag.move)
                     .attr('x', this.middle)
                     .attr('width', 0)
@@ -494,7 +475,7 @@ export class Drawer {
       if (region === 'x-axis') this.emit_zoom();
       else if (region === 'frame') {
         if (mode.selection) this.emit_zoom();    // allow frame-panning in selection mode
-        if (mode.click) this.mouse_move();       // otherwise treat as a mouse-move
+        if (mode.click) this.behaviors.mouse.mouse_move();       // otherwise treat as a mouse-move
       }
     }
     else { console.warn('unexpected zoom-event type:', type, 'region:', region, 'mode:', mode.current) }
@@ -514,94 +495,8 @@ export class Drawer {
   }
   // #endregion
 
-  // #region [Mouse Behaviors]
-  setup_mouse() {
-    let behavior = (selection) => {
-      selection.on('mousemove', () => {this.mouse_move()})
-      selection.on('mouseleave', () => {this.mouse_leave()})
-      selection.on('mousedown', () => {this.mouse_down()})
-      selection.on('mouseup', () => {this.mouse_up()})
-    }
-    return behavior;
-  }
-
-  private mouse_move() {
-    // get the custom cursor path, or null if no custom cursor applies to this setting
-    let overlaps = this.overlaps();
-    let cursor = this.custom_cursor(this.region(), this.mode, overlaps);
-    this.layers.svg.classed('custom-cursor', !!cursor);
-    this.draw_cursor(cursor);
-  }
-
-  private mouse_leave() {
-    this.layers.svg.classed('custom-cursor', false);
-    this.clear('cursor');
-    this.behaviors.pour.end();
-  }
-
-  private mouse_down() {
-    let buttons = this.mouse_event.buttons
-    console.debug('mouse down', buttons);
-    if ((buttons & 16) === 16) { this.forward_click() }
-    if ((buttons & 8) === 8) { this.backward_click() }
-    if ((buttons & 4) === 4) { this.middle_click() }
-    if ((buttons & 2) === 2) { this.right_click() }
-    if ((buttons & 1) === 1) { this.left_click() }
-  }
-
-  private mouse_up() {
-    console.debug('mouse up', this.mouse_event.button);
-    // prevent page-forward
-    if (this.mouse_event.button === 4) {
-      this.mouse_event.preventDefault();
-    }
-    // prevent page-backwards
-    if (this.mouse_event.button === 3) {
-      this.mouse_event.preventDefault();
-    }
-    // for pour behaviour
-    if (this.mouse_event.button === 0) {
-      this.behaviors.pour.end();
-    }
-  }
-  // #endregion
-
   // #region [Click Handlers]
-
-  /** general click call-back bound to the SVG */
-  clicked(event: MouseEvent) {
-    if (this.overlaps(event)) { return }    // ignore clicks on labels
-    this.labeller.deselect();               // deselect any selected labels
-    // if label-creation mode, add an event
-    if (this.mode.click) {
-      let [x,y] = this.xy(event);
-      this.labeller.add(x, this.label_type);
-    }
-  }
-
-  /** click call-back for when a label has been clicked */
-  lbl_clicked(lbl) {
-    if (this.mode.selection) this.labeller.select(lbl)
-    if (this.mode.click)     this.labeller.change_label(lbl, this.label_type)
-  }
-
-  /** call-back for pressing the middle scroll-wheel button */
-  middle_click() {
-    this.mode.cycle();    // cycle through mode
-    this.mouse_move();    // redraw mouse
-  }
-
-  /** call-back for pressing the "page-forward" button on the mouse */
-  forward_click() { this.ls.cycle() }
-
-  /** call-back for pressing the "page-backward" button on the mouse */
-  backward_click() { this.ls.cycleDown() }
-
-  right_click() { }
-
-  left_click() {
-    if (this.mode.pour) {this.behaviors.pour.start()}
-  }
+  clicked(event) { this.behaviors.mouse.clicked(event) }
   // #endregion
 
   // #region [Utility Methods]
@@ -623,17 +518,6 @@ export class Drawer {
   // #endregion
 
   // #region [Helper Methods]
-  private overlaps(event?: MouseEvent): boolean {
-    event = event || this.mouse_event;
-    return d3.select(event.target).classed('label');
-  }
-
-  private custom_cursor(region, mode, overlaps) {
-    if (region === 'frame' && mode.click && !overlaps) return POINTER;
-    if (region === 'frame' && mode.click && overlaps) return BRUSH;
-    else return null;
-  }
-
   private domains_and_ranges() {
     let dr = (d) => {return [d.domain(), d.range()]}
     let ys = this.Y.map((y) => dr(y))
@@ -646,6 +530,7 @@ export class Drawer {
     console.log('layers:', this.layers);
     console.log('line(s):', this.lines);
     console.log('stacked series:', this.stackedSeries());
+    console.log('behaviors:', this.behaviors);
     console.log('drawer:', this);
     console.groupEnd();
   }
