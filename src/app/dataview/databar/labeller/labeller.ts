@@ -2,9 +2,16 @@ import { DatabarComponent } from '../databar.component';
 import { Label } from '../../labelstreams/labelstream';
 import * as d3 from "d3";
 
+// #region [Interfaces]
+interface LabelLike {
+    start: number;
+    end: number;
+}
+// #endregion
+
 export class Labeller {
     // #region [Constants]
-    NEW_LABEL_WIDTH = 50;
+    FIXED_LABEL_WIDTH = 50;
     // #endregion
 
     // #region [Constructor]
@@ -90,15 +97,8 @@ export class Labeller {
         this.ls.emit('delete');
     }
 
-    add(px: number, label: number, size=this.NEW_LABEL_WIDTH) {
-        let dx = this.x.invert(px);
-        // initial start/end times
-        let start = this.x.invert(px - size/2);
-        let end = this.x.invert(px + size/2);
-        // adjust start/end times for overlap
-        let temp = {label, start:dx, end:dx}
-        start = this.overlaps(start, temp, 'left');
-        end = this.overlaps(end, temp, 'right');
+    add(px: number, label: number, size=this.FIXED_LABEL_WIDTH) {
+        let [start, end] = this.bounds(px, size);
         // add label
         let type = this.ls.emap.get(label);
         let lbl = { start, end, label, type } as Label
@@ -126,6 +126,18 @@ export class Labeller {
     }
     // #endregion
 
+    // #region [Utility Methods]
+    bounds(px, size=this.FIXED_LABEL_WIDTH) {
+        let dx = this.x.invert(px);
+        let start = this.x.invert(px - size/2);
+        let end = this.x.invert(px + size/2);
+        let temp = {start:dx, end:dx}
+        start = this.overlaps(start, temp, 'left');
+        end = this.overlaps(end, temp, 'right');
+        return [start, end]
+    }
+    // #endregion
+
     // #region [Helper Methods]
     private zero_width(lbl: Label) {
         return lbl.start === lbl.end;
@@ -142,14 +154,14 @@ export class Labeller {
     }
 
     /**
-     * checks whether the new label position overlaps with any other labels
+     * reduces the bounds for the specified side to ensure no overlap with other existing labels
      * 
      * @param dx the potential new label position
      * @param lbl the selected label
      * @param side whether moving in the right/left direction
      * @returns updated dx value
      */
-    private overlaps(dx: number, lbl: Label, side: 'left' | 'right') {
+    private overlaps(dx: number, lbl: LabelLike, side: 'left' | 'right') {
         for (let l of this.labels) {
             // ignore the selected label
             if (l.selected) continue;
