@@ -475,19 +475,6 @@ export class Drawer {
   }
   // #endregion
 
-  // #region [Utility Methods]
-  region() {
-    // get x,y
-    let [x,y] = this.xy();
-    // return region based on precedence
-    if (x < 0) return 'y-axis';
-    if (y < 0) return 'margin-top';
-    if (x > this.w) return 'margin-right';
-    if (y > this.h) return 'x-axis';
-    return 'frame';
-  }
-  // #endregion
-
   // #region [Zoom Behaviors]
   setup_zoom() {
     return d3.zoom().scaleExtent([1, 50])
@@ -619,12 +606,25 @@ export class Drawer {
   }
   // #endregion
 
-  // #region [Helper Methods]
+  // #region [Utility Methods]
   xy(event?): number[] {
     if (event) return d3.clientPoint(this.layers.zoom.node(), event);
     else return d3.mouse(this.layers.zoom.node());
   }
 
+  region() {
+    // get x,y
+    let [x,y] = this.xy();
+    // return region based on precedence
+    if (x < 0) return 'y-axis';
+    if (y < 0) return 'margin-top';
+    if (x > this.w) return 'margin-right';
+    if (y > this.h) return 'x-axis';
+    return 'frame';
+  }
+  // #endregion
+
+  // #region [Helper Methods]
   private overlaps(event?: MouseEvent): boolean {
     event = event || this.mouse_event;
     return d3.select(event.target).classed('label');

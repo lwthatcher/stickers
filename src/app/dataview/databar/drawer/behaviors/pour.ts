@@ -2,10 +2,15 @@ import { Drawer } from "../drawer";
 import * as d3 from "d3";
 
 export class PourBehavior {
+    // #region [Constants]
+    PARTICLE_RADIUS = 2;
+    COLLIDE_RADIUS = 5;
+    DX = 10;
+    // #endregion
     
     // #region [Properties]
     drawer: Drawer;
-    particles = [];
+    particles;
     simulation;
     private pour_timer;
     // #endregion
@@ -13,6 +18,7 @@ export class PourBehavior {
     // #region [Constructor]
     constructor(drawer: Drawer) {
         this.drawer = drawer;
+        this.particles = [];
     }
     // #endregion
 
@@ -24,27 +30,37 @@ export class PourBehavior {
     get x() { return this.drawer.x }
     // #endregion
 
+    // #region [Callbacks]
+    get xi() { return (x) => this.x.invert(x); }
+
+    yDepth(formatted) {
+        let e = (x) => {return this.energy.atSycn(this.xi(x), formatted)}
+        return (x) => { return this.drawer.ys(e(x)) }
+    }
+
+    roll(ys) {
+        return (x) => {
+            let x0 = ys(x);
+            let x1 = ys(x+this.DX);
+            let x2 = ys(x-this.DX);
+            let left = (x0-x2)/(this.DX*2)
+            let right = (x0-x1)/(this.DX*2)
+            return x+left-right;
+        }
+    }
+    // #endregion
+
     // #region [Public Methods]
     async start() {
         if (!this.energy.has_energy) return;
         let [x,y] = this.drawer.xy();
         this.pour_timer = d3.interval((t) => this.pour_tick(t, x), 100);
-        let xt = (x) => this.x.invert(x);
         let formatted = await this.energy.formatted;
-        let e = (x) => {return this.energy.atSycn(xt(x), formatted)}
-        let ys = (x) => {return this.drawer.ys(e(x)) }
-        const DX = 10;
-        let roll = (x) => {
-          let x0 = ys(x);
-          let x1 = ys(x+DX);
-          let x2 = ys(x-DX);
-          let left = (x0-x2)/(DX*2)
-          let right = (x0-x1)/(DX*2)
-          return x+left-right;
-        }
+        let ys = this.yDepth(formatted);
+        let roll = this.roll(ys);
     
         let _label = this.label_type;
-        let lbl = this.drawer.labeller.add(this.x(x), _label, 1);
+        let lbl = this.drawer.labeller.add(x, _label, 1);
     
         console.log('POURING', [x,y], ys(x), _label, lbl);
         this.simulation = d3.forceSimulation(this.particles)
@@ -67,7 +83,7 @@ export class PourBehavior {
     // #endregion
     
     // #region [Helper Methods]
-    pour_tick(t, x) {
+    private pour_tick(t, x) {
     console.debug('pour', t, x);
     let point = {x, y: 0}
     let nodes = this.simulation.nodes();
