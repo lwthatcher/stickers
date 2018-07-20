@@ -97,14 +97,16 @@ export class Labeller {
         let end = this.x.invert(px + size/2);
         // adjust start/end times for overlap
         let temp = {label, start:dx, end:dx}
+        console.debug('temp', temp);
         start = this.overlaps(start, temp, "left");
         end = this.overlaps(end, temp, "right");
         // add label
         let type = this.ls.emap.get(label);
         let lbl = { start, end, label, type } as Label
-        this.ls.add(lbl);
+        lbl = this.ls.add(lbl);
         // notify observers
         this.ls.emit('add');
+        return lbl;
     }
 
     change_label(lbl: Label, new_label: number) {

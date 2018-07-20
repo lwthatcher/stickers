@@ -61,6 +61,7 @@ export class LabelStream {
         lbl.id = this._i;
         this._i++;
         this.labels.push(lbl);
+        return lbl;
     }
     // #endregion
 

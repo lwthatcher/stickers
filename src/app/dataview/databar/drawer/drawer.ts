@@ -371,7 +371,6 @@ export class Drawer {
   // #region [Energy Wells Plotting Helpers]
   private plotStacked(series) {
     // update selection
-    console.debug('series', series);
     let wells = this.layers.energy.selectAll('path').data(series)
     // exit selection
     wells.exit()
@@ -704,7 +703,7 @@ export class Drawer {
   async start_pour() {
     if (!this.energy.has_energy) return;
     let [x,y] = this.xy();
-    this.pour_timer = d3.interval((t) => this.pour_tick(t, x, y), 100);
+    this.pour_timer = d3.interval((t) => this.pour_tick(t, x), 100);
     let xt = (x) => this.x.invert(x);
     let formatted = await this.energy.formatted;
     let e = (x) => {return this.energy.atSycn(xt(x), formatted)}
@@ -719,14 +718,17 @@ export class Drawer {
       return x+left-right;
     }
 
+    let _label = this.label_type;
+    let lbl = this.labeller.add(this.x(x), _label, 1);
 
-    console.log('POURING', [x,y], e(x), this.ys(e(x)));
+    console.log('POURING', [x,y], ys(x), _label, lbl);
     this.simulation = d3.forceSimulation(this.particles)
         .force('collide', d3.forceCollide(5))
         .force('fall', d3.forceY((d) => {return ys(d.x) }))
         .force('roll', d3.forceX((d) => {return roll(d.x) }))
         .alphaDecay(0.001)
         .on('tick', () => this.ticked());
+
   }
 
   end_pour() {
@@ -738,8 +740,8 @@ export class Drawer {
     // TODO: get bounding rect
   }
 
-  pour_tick(t, x, y) {
-    console.debug('pour', t, x, y);
+  pour_tick(t, x) {
+    console.debug('pour', t, x);
     let point = {x, y: 0}
     let nodes = this.simulation.nodes();
     nodes.push(point);
