@@ -30,6 +30,8 @@ export class PourBehavior {
     get label_type() { return this.drawer.label_type}
 
     get x() { return this.drawer.x }
+
+    get color() { return this.drawer.databar.colorer.labels(this.drawer.ls.name).get(this.label_type)}
     // #endregion
 
     // #region [Callbacks]
@@ -95,6 +97,7 @@ export class PourBehavior {
         u.enter()
             .append('circle')
             .attr('r', this.PARTICLE_RADIUS)
+            .attr('fill', this.color)
             .merge(u)
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);

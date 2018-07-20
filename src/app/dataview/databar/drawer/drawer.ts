@@ -124,9 +124,9 @@ export class Drawer {
     if (!this.isDomainSet) { return }
     if (!this.show_labels) { this.clear('labels'); return; }
     
-    let lbls = this.select_labels();
-    this.exiting_labels(lbls);
-    this.entering_labels(lbls);
+    let lbls = this.selectAllLabels();
+    this.onExit(lbls);
+    this.onEnter(lbls);
   }
   
   draw_handles(lbl?: Label) {
@@ -243,6 +243,15 @@ export class Drawer {
         .attr('x', (d) => { return this.x(d.start) })
         .attr('width', width)
   }
+
+  updateLabel(label: Label) {
+    let lbl = this.selectLabel(label)
+                  .transition()
+                  .duration(100)
+                  .attr('x', (d) => { return this.x(d.start) })
+                  .attr('width', this.width)
+    console.log('label', lbl, label);
+  }
   // #endregion
 
   // #region [Signal Plotting Helpers]
@@ -288,7 +297,7 @@ export class Drawer {
   // #endregion
 
   // #region [Labels Plotting Helpers]
-  private select_labels() {
+  private selectAllLabels() {
     let rects = this.layers.labels
                     .selectAll('rect.label')
                     .data(this.labels, this.key)
@@ -299,7 +308,11 @@ export class Drawer {
     return rects;
   }
 
-  private exiting_labels(lbls) {
+  private selectLabel(lbl: Label) {
+    return this.layers.labels.select('rect.label[lbl-id="' + lbl.id.toString() + '"]');
+  }
+
+  private onExit(lbls) {
     lbls.exit()
         .transition()
         .duration(250)
@@ -308,11 +321,12 @@ export class Drawer {
         .remove();
   }
 
-  private entering_labels(lbls) {
+  private onEnter(lbls) {
     let enter = lbls.enter()
                     .append('rect')
                     .attr('y', 0)
                     .attr('height', this.databar.height)
+                    .attr('lbl-id', (d) => d.id)
                     .attr("clip-path", "url(#clip)")
                     .classed('label', true)
                     .on('click', (d) => { this.behaviors.mouse.lbl_clicked(d) })

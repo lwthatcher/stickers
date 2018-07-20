@@ -15,6 +15,7 @@ export interface Label {
 export interface LabelStreamEvent {
     type: string;
     source: string;
+    target?: Label;
 }
 // #endregion
 
@@ -90,8 +91,10 @@ export class LabelStream {
     // #endregion
 
     // #region [Utility Methods]
-    emit(type: string) {
-        this.event$.emit({type, source: this.name})
+    emit(type: string, target=undefined) {
+        let event: LabelStreamEvent = {type, source: this.name}
+        if (!!target) event.target = target;
+        this.event$.emit(event)
     }
 
     findType(type: LabelKey) {

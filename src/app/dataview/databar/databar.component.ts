@@ -151,6 +151,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #region [Event Handlers]
   stream_update(event) {
     if (event.type === 'change-type') { this.type_changed(event) }
+    else if (event.type === 'grow') { this.drawer.updateLabel(event.target) }
     else { this.redraw_labels() }
   }
 
