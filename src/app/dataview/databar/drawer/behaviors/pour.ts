@@ -3,6 +3,7 @@ import * as d3 from "d3";
 
 export class PourBehavior {
     // #region [Constants]
+    ALPHA_DECAY = 0.001;
     PARTICLE_RADIUS = 2;
     COLLIDE_RADIUS = 5;
     DX = 10;
@@ -59,17 +60,10 @@ export class PourBehavior {
         let ys = this.yDepth(formatted);
         let roll = this.roll(ys);
     
-        let _label = this.label_type;
-        let lbl = this.drawer.labeller.add(x, _label, 1);
+        let lbl = this.drawer.labeller.add(x, this.label_type, 1);
     
-        console.log('POURING', [x,y], ys(x), _label, lbl);
-        this.simulation = d3.forceSimulation(this.particles)
-            .force('collide', d3.forceCollide(5))
-            .force('fall', d3.forceY((d) => {return ys(d.x) }))
-            .force('roll', d3.forceX((d) => {return roll(d.x) }))
-            .alphaDecay(0.001)
-            .on('tick', () => this.ticked());
-        
+        console.log('POURING', [x,y], ys(x), lbl);
+        this.simulation = this.createSimulation(ys, roll);
     }
     
     end() {
@@ -84,23 +78,32 @@ export class PourBehavior {
     
     // #region [Helper Methods]
     private pour_tick(t, x) {
-    console.debug('pour', t, x);
-    let point = {x, y: 0}
-    let nodes = this.simulation.nodes();
-    nodes.push(point);
-    this.simulation.nodes(nodes);
-    this.simulation.restart();
+        console.debug('pour', t, x);
+        let point = {x, y: 0}
+        let nodes = this.simulation.nodes();
+        nodes.push(point);
+        this.simulation.nodes(nodes);
+        this.simulation.restart();
     }
 
     private ticked() {
-    let u = this.drawer.layers.ghost.selectAll('circle').data(this.particles);
-    u.enter()
-        .append('circle')
-        .attr('r', 2)
-        .merge(u)
-        .attr('cx', (d) => d.x)
-        .attr('cy', (d) => d.y);
-    u.exit().remove();
+        let u = this.drawer.layers.ghost.selectAll('circle').data(this.particles);
+        u.enter()
+            .append('circle')
+            .attr('r', this.PARTICLE_RADIUS)
+            .merge(u)
+            .attr('cx', (d) => d.x)
+            .attr('cy', (d) => d.y);
+        u.exit().remove();
+    }
+
+    private createSimulation(ys, roll) {
+        return d3.forceSimulation(this.particles)
+                 .force('collide', d3.forceCollide(this.COLLIDE_RADIUS))
+                 .force('fall', d3.forceY((d) => {return ys(d.x) }))
+                 .force('roll', d3.forceX((d) => {return roll(d.x) }))
+                 .alphaDecay(this.ALPHA_DECAY)
+                 .on('tick', () => this.ticked());
     }
     // #endregion
 }
