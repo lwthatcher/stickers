@@ -97,14 +97,23 @@ export class Labeller {
         let end = this.x.invert(px + size/2);
         // adjust start/end times for overlap
         let temp = {label, start:dx, end:dx}
-        start = this.overlaps(start, temp, "left");
-        end = this.overlaps(end, temp, "right");
+        start = this.overlaps(start, temp, 'left');
+        end = this.overlaps(end, temp, 'right');
         // add label
         let type = this.ls.emap.get(label);
         let lbl = { start, end, label, type } as Label
         lbl = this.ls.add(lbl);
         // notify observers
         this.ls.emit('add');
+        return lbl;
+    }
+
+    grow(lbl: Label, sx, ex) {
+        sx = this.x.invert(sx);
+        ex = this.x.invert(ex);
+        lbl.start = this.overlaps(sx, lbl, 'left');
+        lbl.end = this.overlaps(ex, lbl, 'right');
+        this.ls.emit('grow');
         return lbl;
     }
 
