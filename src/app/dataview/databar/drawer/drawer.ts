@@ -8,6 +8,7 @@ import { LayerMap } from './layers';
 import { DisplayMode } from '../../energy/energy-wells';
 import { HighlightBehavior } from './behaviors/highlight';
 import { DragBehavior } from './behaviors/drag';
+import { PourBehavior } from './behaviors/pour'
 
 // #region [Interfaces]
 
@@ -67,6 +68,7 @@ export class Drawer {
     this.behaviors = {};
     this.behaviors.highlight = new HighlightBehavior(this);
     this.behaviors.drag = new DragBehavior(this);
+    this.behaviors.pour = new PourBehavior(this);
     this.zoom = this.setup_zoom();
     this.mouse = this.setup_mouse();
     // register non-local behaviors
@@ -520,7 +522,7 @@ export class Drawer {
   }
 
   private zoom_end() {
-    if (this.mode.pour) { this.end_pour() }
+    if (this.mode.pour) { this.behaviors.pour.end() }
     let Δt = Date.now() - this.z_start;
     this.z_start = undefined;
     // console.debug('zoom end:', Δt);
@@ -549,7 +551,7 @@ export class Drawer {
   private mouse_leave() {
     this.layers.svg.classed('custom-cursor', false);
     this.clear('cursor');
-    this.end_pour();
+    this.behaviors.pour.end();
   }
 
   private mouse_down() {
@@ -574,7 +576,7 @@ export class Drawer {
     }
     // for pour behaviour
     if (this.mouse_event.button === 0) {
-      this.end_pour();
+      this.behaviors.pour.end();
     }
   }
   // #endregion
@@ -613,74 +615,12 @@ export class Drawer {
   right_click() { }
 
   left_click() {
-    if (this.mode.pour) {this.start_pour()}
-  }
-  // #endregion
-
-  // #region [Pouring]
-  async start_pour() {
-    if (!this.energy.has_energy) return;
-    let [x,y] = this.xy();
-    this.pour_timer = d3.interval((t) => this.pour_tick(t, x), 100);
-    let xt = (x) => this.x.invert(x);
-    let formatted = await this.energy.formatted;
-    let e = (x) => {return this.energy.atSycn(xt(x), formatted)}
-    let ys = (x) => {return this.ys(e(x)) }
-    const DX = 10;
-    let roll = (x) => {
-      let x0 = ys(x);
-      let x1 = ys(x+DX);
-      let x2 = ys(x-DX);
-      let left = (x0-x2)/(DX*2)
-      let right = (x0-x1)/(DX*2)
-      return x+left-right;
-    }
-
-    let _label = this.label_type;
-    let lbl = this.labeller.add(this.x(x), _label, 1);
-
-    console.log('POURING', [x,y], ys(x), _label, lbl);
-    this.simulation = d3.forceSimulation(this.particles)
-        .force('collide', d3.forceCollide(5))
-        .force('fall', d3.forceY((d) => {return ys(d.x) }))
-        .force('roll', d3.forceX((d) => {return roll(d.x) }))
-        .alphaDecay(0.001)
-        .on('tick', () => this.ticked());
-
-  }
-
-  end_pour() {
-    console.log('END POUR')
-    if (this.pour_timer)
-      this.pour_timer.stop();
-    if (this.simulation)
-      this.simulation.stop();
-    // TODO: get bounding rect
-  }
-
-  pour_tick(t, x) {
-    console.debug('pour', t, x);
-    let point = {x, y: 0}
-    let nodes = this.simulation.nodes();
-    nodes.push(point);
-    this.simulation.nodes(nodes);
-    this.simulation.restart();
-  }
-
-  private ticked() {
-    let u = this.layers.ghost.selectAll('circle').data(this.particles);
-    u.enter()
-      .append('circle')
-      .attr('r', 2)
-      .merge(u)
-      .attr('cx', (d) => d.x)
-      .attr('cy', (d) => d.y);
-    u.exit().remove();
+    if (this.mode.pour) {this.behaviors.pour.start()}
   }
   // #endregion
 
   // #region [Helper Methods]
-  private xy(event?): number[] {
+  xy(event?): number[] {
     if (event) return d3.clientPoint(this.layers.zoom.node(), event);
     else return d3.mouse(this.layers.zoom.node());
   }
