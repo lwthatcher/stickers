@@ -9,11 +9,8 @@ import { HighlightBehavior } from './behaviors/highlight';
 import { DragBehavior } from './behaviors/drag';
 import { PourBehavior } from './behaviors/pour'
 import { MouseBehavior } from './behaviors/mouse';
+import { ZoomBehavior } from './behaviors/zoom';
 import * as d3 from "d3";
-
-// #region [Interfaces]
-type ZoomBehavior = any
-// #endregion
 
 export class Drawer {
   // #region [Variables]
@@ -24,15 +21,7 @@ export class Drawer {
   area; stacked_area;
   Y = [];
   lines = [];
-  zoom: ZoomBehavior;
-  div: Selection;
-  particles = [];
-  simulation;
   behaviors;
-  // #endregion
-
-  // #region [Private Variables]
-  private z_start;
   // #endregion
 
   // #region [Constructor]
@@ -57,10 +46,10 @@ export class Drawer {
     this.behaviors.drag = new DragBehavior(this);
     this.behaviors.pour = new PourBehavior(this);
     this.behaviors.mouse = new MouseBehavior(this);
-    this.zoom = this.setup_zoom();
+    this.behaviors.zoom = new ZoomBehavior(this);
     // register non-local behaviors
     this.layers.svg.call(this.behaviors.mouse.mouse);
-    this.layers.svg.call(this.zoom)
+    this.layers.svg.call(this.behaviors.zoom.zoom)
                    .on("dblclick.zoom", null);
   }
   // #endregion
@@ -137,7 +126,7 @@ export class Drawer {
     
     let lbls = this.select_labels();
     this.exiting_labels(lbls);
-    let enter = this.entering_labels(lbls);
+    this.entering_labels(lbls);
   }
   
   draw_handles(lbl?: Label) {
@@ -451,47 +440,6 @@ export class Drawer {
   private eyAxis() {
     if (this.energy.displayMode === DisplayMode.Overlayed) return this.ye;
     else return this.ys;
-  }
-  // #endregion
-
-  // #region [Zoom Behaviors]
-  setup_zoom() {
-    return d3.zoom().scaleExtent([1, 50])
-                    .translateExtent([[0, 0], [this.w, this.h]])
-                    .extent([[0, 0], [this.w, this.h]])
-                    .on('zoom', () => this.zoomed())
-                    .on('start', () => this.zoom_start())
-                    .on('end', () => this.zoom_end())
-  }
-
-  zoomed() {
-    let region = this.region()
-    let type = d3.event.sourceEvent.type;
-    let mode = this.mode;
-    // always allow scroll-wheel zooming
-    if (type === 'wheel' && region === 'frame') this.emit_zoom()
-    else if (type === 'mousemove') {
-      // always allow panning on the x-axis
-      if (region === 'x-axis') this.emit_zoom();
-      else if (region === 'frame') {
-        if (mode.selection) this.emit_zoom();    // allow frame-panning in selection mode
-        if (mode.click) this.behaviors.mouse.mouse_move();       // otherwise treat as a mouse-move
-      }
-    }
-    else { console.warn('unexpected zoom-event type:', type, 'region:', region, 'mode:', mode.current) }
-  }
-
-  private emit_zoom() { this.databar.zoom.emit(d3.event) }
-
-  private zoom_start() {
-    this.z_start = Date.now();
-  }
-
-  private zoom_end() {
-    if (this.mode.pour) { this.behaviors.pour.end() }
-    let Δt = Date.now() - this.z_start;
-    this.z_start = undefined;
-    // console.debug('zoom end:', Δt);
   }
   // #endregion
 
