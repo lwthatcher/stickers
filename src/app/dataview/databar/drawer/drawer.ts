@@ -7,13 +7,13 @@ import { time_format } from './time-format';
 import { LayerMap } from './layers';
 import { DisplayMode } from '../../energy/energy-wells';
 import { HighlightBehavior } from './behaviors/highlight';
+import { DragBehavior } from './behaviors/drag';
 
 // #region [Interfaces]
 
 type side = 'left' | 'right'
 
 type ZoomBehavior = any
-type DragBehavior = any | {[side: string]: DragBehavior}
 type MouseBehavior = any
 // #endregion
 
@@ -34,8 +34,6 @@ export class Drawer {
   Y = [];
   lines = [];
   zoom: ZoomBehavior;
-  move: DragBehavior;
-  resize: DragBehavior = {};
   mouse: MouseBehavior;
   div: Selection;
   particles = [];
@@ -44,8 +42,6 @@ export class Drawer {
   // #endregion
 
   // #region [Private Variables]
-  private m_start;
-  private r_start;
   private z_start;
   private cursor;
   private pour_timer;
@@ -70,11 +66,9 @@ export class Drawer {
     // setup behaviors
     this.behaviors = {};
     this.behaviors.highlight = new HighlightBehavior(this);
+    this.behaviors.drag = new DragBehavior(this);
     this.zoom = this.setup_zoom();
-    this.move = this.setup_move();
     this.mouse = this.setup_mouse();
-    this.resize.left = this.setup_resize('left');
-    this.resize.right = this.setup_resize('right');
     // register non-local behaviors
     this.layers.svg.call(this.mouse);
     this.layers.svg.call(this.zoom)
@@ -317,7 +311,7 @@ export class Drawer {
                     .classed(side, true)
                     .attr('y', 0)
                     .attr('height', this.databar.height)
-                    .call(this.resize[side])
+                    .call(this.behaviors.drag.resize[side])
                     .merge(selection)
                     .attr('x', callback)
   }
@@ -352,7 +346,7 @@ export class Drawer {
                     .attr("clip-path", "url(#clip)")
                     .classed('label', true)
                     .on('click', (d) => { this.lbl_clicked(d) })
-                    .call(this.move)
+                    .call(this.behaviors.drag.move)
                     .attr('x', this.middle)
                     .attr('width', 0)
                     .classed('selected', (d) => d.selected )
@@ -533,50 +527,6 @@ export class Drawer {
   }
   // #endregion
 
-  // #region [Drag Behaviors]
-  setup_move() {
-    return d3.drag().on('drag', (...d) => { this.lbl_move(d) })
-                    .on('start', (...d) => { this.move_start(d) })
-                    .on('end', (...d) => { this.move_end(d) })
-  }
-
-  setup_resize(side: side) {
-    return d3.drag().on('drag', (d) => { this.lbl_resize(d, side) })
-                    .on('start', (...d) => { this.resize_start(d, side) })
-                    .on('end', (...d) => { this.resize_end(d, side) })
-  }
-
-  lbl_resize(d, side) { this.labeller.resize(d, side) }
-
-  lbl_move(_d) {
-    // can only drag in selection mode
-    if (!this.mode.selection) return;   
-    let [d,i,arr] = _d;               
-    this.labeller.move(d, d3.select(arr[i]));
-  }
-
-  private move_start(_d) {
-    this.m_start = Date.now();
-  }
-
-  private move_end(_d) {
-    let [d,i,arr] = _d;
-    let Δt = Date.now() - this.m_start;
-    this.m_start = undefined;
-    console.debug('move end:', Δt, [d,i,arr], d3.event);
-  }
-
-  private resize_start(d, side) {
-    this.r_start = Date.now();
-  }
-
-  private resize_end(d, side) {
-    let Δt = Date.now() - this.r_start;
-    this.r_start = undefined;
-    console.debug('resize end:', Δt, d, side);
-  }
-  // #endregion
-
   // #region [Mouse Behaviors]
   setup_mouse() {
     let behavior = (selection) => {
@@ -628,39 +578,6 @@ export class Drawer {
     }
   }
   // #endregion
-
-  // // #region [Highlight Behaviors]
-  // mouseover(j) {
-  //   this.highlight_signal(j);
-  //   this.display_tooltip(j);
-  // }
-
-  // mouseout() {
-  //   this.signals.classed('line--hover', false)
-  //               .classed('line--fade', false);
-  //   this.div.transition()
-  //           .duration(500)
-  //           .style('opacity', 0);
-  // }
-
-  // private highlight_signal(j) {
-  //   this.signals.each((d,i,nodes) => {
-  //     let self = d3.select(nodes[i]);
-  //     let idx = self.attr('idx');
-  //     self.classed('line--hover', () => idx == j);
-  //     self.classed('line--fade', () => idx != j);
-  //   })
-  // }
-
-  // private display_tooltip(j) {
-  //   this.div.transition()
-  //   	      .duration(200)
-  //   	      .style("opacity", 1);
-  //   this.div.html(this.sensor.name + ' - ' + this.sensor.dims[j])
-  //   	      .style("left", (d3.event.pageX - 55) + "px")
-  //           .style("top", (d3.event.pageY - 40) + "px");
-  // }
-  // // #endregion
 
   // #region [Click Handlers]
 
