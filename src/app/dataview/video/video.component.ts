@@ -14,6 +14,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   expanded: boolean;
   api: VgAPI;
   src: string;
+  name: string;
   // #endregion
 
   // #region [Inputs]
@@ -28,7 +29,8 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     this.expanded = true;
     // video source
     let vids = Object.keys(this.workspace.video);
-    this.src = this.source(vids[0]);
+    this.name = vids[0];
+    this.src = this.source(this.name);
     console.log('source:', this.src);
     // video element
     this.video = this.el.nativeElement.querySelector('vg-player > video');
