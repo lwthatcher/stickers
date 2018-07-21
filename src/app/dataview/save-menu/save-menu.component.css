@@ -1,0 +1,20 @@
+/*#region [Menu] */
+:host {
+    display: block;
+}
+
+div.card {
+    margin-left: 0px;
+}
+/*#endregion */
+
+/*#region [Generic Dropdowns] */
+button.dropdown-item,
+div.dropdown-item {
+    cursor: pointer;
+}
+
+div.dropdown-item.dropdown-button {
+    padding: 1px 1px;
+}
+/*#endregion */

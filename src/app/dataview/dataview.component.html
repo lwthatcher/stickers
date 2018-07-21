@@ -1,0 +1,71 @@
+<div class="card border-primary sensor-bars">
+    <div class="card-header ws-name">
+        <div class="detail">
+            Workspace: 
+            <span class="value">{{ws}}</span>
+        </div>
+        <div class="detail">
+                Dataset: 
+                <span class="value">{{ds}}</span>
+        </div>
+        
+    </div>
+    <div *ngFor="let sensor of sensors">
+        <div class='card-header d-flex toolbar'>
+
+            <toolbox-sensors
+                [sensor]="sensor"
+                [channels]="channels">
+            </toolbox-sensors>
+
+            <toolbox-labelstreams 
+                [sensor]="sensor"
+                [workspace]="workspace"
+                [(labelstreams)]="labelStreams" 
+                (remove)="removeStream($event)">
+            </toolbox-labelstreams>
+
+            <toolbox-modes 
+                [sensor]="sensor" 
+                [tracker]="mode">
+            </toolbox-modes>
+
+            <toolbox-types 
+                [sensor]="sensor" 
+                [colorer]="colorer" 
+                [(labelstream)]="labelStreams[sensor.labelstream]">
+            </toolbox-types>
+
+            <toolbox-energy
+                [energy]="energy">
+            </toolbox-energy>
+
+            <div class='right'>
+                <i *ngIf="!sensor.hidden" (click)="hide(sensor)" class="material-icons icon" title='hide' aria-label="hide">remove</i>
+                <i *ngIf="!sensor.hidden" (click)="remove(sensor)" class="material-icons icon" title='close' aria-label="hide">close</i>
+                <i *ngIf="sensor.hidden" (click)="show(sensor)" class="material-icons icon" title='show' aria-label="show">add</i>
+            </div>
+        </div>
+        <app-databar  
+            *ngIf="!sensor.hidden"
+            [data_info]="info"
+            [dataset]="dataset"
+            [energy]="energy"
+            [sensor]="sensor"
+            [mode]="mode"
+            [transform]="zoom_transform"
+            [colorer]="colorer"
+            [(labelstream)]="labelStreams[sensor.labelstream]"
+            (zoom)="onZoom($event)">
+        </app-databar>
+    </div>
+    <div class="card-footer">
+        <div class="right">
+                <button class="btn btn-info" (click)="newSensor()" title="add sensor">
+                        <i class="material-icons icon">add</i>
+                </button>
+        </div>
+    </div>
+</div>
+
+<app-save-menu [labelstreams]="labelStreams" [default]="default_stream"></app-save-menu>

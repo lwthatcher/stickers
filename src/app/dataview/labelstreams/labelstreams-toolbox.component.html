@@ -1,0 +1,77 @@
+<ng-template #addPopover>
+    <form>
+        <div class="form-group row">
+            <label for="event-type" class="col-form-label">Name:</label>
+            <div class="col">
+                <input type="text" 
+                    class="form-control" 
+                    #textbox 
+                    id="event-type"
+                    (keyup.enter)="add_stream(textbox.value)"
+                    placeholder="event name"
+                    required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class='col'>
+                <button class="btn btn-success btn-block"
+                    type="button"
+                    title="create"
+                    [disabled]="!valid_name(textbox.value)"
+                    (click)="add_stream(textbox.value)">
+                    <i class="material-icons icon">done</i>
+                </button>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<div class='label-streams tools-box'>
+    <div class="btn-group">
+        <button type="button" 
+        (click)="toggleLabels()" 
+        class="btn btn-outline-secondary"
+        [disabled]="sensor.hidden" 
+        title="toggle labels on/off">
+            <span>
+                <i *ngIf="sensor.show_labels" class="material-icons">label</i>
+                <i *ngIf="!sensor.show_labels" class="material-icons">label_outline</i>
+            </span>
+        </button>
+        <div class="btn-group" 
+          ngbDropdown 
+          role="group"
+          autoClose="outside"
+          #dropdown="ngbDropdown"
+          aria-label="list of label streams">
+            <button class="btn btn-outline-secondary" 
+              title="current label stream" 
+              [ngClass]="{'disabled': sensor.hidden}" 
+              ngbDropdownToggle>
+                {{sensor.labelstream}}
+            </button>
+            <div class="dropdown-menu" ngbDropdownMenu>
+                <div *ngFor="let stream of streams" 
+                  (click)="selectStream(stream)" 
+                  class="dropdown-item">
+                    {{stream}}
+                    <button class='btn btn-danger btn-icon'
+                      [disabled]="!can_remove(stream)"
+                      (click)="remove_stream(stream, $event)">
+                        <i class="material-icons icon">delete</i>
+                    </button>
+                </div>
+                <div class="dropdown-item dropdown-button">
+                    <button type="button" 
+                      class="btn btn-outline-secondary add-stream" 
+                      title='new label stream'
+                      [ngbPopover]="addPopover"
+                      #popover="ngbPopover"
+                      placement="right" >
+                        <i class="material-icons icon">{{icon}}</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

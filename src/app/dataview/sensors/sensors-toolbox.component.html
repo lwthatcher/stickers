@@ -1,0 +1,15 @@
+<ul class="nav nav-tabs card-header-tabs">
+    <li class="nav-item">
+        <a class="nav-link" [ngClass]="{'active': !sensor.hidden, 'disabled': sensor.hidden}">
+            {{sensor.name}}
+        </a>
+    </li>
+    <li class="nav-item" ngbDropdown>
+        <a class="nav-link btn-secondary text-white select-sensor" ngbDropdownToggle>...</a>
+        <div ngbDropdownMenu>
+            <button *ngFor="let s of sensors" class="dropdown-item" (click)="changeSensor(s)">
+                {{s.name}}
+            </button>
+        </div>
+    </li>
+</ul>

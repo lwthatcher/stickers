@@ -1,0 +1,131 @@
+/*#region [Sensor Bars] */
+app-save-menu,
+div.card {
+    margin-left: 1px;
+}
+
+div.card.sensor-bars {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+div.card-footer {
+    padding: 0px;
+}
+/*#endregion */
+
+/*#region [Headers] */
+div.card-header.toolbar {
+    padding: 0px;
+    background-color: rgba(230, 230, 230, 1);
+}
+
+div.card-header.ws-name {
+    padding: .75rem 1.25rem;
+}
+
+div.card-header.ws-name > div.detail {
+    float: left;
+    display: inline-flew;
+    padding-right: 20px;
+    font-weight: normal;
+}
+
+div.card-header.ws-name > div.detail > span.value {
+    color: darkblue;
+}
+
+div.card-header > .tools-box {
+    float: left;
+    display: inline-flex;
+    padding-left: 20px;
+}
+
+div.card-footer > div.right,
+div.card-header > div.right {
+    float: right;
+    display: -webkit-inline-box;
+    margin-left: auto;
+    margin-right: 0;
+    align-content: flex-end;
+    align-items: flex-end;
+}
+/*#endregion */
+
+
+/*#region [Icons] */
+button > i.material-icons,
+span > i.material-icons {
+    vertical-align:middle;
+}
+
+div.right > i.icon {
+    vertical-align: initial;
+}
+
+.icon {
+    cursor: pointer;
+}
+/*#endregion */
+
+/*#region [Select Sensor] */
+toolbox-sensors {
+    margin-left: 10px;
+}
+
+li.nav-item.dropdown > a.select-sensor {
+    cursor: pointer;
+}
+
+li.nav-item.dropdown.disabled > a.select-sensor,
+li.nav-item.dropdown.disabled {
+    cursor: default;
+    color: #6c757d;
+}
+
+li.nav-item.show.dropdown > a.select-sensor {
+    background-color: #6c757d;  /* bootstrap secondary gray */
+}
+
+a.select-sensor.dropdown-toggle::after {
+    margin-left: 0;
+    border-top: 0;
+    content: none;
+}
+/*#endregion */
+
+/*#region [Generic Dropdowns] */
+button.dropdown-item,
+div.dropdown-item {
+    cursor: pointer;
+}
+
+div.dropdown-item.dropdown-button {
+    padding: 1px 1px;
+}
+/*#endregion */
+
+/*#region [Label Streams] */
+div.dropdown-item.dropdown-button > button.add-stream {
+    border-style: dashed; 
+    width: 100%;
+    padding: 0;
+}
+
+div.dropdown-item.dropdown-button > button.add-stream > i.material-icons {
+    vertical-align: middle;
+}
+/*#endregion */
+
+/*#region [Label Types] */
+div.btn-group > label.btn-lbl {
+    border: gray;
+    border-width: 1px;
+}
+
+div.btn-group > label.btn-lbl.active {
+    border: black;
+    border-width: 2px;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+/*#endregion */

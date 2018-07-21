@@ -1,0 +1,12 @@
+.databar{
+    background-color: white;
+}
+
+.zoom{
+    fill: none;
+    pointer-events: all;
+}
+
+:host {
+    width: 100%;
+}

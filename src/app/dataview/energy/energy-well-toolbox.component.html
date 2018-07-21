@@ -1,0 +1,67 @@
+<div class="energy-wells tools-box">
+  <div class="btn-group">
+    <button type="button" 
+      class="btn btn-outline-secondary" 
+      (click)="energy.toggle()"
+      title='toggle energy wells visibility'>
+        <span>
+          <i *ngIf='energy.visible' class="material-icons">visibility</i>
+          <i *ngIf='!energy.visible' class="material-icons">visibility_off</i>
+        </span>
+    </button>
+    <div class='btn-group'
+      ngbDropdown
+      role="group"
+      #dropdown="ngbDropdown">
+        <button class="btn btn-outline-secondary" ngbDropdownToggle title="select energy dataset">
+          {{name}}
+        </button>
+        <div class="dropdown-menu" ngbDropdownMenu>
+          <div *ngFor="let ds of datasets" class="dropdown-item" (click)="energy.select(ds)">
+            {{ds}}
+          </div>
+        </div>
+    </div>
+    <button type="button"
+    class="btn btn-secondary"
+    [ngbPopover]="settingsPopover"
+    placement="right"
+    #settingsMenu="ngbPopover"
+    title='settings'
+    popoverTitle="Energy Wells Settings:">
+      <span><i class="material-icons icon">settings</i></span>
+    </button>
+  </div>
+</div>
+
+<ng-template #settingsPopover>
+    <form>
+        <div class="form-group row">
+          <div class="col">
+            <div class="btn-group btn-group-toggle d-flex" 
+              ngbRadioGroup 
+              name="radiomode" 
+              [(ngModel)]="displayMode"
+              (ngModelChange)="changed($event)">
+                <label ngbButtonLabel class="btn-primary flex-fill">
+                  <input ngbButton type="radio" [value]="DISPLAY_MODE.Stacked"> Stacked
+                </label>
+                <label ngbButtonLabel class="btn-primary flex-fill">
+                  <input ngbButton type="radio" [value]="DISPLAY_MODE.Overlayed"> Overlayed
+                </label>
+            </div>
+          </div>
+            
+        </div>
+        <div class="form-group row">
+            <div class='col'>
+                <button class="btn btn-success btn-block"
+                    type="button"
+                    (click)="close()"
+                    title="create">
+                    <i class="material-icons icon">done</i>
+                </button>
+            </div>
+        </div>
+    </form>
+</ng-template>

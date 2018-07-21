@@ -1,0 +1,32 @@
+/*#region [Select Sensor] */
+li.nav-item.dropdown > a.select-sensor {
+    cursor: pointer;
+}
+
+li.nav-item.dropdown.disabled > a.select-sensor,
+li.nav-item.dropdown.disabled {
+    cursor: default;
+    color: #6c757d;
+}
+
+li.nav-item.show.dropdown > a.select-sensor {
+    background-color: #6c757d;  /* bootstrap secondary gray */
+}
+
+a.select-sensor.dropdown-toggle::after {
+    margin-left: 0;
+    border-top: 0;
+    content: none;
+}
+/*#endregion */
+
+/*#region [Generic Dropdowns] */
+button.dropdown-item,
+div.dropdown-item {
+    cursor: pointer;
+}
+
+div.dropdown-item.dropdown-button {
+    padding: 1px 1px;
+}
+/*#endregion */

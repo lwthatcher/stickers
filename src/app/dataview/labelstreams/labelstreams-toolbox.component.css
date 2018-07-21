@@ -1,0 +1,58 @@
+/*#region [Toolbox] */
+:host {
+    display: contents;
+}
+
+:host > .tools-box {
+    float: left;
+    display: inline-flex;
+    padding-left: 20px;
+}
+/*#endregion */
+
+/*#region [Icons] */
+button > i.material-icons,
+span > i.material-icons {
+    vertical-align:middle;
+}
+
+.icon {
+    cursor: pointer;
+}
+/*#endregion */
+
+/*#region [Dropdown Menu] */
+button.dropdown-item,
+div.dropdown-item {
+    cursor: pointer;
+    padding-right: 0.25rem;
+}
+
+div.dropdown-item.dropdown-button {
+    padding: 1px 1px;
+}
+
+div.dropdown-item > .btn-icon {
+    float: right;
+    padding: 0;
+    visibility: hidden;
+}
+
+div.dropdown-item:hover > .btn-icon {
+    visibility: visible;
+}
+
+div.dropdown-menu {
+    padding-bottom: 0;
+}
+
+div.dropdown-item.dropdown-button > button.add-stream {
+    border-style: dashed; 
+    width: 100%;
+    padding: 0;
+}
+
+div.dropdown-item.dropdown-button > button.add-stream > i.material-icons {
+    vertical-align: middle;
+}
+/*#endregion */

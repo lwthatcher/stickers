@@ -1,0 +1,17 @@
+<div class='card border-info'>
+  <div class='card-header'>
+    Save Menu
+  </div>
+  <div class='card-body'>
+    <div class='card-text'>Labels: {{selected_stream}}</div>
+    <div class="btn-group mr-3">
+      <button type="button" class="btn btn-info" (click)="save_labels()">Save Labels</button>
+      <div class="btn-group" ngbDropdown role="group">
+        <button class="btn btn-info dropdown-toggle-split" ngbDropdownToggle></button>
+        <div class="dropdown-menu" ngbDropdownMenu>
+            <div *ngFor="let stream of streams" (click)="select(stream)" class="dropdown-item">{{stream}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<div class='tool-modes tools-box'>
+    <div class="btn-group btn-group-toggle" 
+    ngbRadioGroup 
+    name="radiotool" 
+    [(ngModel)]="mode" 
+    (ngModelChange)="changed($event)">
+        <label ngbButtonLabel class="btn btn-primary" title="selection mode">
+            <input ngbButton type="radio" [value]="TOOL_MODE.Selection" [disabled]="sensor.hidden">
+            <i class="material-icons">pan_tool</i>
+        </label>
+        <label ngbButtonLabel class="btn btn-primary" title="fixed width mode">
+            <input ngbButton type="radio" [value]="TOOL_MODE.Click" [disabled]="sensor.hidden">
+            <i class="material-icons">touch_app</i>
+        </label>
+        <label ngbButtonLabel class="btn btn-primary" title="hold-and-pour mode">
+            <input ngbButton type="radio" [value]="TOOL_MODE.Pour" [disabled]="sensor.hidden">
+            <mat-icon svgIcon="water-pump"></mat-icon>
+        </label>
+    </div>
+</div>
