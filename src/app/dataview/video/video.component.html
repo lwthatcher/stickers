@@ -1,13 +1,18 @@
 <div class="container-fluid">
-  <div class="row">
-    <div class="col"></div>
-    <div class="col-6">
-      <vg-player (onPlayerReady)="onPlayerReady($event)">
-          <video [vgMedia]="media" #media id="singleVideo" [preload]="preload" crossorigin controls>
-              <source [src]="src" type="video/mp4">
-          </video>
-      </vg-player>
-    </div>
-    <div class="col"></div>
-  </div>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header class="header">
+      Video:
+    </mat-expansion-panel-header>
+      <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
+          <vg-player (onPlayerReady)="onPlayerReady($event)">
+              <video [vgMedia]="media" #media id="singleVideo" [preload]="preload" crossorigin controls>
+                  <source [src]="src" type="video/mp4">
+              </video>
+          </vg-player>
+        </div>
+        <div class="col"></div>
+      </div>
+  </mat-expansion-panel>
 </div>
