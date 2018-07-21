@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 /*#region [Material Icons] */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
 button.mat-menu-item {
     line-height: 24px !important;
   }
