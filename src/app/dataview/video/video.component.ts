@@ -10,8 +10,9 @@ import { VgAPI } from 'videogular2/core';
 export class VideoComponent implements OnInit {
   // #region [Properties]
   preload: string = 'auto';
-  api: VgAPI;
   video: HTMLVideoElement;
+  expanded: boolean;
+  api: VgAPI;
   src: string;
   // #endregion
 
@@ -24,9 +25,12 @@ export class VideoComponent implements OnInit {
 
   ngOnInit() {
     console.groupCollapsed('video component');
+    this.expanded = true;
+    // video source
     let vids = Object.keys(this.workspace.video);
     this.src = this.source(vids[0]);
     console.log('source:', this.src);
+    // video element
     this.video = this.el.nativeElement.querySelector('vg-player > video');
     console.log('video element:', this.video);
     console.info('video component init', this);
