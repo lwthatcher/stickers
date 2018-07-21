@@ -5,9 +5,35 @@
     </mat-expansion-panel-header>
     <div class="row">
       <div class="col"></div>
-      <div class="col-6">
+      <div class="col-4">
         <vg-player (onPlayerReady)="onPlayerReady($event)">
-            <video [vgMedia]="media" #media id="singleVideo" [preload]="preload" crossorigin controls>
+            <vg-overlay-play></vg-overlay-play>
+            <vg-buffering></vg-buffering>
+
+            <vg-scrub-bar>
+                <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+            </vg-scrub-bar>
+
+            <vg-controls>
+                <vg-play-pause></vg-play-pause>
+                
+                <vg-mute></vg-mute>
+                <vg-volume></vg-volume>
+
+                <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+        
+                <vg-scrub-bar style="pointer-events: none;"></vg-scrub-bar>
+        
+                <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
+                <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+
+                <vg-playback-button></vg-playback-button>
+
+                <vg-fullscreen></vg-fullscreen>
+            </vg-controls>
+
+            <video [vgMedia]="media" #media id="singleVideo" [preload]="preload" crossorigin>
                 <source [src]="src" type="video/mp4">
             </video>
         </vg-player>
