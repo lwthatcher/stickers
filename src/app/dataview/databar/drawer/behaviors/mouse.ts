@@ -5,6 +5,7 @@ export class MouseBehavior {
     // #region [Constants]
     POINTER = 'M10,2A2,2 0 0,1 12,4V8.5C12,8.5 14,8.25 14,9.25C14,9.25 16,9 16,10C16,10 18,9.75 18,10.75C18,10.75 20,10.5 20,11.5V15C20,16 17,21 17,22H9C9,22 7,15 4,13C4,13 3,7 8,12V4A2,2 0 0,1 10,2Z'
     BRUSH = 'M7 14c-1.66 0-3 1.34-3 3 0 1.31-1.16 2-2 2 .92 1.22 2.49 2 4 2 2.21 0 4-1.79 4-4 0-1.66-1.34-3-3-3zm13.71-9.37l-1.34-1.34c-.39-.39-1.02-.39-1.41 0L9 12.25 11.75 15l8.96-8.96c.39-.39.39-1.02 0-1.41z'
+    WATER = 'M12,20C8.69,20 6,17.31 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14C18,17.31 15.31,20 12,20Z'
     D3_EVENTS = ['zoom', 'drag', 'start', 'end']
     // #endregion
 
@@ -129,6 +130,7 @@ export class MouseBehavior {
     private custom_cursor(region, mode, overlaps) {
         if (region === 'frame' && mode.click && !overlaps) return this.POINTER;
         if (region === 'frame' && mode.click && overlaps) return this.BRUSH;
+        if (region === 'frame' && mode.pour && !overlaps) return this.WATER;
         else return null;
     }
     
