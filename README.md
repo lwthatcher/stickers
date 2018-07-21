@@ -1,5 +1,8 @@
-# Stickers
-The practical interface for interactive temporal data annotation used for my Thesis proposal.
+# Stickers-2
+This fork is being used as a placeholder for the update of [_stickers_](https://github.com/lwthatcher/stickers) to its `2.0` version release.
+For various purposes I felt like some reorganization was in order, as well as including various features left out originally when initially creating the project in minimal mode. 
+This plan hopes to reintigrate some of these features by creating a fresh project using the Angular CLI.
+Here's to hoping!
 
 ## Dependencies
 ```
