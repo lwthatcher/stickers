@@ -37,13 +37,17 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     console.groupEnd();
   }
 
-  ngAfterViewChecked() {
-    this.cdRef.detectChanges();
-  }
+  ngAfterViewChecked() { this.cdRef.detectChanges() }
+  // #endregion
+
+  // #region [Accessors]
+  get w() { return this.api.videogularElement.clientWidth }
+  get h() { return this.api.videogularElement.clientHeight }
   // #endregion
 
   // #region [Event Handlers]
   onPlayerReady(api: VgAPI) {
+    this.api = api;
     console.log('video player ready', this.api);
   }
   // #endregion

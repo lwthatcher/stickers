@@ -1,8 +1,18 @@
+// #region [Container]
 .container-fluid {
     padding-left: 0;
     padding-right: 0;
 }
+// #endregion
 
+// #region [Border]
+mat-expansion-panel,
+mat-expansion-panel-header {
+    border-radius: 0.25rem;
+}
+// #endregion
+
+// #region [Header]
 mat-expansion-panel-header.header:focus,
 mat-expansion-panel-header.header {
     background-color: rgb(230, 230, 230) !important;
@@ -12,3 +22,4 @@ mat-expansion-panel-header.header {
 mat-expansion-panel-header.header:hover {
     background-color: rgb(200, 200, 200) !important;
 }
+// #endregion

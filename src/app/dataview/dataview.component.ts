@@ -18,6 +18,7 @@ import { DatabarComponent } from './databar/databar.component';
 import { SaveMenuComponent } from './save-menu/save-menu.component';
 import { EnergyWellsTracker } from './energy/energy-wells';
 import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
+import { VideoComponent } from './video/video.component';
 // #endregion
 
 // #region [Interfaces]
@@ -49,6 +50,7 @@ export class DataviewComponent implements OnInit {
   @ViewChildren(EnergyWellToolboxComponent) tbEnergyWells;
   @ViewChildren(DatabarComponent) _databars;
   @ViewChild(SaveMenuComponent) saveMenu;
+  @ViewChild(VideoComponent) video;
   // #endregion
 
   // #region [Properties]
@@ -232,6 +234,7 @@ export class DataviewComponent implements OnInit {
       console.log('workspace info:', this.workspace);
     console.groupEnd();
     console.groupCollapsed('children')
+      console.log('video', this.video);
       console.log('sensors-toolboxes', this.tbSensors.toArray());
       console.log('labelstreams-toolboxes', this.tbLblStreams.toArray());
       console.log('modes-toolboxes', this.tbModes.toArray());
