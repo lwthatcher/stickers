@@ -210,7 +210,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     background.classed('click-mode', mode.click);
     background.classed('pour-mode', mode.pour);
     console.debug('mode update:', mode.current);
-    if (mode.click) { this.labeller.deselect() }
+    if (mode.click || mode.pour) { this.labeller.deselect() }
   }
 
   private updateZoom(t) {
