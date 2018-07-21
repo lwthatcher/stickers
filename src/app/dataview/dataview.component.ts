@@ -8,7 +8,6 @@ import { Label, LabelStream} from './labelstreams/labelstream';
 import { ModeTracker } from './modes/tool-mode';
 import { Colorer } from './types/colorer';
 import { Sensor } from './sensors/sensor';
-import { EventMap } from './types/event-types';
 import { Dataset } from '../data-loader/dataset';
 import { LabelsLoaderService } from '../data-loader/labels-loader.service';
 import { TypesToolboxComponent } from './types/types-toolbox.component';
@@ -18,15 +17,10 @@ import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox
 import { DatabarComponent } from './databar/databar.component';
 import { SaveMenuComponent } from './save-menu/save-menu.component';
 import { EnergyWellsTracker } from './energy/energy-wells';
+import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
 // #endregion
 
 // #region [Interfaces]
-interface SensorInfo {
-  name: string;
-  index: number;
-  channel?: string;
-}
-
 interface datum {
   d: number;
   i: number;
@@ -34,10 +28,7 @@ interface datum {
 }
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
-
 type LabelStreamMap = { [name: string]: LabelStream }
-
-type IdxEntries = [number, number[]][]
 type IndexMap = Map<number,number[]>
 // #endregion
 
@@ -55,6 +46,7 @@ export class DataviewComponent implements OnInit {
   @ViewChildren(SensorsToolboxComponent) tbSensors;
   @ViewChildren(ModesToolboxComponent) tbModes;
   @ViewChildren(LabelstreamToolboxComponent) tbLblStreams;
+  @ViewChildren(EnergyWellToolboxComponent) tbEnergyWells;
   @ViewChildren(DatabarComponent) _databars;
   @ViewChild(SaveMenuComponent) saveMenu;
   // #endregion
@@ -244,6 +236,7 @@ export class DataviewComponent implements OnInit {
       console.log('labelstreams-toolboxes', this.tbLblStreams.toArray());
       console.log('modes-toolboxes', this.tbModes.toArray());
       console.log('types-toolboxes', this.tbTypes.toArray());
+      console.log('energy-wells-toolboxes', this.tbEnergyWells.toArray());
       console.log('save-menu', this.saveMenu);
     console.groupEnd()
     console.groupCollapsed('sensors');
