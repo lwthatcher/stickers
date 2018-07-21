@@ -45,6 +45,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   // #region [Accessors]
   get w() { return this.api.videogularElement.clientWidth }
   get h() { return this.api.videogularElement.clientHeight }
+  get flashes() { return this.workspace.video[this.name].flashes }
   // #endregion
 
   // #region [Event Handlers]
