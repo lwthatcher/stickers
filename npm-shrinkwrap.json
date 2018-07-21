@@ -304,6 +304,12 @@
         "seedrandom": "2.4.3"
       }
     },
+    "@types/core-js": {
+      "version": "2.5.0",
+      "resolved": "https://registry.npmjs.org/@types/core-js/-/core-js-2.5.0.tgz",
+      "integrity": "sha512-qjkHL3wF0JMHMqgm/kmL8Pf8rIiqvueEiZ0g6NVTcBX1WN46GWDr+V5z+gsHUeL0n8TfAmXnYmF7ajsxmBp4PQ==",
+      "dev": true
+    },
     "@types/jasmine": {
       "version": "2.8.8",
       "resolved": "https://registry.npmjs.org/@types/jasmine/-/jasmine-2.8.8.tgz",
@@ -10669,6 +10675,11 @@
           "dev": true
         }
       }
+    },
+    "videogular2": {
+      "version": "6.3.0",
+      "resolved": "https://registry.npmjs.org/videogular2/-/videogular2-6.3.0.tgz",
+      "integrity": "sha1-Bli08FJp12ej6Nt7oFm5kIT0DpQ="
     },
     "vlq": {
       "version": "0.2.3",

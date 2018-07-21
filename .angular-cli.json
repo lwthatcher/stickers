@@ -19,8 +19,9 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.scss",
-        "../node_modules/spin.js/spin.css"
+        "../node_modules/spin.js/spin.css",
+        "../node_modules/videogular2/fonts/videogular.css",
+        "styles.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
