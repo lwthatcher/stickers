@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { WorkspaceInfo } from '../../data-loader/workspace-info';
 import { VgAPI } from 'videogular2/core';
 
@@ -7,7 +7,7 @@ import { VgAPI } from 'videogular2/core';
   templateUrl: './video.component.html',
   styleUrls: ['./video.component.scss']
 })
-export class VideoComponent implements OnInit {
+export class VideoComponent implements OnInit, AfterViewChecked {
   // #region [Properties]
   preload: string = 'auto';
   video: HTMLVideoElement;
@@ -21,7 +21,7 @@ export class VideoComponent implements OnInit {
   // #endregion
 
   // #region [Constructors]
-  constructor(private el: ElementRef) { }
+  constructor(private el: ElementRef, private cdRef:ChangeDetectorRef) { }
 
   ngOnInit() {
     console.groupCollapsed('video component');
@@ -35,6 +35,10 @@ export class VideoComponent implements OnInit {
     console.log('video element:', this.video);
     console.info('video component init', this);
     console.groupEnd();
+  }
+
+  ngAfterViewChecked() {
+    this.cdRef.detectChanges();
   }
   // #endregion
 
