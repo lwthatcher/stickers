@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MatIconRegistry, MatIconModule } from '@angular/material';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -24,6 +25,7 @@ import { DataviewModule } from './dataview/dataview.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatIconModule,
+    MatToolbarModule,
     NgbModule.forRoot(),
     SettingsModule,
     DataLoaderModule,
