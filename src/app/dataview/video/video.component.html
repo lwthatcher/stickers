@@ -9,7 +9,7 @@
       <div class="col">
         <div class="list-header">Flashes:</div>
         <mat-nav-list>
-          <mat-list-item *ngFor="let flash of flashes">
+          <mat-list-item *ngFor="let flash of flashes" (click)="jumpTo(flash)">
               {{flash}}
               <mat-icon matListIcon svgIcon="flash"></mat-icon>
               

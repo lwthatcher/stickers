@@ -48,6 +48,10 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   get flashes() { return this.workspace.video[this.name].flashes }
   // #endregion
 
+  // #region [Public Methods]
+  jumpTo(time: number) { this.api.seekTime(time) }
+  // #endregion
+
   // #region [Event Handlers]
   onPlayerReady(api: VgAPI) {
     this.api = api;
