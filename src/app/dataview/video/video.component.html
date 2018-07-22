@@ -6,7 +6,16 @@
     </mat-expansion-panel-header>
     
     <div class="row">
-      <div class="col"></div>
+      <div class="col">
+        <div class="list-header">Flashes:</div>
+        <mat-nav-list>
+          <mat-list-item *ngFor="let flash of flashes">
+              {{flash}}
+              <mat-icon matListIcon svgIcon="flash"></mat-icon>
+              
+          </mat-list-item>
+        </mat-nav-list>
+      </div>
       <div class="col-4">
         <vg-player (onPlayerReady)="onPlayerReady($event)">
             <vg-overlay-play></vg-overlay-play>
