@@ -15,7 +15,7 @@ export class VideoTracker {
         this._comp = videoComponent;
         this.api = videoComponent.api;
         this.sync = videoComponent.sync;
-        if (!!this.api) console.warn('Video API does not seem to be initialized:', this.api, this._comp);
+        if (!this.api) console.warn('Video API does not seem to be initialized:', this.api, this._comp);
         console.debug('Video Tracker', this);
     }
     // #endregion

@@ -22,6 +22,7 @@ import { Drawer } from './drawer/drawer';
 import { ModeTracker } from '../modes/tool-mode';
 import { EnergyWellsTracker } from '../energy/energy-wells';
 import { VideoComponent } from '../video/video.component';
+import { VideoTracker } from '../video/video';
 // #endregion
 
  // #region [Interfaces]
@@ -48,6 +49,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() colorer: Colorer;
   @Input() dataset: Promise<Dataset>;
   @Input() energy: EnergyWellsTracker;
+  @Input() video: VideoTracker;
   // #endregion
 
   // #region [Outputs]
@@ -138,10 +140,11 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Lifecycle Hooks]
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    let {transform, labelstream, lbl_type} = changes;
+    let {transform, labelstream, lbl_type, video} = changes;
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
     if (labelstream && !labelstream.firstChange) this.stream_changed(labelstream);
     if (lbl_type && !lbl_type.firstChange) this.type_changed(lbl_type);
+    if (video && !video.firstChange) this.video_changed(video);
   }
 
   ngOnDestroy() {
@@ -150,18 +153,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #endregion
 
   // #region [Event Handlers]
-  stream_update(event) {
-    if (event.type === 'change-type') { this.type_changed(event) }
-    else if (event.type === 'grow') { this.drawer.updateLabel(event.target) }
-    else { this.redraw_labels() }
-  }
-
-  energy_update(event) {
-    if (event.type === 'display-mode') { 
-      this.drawer.clear('energy', 'y-axis');
-      this.drawer.draw_yAxis();
-    }
-    this.drawer.draw_energy();
+  video_changed(change) {
+    console.log('Video Tracker Change:', change, this.video);
   }
 
   stream_changed(change) {
@@ -176,7 +169,20 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   type_changed(change) {
     console.debug('type change:', change, this.labelstream.lbl_type);
-    // todo: if selected-label -> change-type?
+  }
+
+  stream_update(event) {
+    if (event.type === 'change-type') { this.type_changed(event) }
+    else if (event.type === 'grow') { this.drawer.updateLabel(event.target) }
+    else { this.redraw_labels() }
+  }
+
+  energy_update(event) {
+    if (event.type === 'display-mode') { 
+      this.drawer.clear('energy', 'y-axis');
+      this.drawer.draw_yAxis();
+    }
+    this.drawer.draw_energy();
   }
 
   sensor_update(event) {

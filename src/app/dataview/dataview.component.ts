@@ -1,6 +1,7 @@
 // #region [Imports]
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, HostListener, ViewChildren, ViewChild } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChildren, ViewChild, 
+         ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo, TypeMap, LabelScheme } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service';
@@ -42,7 +43,7 @@ type IndexMap = Map<number,number[]>
   providers: [DataloaderService]
 })
 // #endregion
-export class DataviewComponent implements OnInit {
+export class DataviewComponent implements OnInit, AfterViewChecked {
   // #region [Child Components]
   @ViewChildren(TypesToolboxComponent) tbTypes;
   @ViewChildren(SensorsToolboxComponent) tbSensors;
@@ -74,7 +75,8 @@ export class DataviewComponent implements OnInit {
   constructor(private route: ActivatedRoute, 
               private dataloader: DataloaderService,
               private labelsloader: LabelsLoaderService,
-              private _settings: SettingsService) { 
+              private _settings: SettingsService,
+              private cdRef:ChangeDetectorRef) { 
     this.mode = new ModeTracker();
   }
 
@@ -119,6 +121,9 @@ export class DataviewComponent implements OnInit {
     console.debug('dataview children initialized', this);
     console.groupEnd();
   }
+
+  /** This prevents errors from changing the playback rate */
+  ngAfterViewChecked() { this.cdRef.detectChanges() }
   // #endregion
 
   // #region [Accessors]
