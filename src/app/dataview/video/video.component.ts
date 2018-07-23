@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
-import { WorkspaceInfo } from '../../data-loader/workspace-info';
+import { WorkspaceInfo, DataInfo } from '../../data-loader/workspace-info';
 import { VgAPI } from 'videogular2/core';
 
 @Component({
@@ -10,8 +10,8 @@ import { VgAPI } from 'videogular2/core';
 export class VideoComponent implements OnInit, AfterViewChecked {
   // #region [Properties]
   preload: string = 'auto';
+  expanded: boolean = true;
   video: HTMLVideoElement;
-  expanded: boolean;
   api: VgAPI;
   src: string;
   name: string;
@@ -19,6 +19,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
 
   // #region [Inputs]
   @Input() workspace: WorkspaceInfo;
+  @Input() dataInfo: DataInfo;
   // #endregion
 
   // #region [Constructors]
@@ -26,7 +27,6 @@ export class VideoComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     console.groupCollapsed('video component');
-    this.expanded = true;
     // video source
     let vids = Object.keys(this.workspace.video);
     this.name = vids[0];
@@ -39,6 +39,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     console.groupEnd();
   }
 
+  /** This prevents errors from changing the playback rate */
   ngAfterViewChecked() { this.cdRef.detectChanges() }
   // #endregion
 
