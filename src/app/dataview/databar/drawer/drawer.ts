@@ -82,6 +82,8 @@ export class Drawer {
   get isDomainSet() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
 
   get energy() { return this.databar.energy }
+
+  get video() { return this.databar.video }
   // #endregion
 
   // #region [Callbacks]
@@ -117,6 +119,7 @@ export class Drawer {
     this.plot_signals(data);
     this.draw_labels();
     this.draw_handles();
+    this.draw_ctb();
   }
   
   draw_labels() {
@@ -217,6 +220,21 @@ export class Drawer {
         .attr('x', (d) => { return this.x(d.start) })
         .attr('width', this.width)
         .attr('fill', this.fill);
+  }
+
+  draw_ctb() {
+    this.clear('timebar');
+    if (!this.video.api.canPlay) { console.debug('draw dummy bar here!', this.video.api.canPlay) }
+    let t = this.x(this.video.dt)
+    this.layers.timebar.append('line')
+        .attr('x1', t)
+        .attr('x2', t)
+        .attr('y1', 0)
+        .attr('y2', this.h)
+        .attr("clip-path", "url(#clip)")
+        .attr('class', 'current-time-bar')
+        .append('svg:title')
+        .text('Current Time: ' + this.video.vt.toString())
   }
 
   async draw_energy() {

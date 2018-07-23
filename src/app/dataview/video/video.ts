@@ -20,5 +20,11 @@ export class VideoTracker {
     }
     // #endregion
 
+    // #region [Accessors]
+    get dt() { return this.sync.vidToData(this.api.currentTime) }
 
+    get vt() { return this.api.currentTime }
+
+    get subscriptions() { return this.api.getDefaultMedia().subscriptions }
+    // #endregion
 }

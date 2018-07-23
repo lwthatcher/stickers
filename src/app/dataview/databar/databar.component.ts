@@ -154,7 +154,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Event Handlers]
   video_changed(change) {
-    console.log('Video Tracker Change:', change, this.video);
+    if (!!change.currentValue) {
+      console.log('video tracker ready:', change, this.video);
+      this.register_video();
+    }
   }
 
   stream_changed(change) {
@@ -233,6 +236,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     // redraw labels
     this.drawer.updateLabels();
     this.drawer.draw_handles();
+    // redraw current-time-bar
+    this.drawer.draw_ctb();
   }
   // #endregion
 
@@ -254,6 +259,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   private register_energy() {
     this.energy.event$.subscribe((e) => { this.energy_update(e) })
+  }
+
+  private register_video() {
+    this.video.subscriptions.timeUpdate.subscribe((e) => { this.drawer.draw_ctb() })
   }
   // #endregion
 

@@ -173,3 +173,12 @@ mat-list-item.d-flex > .mat-list-item-content {
 
 }
 // #endregion
+
+// #region [Current Time Bar]
+.current-time-bar {
+    stroke-width: 3;
+    fill: none;
+    stroke: lawngreen;
+    cursor: help;
+}
+// #endregion
