@@ -171,20 +171,21 @@ export class Drawer {
   }
 
   draw_yAxis() {
+    let W = this.w + (this.databar.margin.right *.25)
     this.layers.axes.append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this.Y[0]));
     if (this.yDims().length > 1) {
       this.layers.axes.append('g')
         .attr('class', 'y-axis')
-        .attr("transform", "translate( " +this.w + ", 0 )")
+        .attr("transform", "translate( " + W + ", 0 )")
         .call(d3.axisLeft(this.Y[1]));
     }
     if (this.energy.has_energy) {
       let y = this.eyAxis();
       this.layers.axes.append('g')
           .attr('class', 'y-axis')
-          .attr("transform", "translate( " +this.w + ", 0 )")
+          .attr("transform", "translate( " + W + ", 0 )")
           .call(d3.axisRight(y));
     }
   }

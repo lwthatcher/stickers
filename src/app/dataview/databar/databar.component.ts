@@ -57,7 +57,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #endregion
 
   // #region [Variables]
-  margin = {top: 4, right: 40, bottom: 20, left: 50}
+  margin = {top: 4, right: 50, bottom: 20, left: 50}
   container: Element;
   // zoom handler
   _zoom;
