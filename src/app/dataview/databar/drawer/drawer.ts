@@ -178,14 +178,14 @@ export class Drawer {
       this.layers.axes.append('g')
         .attr('class', 'y-axis')
         .attr("transform", "translate( " +this.w + ", 0 )")
-        .call(d3.axisRight(this.Y[1]));
+        .call(d3.axisLeft(this.Y[1]));
     }
     if (this.energy.has_energy) {
       let y = this.eyAxis();
       this.layers.axes.append('g')
           .attr('class', 'y-axis')
           .attr("transform", "translate( " +this.w + ", 0 )")
-          .call(d3.axisLeft(y));
+          .call(d3.axisRight(y));
     }
   }
 
