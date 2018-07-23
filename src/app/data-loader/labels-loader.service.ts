@@ -18,6 +18,7 @@ export class LabelsLoaderService {
     console.log('FLASHES', scheme.name, flashes, scheme.flashes, scheme);
     let sync = new Synchronizer(flashes);
     return this.http.get('/static/' + scheme.path).pipe(
+      // @ts-ignore
       map((labels) => {return this.format(labels, scheme)}),
       map((labels) => {return this.syncTimes(labels, sync)})
     )
