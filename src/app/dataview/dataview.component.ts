@@ -19,6 +19,7 @@ import { SaveMenuComponent } from './save-menu/save-menu.component';
 import { EnergyWellsTracker } from './energy/energy-wells';
 import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
 import { VideoComponent } from './video/video.component';
+import { VideoTracker } from './video/video';
 // #endregion
 
 // #region [Interfaces]
@@ -65,6 +66,7 @@ export class DataviewComponent implements OnInit {
   mode: ModeTracker;
   colorer: Colorer;
   energy: EnergyWellsTracker;
+  vt: VideoTracker;
   private _idx_map: Map<number,number[]>;
   // #endregion
 
@@ -107,12 +109,13 @@ export class DataviewComponent implements OnInit {
           .then((labels) => { this.setLabels(this.default_stream.name, labels) })
     }
     // load energy if available
-    this.energy = new EnergyWellsTracker(this.dataloader, this.workspace.energy_data)
+    this.energy = new EnergyWellsTracker(this.dataloader, this.workspace.energy_data);
     // component initialized
     console.info('dataview initialized', this);
   }
 
   ngAfterViewInit() {
+    this.vt = new VideoTracker(this.video);
     console.debug('dataview children initialized', this);
     console.groupEnd();
   }

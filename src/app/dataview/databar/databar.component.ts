@@ -21,6 +21,7 @@ import { LabelStream } from '../labelstreams/labelstream';
 import { Drawer } from './drawer/drawer';
 import { ModeTracker } from '../modes/tool-mode';
 import { EnergyWellsTracker } from '../energy/energy-wells';
+import { VideoComponent } from '../video/video.component';
 // #endregion
 
  // #region [Interfaces]

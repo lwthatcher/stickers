@@ -27,7 +27,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   constructor(private el: ElementRef, private cdRef:ChangeDetectorRef) { }
 
   ngOnInit() {
-    console.groupCollapsed('video component');
+    console.groupCollapsed('video component init');
     // select default video
     this.video = this.videos[0];
     this.sync = this.video.sync(this.dataInfo);
