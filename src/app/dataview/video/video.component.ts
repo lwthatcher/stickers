@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ElementRef, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
-import { WorkspaceInfo, DataInfo } from '../../data-loader/workspace-info';
+import { WorkspaceInfo, DataInfo, VideoInfo } from '../../data-loader/workspace-info';
 import { VgAPI } from 'videogular2/core';
+import { Synchronizer } from '../../util/sync';
 
 @Component({
   selector: 'app-video',
@@ -11,10 +12,10 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   // #region [Properties]
   preload: string = 'auto';
   expanded: boolean = true;
-  video: HTMLVideoElement;
+  videoElement: HTMLVideoElement;
   api: VgAPI;
-  src: string;
-  name: string;
+  video: VideoInfo;
+  sync: Synchronizer;
   // #endregion
 
   // #region [Inputs]
@@ -27,14 +28,12 @@ export class VideoComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     console.groupCollapsed('video component');
-    // video source
-    let vids = Object.keys(this.workspace.video);
-    this.name = vids[0];
-    this.src = this.source(this.name);
-    console.log('source:', this.src);
+    // select default video
+    this.video = this.videos[0];
+    this.sync = this.video.sync(this.dataInfo);
     // video element
-    this.video = this.el.nativeElement.querySelector('vg-player > video');
-    console.log('video element:', this.video);
+    this.videoElement = this.el.nativeElement.querySelector('vg-player > video');
+    console.log('video element:', this.videoElement);
     console.info('video component init', this);
     console.groupEnd();
   }
@@ -46,7 +45,10 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   // #region [Accessors]
   get w() { return this.api.videogularElement.clientWidth }
   get h() { return this.api.videogularElement.clientHeight }
-  get flashes() { return this.workspace.video[this.name].flashes }
+  get flashes() { return this.workspace._video[this.name].flashes }
+  get videos() { return this.workspace.videos }
+  get name() { return this.video.name }
+  get src() { return 'static/' + this.video.path }
   // #endregion
 
   // #region [Public Methods]
@@ -57,13 +59,6 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   onPlayerReady(api: VgAPI) {
     this.api = api;
     console.log('video player ready', this.api);
-  }
-  // #endregion
-
-  // #region [Helper Methods]
-  private source(videoName: string): string {
-    let vidInfo = this.workspace.video[videoName];
-    return 'static/' + vidInfo.path;
   }
   // #endregion
 }

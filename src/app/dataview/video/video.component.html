@@ -7,12 +7,18 @@
     
     <div class="row">
       <div class="col">
-        <div class="list-header">Flashes:</div>
+        <mat-list>
+            <mat-list-item class="d-flex">
+              <span class="list-header flex-fill">Flashes:</span>
+              <span class='flash-info flex-fill'>Video Time:</span>
+              <span class='flash-info flex-fill'>Data Time:</span>
+            </mat-list-item>
+        </mat-list>
         <mat-nav-list>
-          <mat-list-item *ngFor="let flash of flashes" (click)="jumpTo(flash)">
-              {{flash}}
-              <mat-icon matListIcon svgIcon="flash"></mat-icon>
-              
+          <mat-list-item class='d-flex' *ngFor="let flash of flashes" (click)="jumpTo(flash)">
+              <mat-icon class='flex-fill' matListIcon svgIcon="flash"></mat-icon>
+              <span class='flash-info flex-fill'>{{ flash }} s</span>
+              <span class='flash-info flex-fill'>{{ sync.vidToData(flash) }} ms</span>
           </mat-list-item>
         </mat-nav-list>
       </div>

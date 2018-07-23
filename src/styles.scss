@@ -165,3 +165,11 @@ i.icon {
     vertical-align:middle;
 }
 /*#endregion */
+
+// #region [Flashes]
+mat-list-item.d-flex > .mat-list-item-content {
+    display: flex;
+    width: 100% !important;
+
+}
+// #endregion

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { LabelScheme } from './workspace-info';
@@ -14,13 +13,12 @@ export class LabelsLoaderService {
 
   // #region [Public Methods]
   loadLabels(dataset: string, scheme: LabelScheme) {
-    let flashes = scheme.sync(dataset);
-    console.log('FLASHES', scheme.name, flashes, scheme.flashes, scheme);
-    let sync = new Synchronizer(flashes);
+    let synchronizer = scheme.sync(dataset);
+    console.log('FLASHES', scheme.name, synchronizer, scheme.flashes, scheme);
     return this.http.get('/static/' + scheme.path).pipe(
       // @ts-ignore
       map((labels) => {return this.format(labels, scheme)}),
-      map((labels) => {return this.syncTimes(labels, sync)})
+      map((labels) => {return this.syncTimes(labels, synchronizer)})
     )
   }
   // #endregion

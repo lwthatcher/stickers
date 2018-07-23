@@ -23,3 +23,16 @@ mat-expansion-panel-header.header:hover {
     background-color: rgb(200, 200, 200) !important;
 }
 // #endregion
+
+// #region [Flashes]
+span.flash-info {
+    // margin-left: 30%;
+    position: relative;
+    display: inline-flex;
+    color: darkslategray;
+}
+
+span.list-header {
+    font-weight: bold;
+}
+// #endregion

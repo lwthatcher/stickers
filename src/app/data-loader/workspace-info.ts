@@ -1,4 +1,5 @@
 import {zip, invert} from '../util/util'
+import { Synchronizer } from '../util/sync';
 
 // #region [Interfaces]
 export interface TypeMap {
@@ -12,17 +13,17 @@ type Info = DataInfo | LabelScheme
 export class WorkspaceInfo {
     // #region [Properties]
     _data: Object;
-    _labels: Object[];
-    video: Object[];
+    _labels: Object;
+    _video: Object;
     name: string;
     _info;
     // #endregion
 
-    // #endregion [Constructor]
+    // #region [Constructor]
     constructor(info) { 
         this._data = info.data;
         this._labels = info.labels;
-        this.video = info.video;
+        this._video = info.video;
         this._info = info;
         this.name = info.workspace.join('.');
     }
@@ -33,18 +34,22 @@ export class WorkspaceInfo {
         return Object.entries(this._data).map(entry => new DataInfo(this, this.toInfo(entry)));
     }
 
-    get energy_data(): DataInfo[] { return this.data.filter((data) => data.isEnergy) }
+    get videos(): VideoInfo[] {
+        return Object.entries(this._video).map(entry => new VideoInfo(this, this.toInfo(entry)));
+    }
 
     get labelschemes(): LabelScheme[] {
         return Object.entries(this._labels).map(entry => new LabelScheme(this, this.toInfo(entry)));
     }
+
+    get energy_data(): DataInfo[] { return this.data.filter((data) => data.isEnergy) }
 
     get visibleData(): DataInfo[] {
         let visible = (data: DataInfo) => { return !data.hide && !data.isEnergy }
         return this.data.filter(visible);
     }
 
-    get hasVideo(): boolean { return Object.keys(this.video).length > 0 }
+    get hasVideo(): boolean { return Object.keys(this._video).length > 0 }
 
     get hasEnergy(): boolean { return Object.keys(this.energy_data).length > 0 }
     // #endregion
@@ -59,8 +64,8 @@ export class WorkspaceInfo {
     }
 
     vFlashes(vid: string) {
-        if (!(vid in this.video)) return [];
-        return this.video[vid].flashes || [];
+        if (!(vid in this._video)) return [];
+        return this._video[vid].flashes || [];
     }
 
     EMPTY_SCHEME(name: string)
@@ -86,6 +91,35 @@ export class WorkspaceInfo {
             }
         }
         return obj;
+    }
+    // #endregion
+}
+
+export class VideoInfo {
+    // #region [Properties]
+    name: string;
+    path: string;
+    flashes: number[];
+    private info;
+    private ws: WorkspaceInfo;
+    // #endregion
+
+    // #region [Constructor]
+    constructor(ws, info) {
+        this.name = info.name;
+        this.path = info.path;
+        this.flashes = info.flashes || [];
+        this.ws = ws;
+        this.info = info;
+    }
+    // #endregion
+
+    // #region [Public Methods]
+    sync(data: DataInfo): Synchronizer {
+        let zipped = zip(data.flashes, this.flashes);
+        let syncable = zipped.filter((dv) => { let [d,v] = dv; return (d===0 || !!d) && (v===0 || !!v) });
+        let flashes = syncable.map((dv) => { let [d,v] = dv; return [d,v*1000] }) as [number, number][];
+        return new Synchronizer(flashes);
     }
     // #endregion
 }
@@ -177,12 +211,13 @@ export class LabelScheme {
     // #endregion
 
     // #region [Public Methods]
-    sync(dataset: string): [number, number][] {
+    sync(dataset: string): Synchronizer {
         let ds = this.ws.getData(dataset);
-        if (!ds) return [];
+        if (!ds) return null;
         let zipped = zip(ds.flashes, this.flashes);
         let syncable = zipped.filter((dv) => { let [d,v] = dv; return (d===0 || !!d) && (v===0 || !!v) });
-        return syncable.map((dv) => { let [d,v] = dv; return [d,v*1000] }) as [number, number][]
+        let flashes = syncable.map((dv) => { let [d,v] = dv; return [d,v*1000] }) as [number, number][];
+        return new Synchronizer(flashes)
     }
 
     lblKey(type: string) { return parseInt(this.inv_event_map[type]) }
