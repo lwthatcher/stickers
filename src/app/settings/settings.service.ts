@@ -60,7 +60,7 @@ export class SettingsService {
 
   // #region [Public Methods]
   version(): Observable<string> {
-    return this.http.get('/api/version', {responseType: 'text'});
+    return this.http.get('/version', {responseType: 'text'});
   }
   // #endregion
 }
