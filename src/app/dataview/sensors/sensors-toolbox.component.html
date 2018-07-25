@@ -5,11 +5,12 @@
         </a>
     </li>
     <li class="nav-item" ngbDropdown>
-        <a class="nav-link btn-secondary text-white select-sensor" ngbDropdownToggle>...</a>
-        <div ngbDropdownMenu>
-            <button *ngFor="let s of sensors" class="dropdown-item" (click)="changeSensor(s)">
+        <a class="nav-link btn-secondary text-white select-sensor" 
+            autoClose="outside" ngbDropdownToggle>...</a>
+        <div class="dropdown-menu" ngbDropdownMenu>
+            <div *ngFor="let s of sensors" class="dropdown-item" (click)="changeSensor(s)">
                 {{s.name}}
-            </button>
+            </div>
         </div>
     </li>
 </ul>

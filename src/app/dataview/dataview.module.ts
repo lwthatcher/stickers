@@ -8,6 +8,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry, MatIconModule } from '@angular/material';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {VgCoreModule} from 'videogular2/core';
 import {VgControlsModule} from 'videogular2/controls';
@@ -33,7 +34,8 @@ import { VideoComponent } from './video/video.component';
     VgOverlayPlayModule,
     VgBufferingModule,
     MatExpansionModule,
-    MatListModule
+    MatListModule,
+    MatMenuModule
   ],
   declarations: [
     DataviewComponent, 

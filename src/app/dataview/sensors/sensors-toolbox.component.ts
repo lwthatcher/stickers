@@ -12,7 +12,7 @@ interface SensorInfo {
 @Component({
   selector: 'toolbox-sensors',
   templateUrl: './sensors-toolbox.component.html',
-  styleUrls: ['./sensors-toolbox.component.css']
+  styleUrls: ['./sensors-toolbox.component.scss']
 })
 export class SensorsToolboxComponent implements OnInit {
   // #region [Inputs]
@@ -21,19 +21,21 @@ export class SensorsToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Constructors]
+  sensors: SensorInfo[];
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.sensors = [...this.channels].map(this.getInfo)  
+  }
   // #endregion
 
-  // #region [Accessors]
-  get sensors(): SensorInfo[] {
-    let getInfo = (c,i) => { return {name: Sensor.SENSOR_NAMES[c], channel: c, index: i} }
-    return [...this.channels].map(getInfo);
-  }
+  // #region [Callbacks]
+  get getInfo() { return (c,i) => {return {name: Sensor.SENSOR_NAMES[c], channel: c, index: i}} }
   // #endregion
 
   // #region [Public Methods]
   changeSensor(to: SensorInfo) { this.sensor.update(to) }
+
+  quack() { console.log('quack!') }
   // #endregion
 }
