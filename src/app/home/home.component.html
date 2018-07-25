@@ -1,3 +1,41 @@
+<div class="flex-container">
+
+    <mat-card class="workspace-card card" *ngFor="let workspace of workspaces">
+        <mat-card-header class="card-header">
+            <mat-card-title>{{workspace.name}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="card-body">
+            <div class="row">
+
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button mat-button [matMenuTriggerFor]="dsMenu">Dataset</button>
+                    <mat-menu #dsMenu="matMenu">
+                        <button mat-menu-item *ngFor="let dataset of workspace.visibleData">
+                            {{dataset.name}}
+                        </button>
+                    </mat-menu>
+                </div>
+                <div class="col">
+                    <button mat-button [matMenuTriggerFor]="lsMenu">Labelscheme</button>
+                    <mat-menu #lsMenu="matMenu">
+                        <button mat-menu-item *ngFor="let scheme of workspace.labelschemes">
+                            {{scheme.name}}
+                        </button>
+                        <button mat-menu-item>None</button>
+                    </mat-menu>
+                </div>
+            </div>
+        </mat-card-content>
+        <mat-card-actions class="card footer">
+            <button mat-button>Open</button>
+        </mat-card-actions>
+    </mat-card>
+
+</div>
+
+
 <div class="flex-container"[@workspace]="workspaces.length" >
     <div *ngFor="let workspace of workspaces" class="card bg-light">
         <div class="card-body">

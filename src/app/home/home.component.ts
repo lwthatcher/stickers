@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { trigger, style, animate, transition, query, stagger, keyframes } from '@angular/animations';
+import { WorkspaceInfo } from '../data-loader/workspace-info';
 
 @Component({
   selector: 'app-home',
@@ -21,12 +22,13 @@ import { trigger, style, animate, transition, query, stagger, keyframes } from '
   ]
 })
 export class HomeComponent implements OnInit {
+  // #region [Constructors]
   workspaces;
-
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.workspaces = this.route.snapshot.data.workspaces;
     console.info('workspaces', this.workspaces);
   }
+  // #endregion
 }
