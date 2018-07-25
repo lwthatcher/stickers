@@ -7,17 +7,16 @@ import { MatIconRegistry, MatIconModule } from '@angular/material';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SettingsModule } from './settings/settings.module';
 import { DataLoaderModule } from './data-loader/data-loader.module';
 import { DataviewModule } from './dataview/dataview.module';
+import { HomeModule } from './home/home.module';
 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HomeComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +28,8 @@ import { DataviewModule } from './dataview/dataview.module';
     NgbModule.forRoot(),
     SettingsModule,
     DataLoaderModule,
-    DataviewModule
+    DataviewModule,
+    HomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
