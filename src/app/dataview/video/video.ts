@@ -12,6 +12,12 @@ export class VideoTracker {
 
     // #region [Constructor]
     constructor(videoComponent: VideoComponent) {
+        if (!videoComponent) {  
+            this.api = undefined;
+            this.sync = undefined;
+            console.debug('no video available', this);
+            return;
+        }
         this._comp = videoComponent;
         this.api = videoComponent.api;
         this.sync = videoComponent.sync;
@@ -25,6 +31,13 @@ export class VideoTracker {
 
     get vt() { return this.api.currentTime }
 
+    get defined() { return !!this.api }
+
     get subscriptions() { return this.api.getDefaultMedia().subscriptions }
+
+    get canPlay() {
+        if (!this.api) return false;
+        else return this.api.canPlay;
+    }
     // #endregion
 }

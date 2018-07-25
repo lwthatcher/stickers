@@ -225,7 +225,7 @@ export class Drawer {
 
   draw_ctb() {
     this.clear('timebar');
-    if (!this.video.api.canPlay) { console.debug('draw dummy bar here!', this.video.api.canPlay) }
+    if (!this.video.canPlay) { console.debug('draw dummy bar here!', this.video.canPlay); return; }
     let t = this.x(this.video.dt)
     this.layers.timebar.append('line')
         .attr('x1', t)
