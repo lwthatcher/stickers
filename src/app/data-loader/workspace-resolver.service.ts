@@ -15,6 +15,7 @@ export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
   get workspaces() {
     if (!this._workspaces) {
       let ws = this.loader.listWorkspaces();
+      // @ts-ignore
       this._workspaces = ws.pipe(map(this.convert))
     }
     else { console.debug('loading memoized workspace list', this._workspaces); }
@@ -23,6 +24,7 @@ export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
   // #endregion
 
   // #region [Implementation]
+  // @ts-ignore
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<WorkspaceInfo[]> {
     if ('workspace' in route.params) {
       let finder = this.find(route.params.workspace);

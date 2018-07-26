@@ -70,7 +70,7 @@
         </div>
     </mat-card-content>
     <mat-card-actions class="actions">
-      <button mat-button routerLink="/workspace/{{workspace.name}}/{{selected.dataset.name}}">
+      <button mat-button [routerLink]="routerLink">
         <mat-icon svgIcon="open-in-new"></mat-icon>
         Open
       </button>

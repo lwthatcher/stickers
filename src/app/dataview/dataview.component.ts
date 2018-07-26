@@ -136,7 +136,11 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
   }
 
   get default_stream(): LabelStream {
-    if (!this.is_labelled) return this.labelStreams['user-labels'];
+    if (this.route.snapshot.paramMap.has('labels'))
+      return this.labelStreams[this.route.snapshot.paramMap.get('labels')]
+    else if (!this.is_labelled) 
+      return this.labelStreams['user-labels'];
+    console.log('DEFAULT STREAM', this.route.snapshot);
     return this.labelStreams[<string>this.info.labelled];
   }
 

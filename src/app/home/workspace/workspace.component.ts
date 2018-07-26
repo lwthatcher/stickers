@@ -52,6 +52,14 @@ export class WorkspaceComponent implements OnInit {
   // #endregion
 
   // #region [Accessors]
+  get routerLink() {
+    let result = []
+    result.push("/workspace/" + this.workspace.name + "/" + this.selected.dataset.name);
+    if (this.selected.labelscheme.name !== 'None')
+      result.push({'labels': this.selected.labelscheme.name});
+    return result;
+  }
+
   get flashcount() { return this.selected.dataset.flashes.length }
 
   get typescount() { return Object.keys(this.selected.labelscheme.event_map).length }
