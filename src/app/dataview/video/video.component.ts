@@ -49,6 +49,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   get videos() { return this.workspace.videos }
   get name() { return this.video.name }
   get src() { return 'video/' + this.video.path }
+  get hasFlashes() { return this.video.flashes.length > 0 }
   // #endregion
 
   // #region [Public Methods]

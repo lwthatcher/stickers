@@ -35,4 +35,9 @@ span.flash-info {
 span.list-header {
     font-weight: bold;
 }
+
+p[matLine].dim-msg {
+    color: gray;
+    margin-bottom: 8px;
+}
 // #endregion

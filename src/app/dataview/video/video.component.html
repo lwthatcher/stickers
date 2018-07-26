@@ -15,6 +15,13 @@
             </mat-list-item>
         </mat-list>
         <mat-nav-list>
+          <mat-list-item class="d-flex">
+            <mat-icon class='flex-fill w-33' matListIcon svgIcon="flash-off"></mat-icon>
+            <div class="flex-fill">
+                <p matLine class="dim-msg">No flashes registered for this video.</p>
+                <p matLine class="dim-msg">Mark a flash to enable synchronization.</p>
+            </div>
+          </mat-list-item>
           <mat-list-item class='d-flex' *ngFor="let flash of flashes" (click)="jumpTo(flash)">
               <mat-icon class='flex-fill' matListIcon svgIcon="flash"></mat-icon>
               <span class='flash-info flex-fill'>{{ flash }} s</span>
