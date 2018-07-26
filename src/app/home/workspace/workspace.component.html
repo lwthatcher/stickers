@@ -24,6 +24,14 @@
                     class="icon-off" svgIcon="water-off"
                     title="no energy data available"></mat-icon>
               </div>
+              <div>
+                  <mat-icon *ngIf="canSync" 
+                    class="icon-on" svgIcon="sync"
+                    title="can synchronize data with video"></mat-icon>
+                  <mat-icon *ngIf="!canSync" 
+                    class="icon-off" svgIcon="sync-off"
+                    title="video/data synchronization unavailable"></mat-icon>
+              </div>
           </div>
         </div>
         <div class="row">
