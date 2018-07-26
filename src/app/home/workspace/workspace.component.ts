@@ -52,17 +52,13 @@ export class WorkspaceComponent implements OnInit {
   // #endregion
 
   // #region [Accessors]
-  get flashcount() {
-    let count = this.selected.dataset.flashes.length;
-    if (count === 0) return false;
-    return count;
-  }
+  get flashcount() { return this.selected.dataset.flashes.length }
 
   get typescount() { return Object.keys(this.selected.labelscheme.event_map).length }
 
   get flashBadge() { 
-    return {'badge-danger': this.flashcount === false,
-            'badge-success': this.flashcount !== false} 
+    return {'badge-danger': this.flashcount === 0,
+            'badge-success': this.flashcount > 0} 
   }
 
   get formatBadge() {
