@@ -115,12 +115,7 @@ export class VideoInfo {
     // #endregion
 
     // #region [Public Methods]
-    sync(data: DataInfo): Synchronizer {
-        let zipped = zip(data.flashes, this.flashes);
-        let syncable = zipped.filter((dv) => { let [d,v] = dv; return (d===0 || !!d) && (v===0 || !!v) });
-        let flashes = syncable.map((dv) => { let [d,v] = dv; return [d,v*1000] }) as [number, number][];
-        return new Synchronizer(flashes);
-    }
+    sync(data: DataInfo): Synchronizer { return new Synchronizer(data.flashes, this.flashes) }
     // #endregion
 }
 
@@ -214,10 +209,7 @@ export class LabelScheme {
     sync(dataset: string): Synchronizer {
         let ds = this.ws.getData(dataset);
         if (!ds) return null;
-        let zipped = zip(ds.flashes, this.flashes);
-        let syncable = zipped.filter((dv) => { let [d,v] = dv; return (d===0 || !!d) && (v===0 || !!v) });
-        let flashes = syncable.map((dv) => { let [d,v] = dv; return [d,v*1000] }) as [number, number][];
-        return new Synchronizer(flashes)
+        return new Synchronizer(ds.flashes, this.flashes);
     }
 
     lblKey(type: string) { return parseInt(this.inv_event_map[type]) }

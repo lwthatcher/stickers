@@ -1,9 +1,19 @@
+import { zip } from "./util"
+
 export class Synchronizer {
     // #region [Constructor]
     private syncs: [number,number][];
-    constructor(syncs: [number,number][]) {
-        this.syncs = syncs;
+    constructor(df: number[], vf: number[]) {
+        let zipped = zip(df, vf);
+        let syncable = zipped.filter(this.syncable);
+        this.syncs = syncable.map(this.scaleVideoTime) as [number,number][];
     }
+    // #endregion
+
+    // #region [Callbacks]
+    private get syncable() { return (dv) => { let [d,v] = dv; return (d===0 || !!d) && (v===0 || !!v) }}
+
+    private get scaleVideoTime() { return (dv) => { let [d,v] = dv; return [d,v*1000] } }
     // #endregion
 
     // #region [Public Methods]
