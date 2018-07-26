@@ -7,7 +7,9 @@ import { DataLoaderModule } from '../data-loader/data-loader.module';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { WorkspaceComponent } from './workspace/workspace.component';
+import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
   imports: [
@@ -17,7 +19,9 @@ import { WorkspaceComponent } from './workspace/workspace.component';
     DataLoaderModule,
     MatCardModule,
     MatMenuModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDividerModule,
+    MatIconModule
   ],
   declarations: [HomeComponent, WorkspaceComponent]
 })

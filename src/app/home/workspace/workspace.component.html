@@ -1,6 +1,9 @@
 <mat-card class="workspace-card card">
     <mat-card-header>
-        <mat-card-title>{{workspace.name}}</mat-card-title>
+        <mat-card-title>
+            <span class='field'>Workspace:</span>
+            {{workspace.name}}
+        </mat-card-title>
     </mat-card-header>
     <mat-card-content class="card-body bg-light">
         <div class="row">
@@ -8,24 +11,66 @@
         </div>
         <div class="row">
             <div class="col">
-                <button mat-button [matMenuTriggerFor]="dsMenu">Dataset</button>
-                <mat-menu #dsMenu="matMenu">
-                    <button mat-menu-item *ngFor="let dataset of datasets">
-                        {{dataset.name}}
-                    </button>
-                </mat-menu>
+              <div class="row">
+                <div class="col-6"></div>
+                <div class="col"><span class='tiny-field'>Labelled:</span></div>
+                <div class="col"><span class='tiny-field'>Format:</span></div>
+              </div>
+              <div class="row">
+                <div class="col-6 d-flex align-items-center">
+                  <span class='field'>Dataset: </span>
+                  <button mat-button 
+                    class="selection flex-grow-1" 
+                    [matMenuTriggerFor]="dsMenu">
+                      {{selected.dataset.name}}
+                  </button>
+                  <mat-menu #dsMenu="matMenu" [class]='classes' [overlapTrigger]="true">
+                      <button (click)="selectData(dataset)" mat-menu-item class="flex-grow-1" *ngFor="let dataset of datasets">
+                          {{dataset.name}}
+                      </button>
+                  </mat-menu>
+                </div>
+                <div class="col">
+                    <span class="badge badge-pill" 
+                      [ngClass]="{'badge-danger': !selected.dataset.labelled, 
+                      'badge-primary': !!selected.dataset.labelled}">
+                        {{selected.dataset.labelled}}
+                    </span>
+                </div>
+                <div class="col">
+                  <span class="badge badge-secondary badge-pill">{{selected.dataset.format}}</span>
+                </div>
+              </div>
             </div>
+            <mat-divider [vertical]="true"></mat-divider>
             <div class="col">
-                <button mat-button [matMenuTriggerFor]="lsMenu">Labelscheme</button>
+              <div class="row">
+                <div class="col-6"></div>
+                <div class="col"><span class='tiny-field'>coverage:</span></div>
+                <div class="col"><span class='tiny-field'>event types:</span></div>
+              </div>
+              <div class="row">
+                <div class="col-6 d-flex align-items-center">
+                <span class='field'>Label Scheme: </span>
+                <button mat-button 
+                  class="selection flex-grow-1" 
+                  [matMenuTriggerFor]="lsMenu">
+                    {{selected.labelscheme.name}}
+                </button>
                 <mat-menu #lsMenu="matMenu">
-                    <button mat-menu-item *ngFor="let scheme of labelschemes">
+                    <button (click)="selectLabels(scheme)" mat-menu-item *ngFor="let scheme of labelschemes">
                         {{scheme.name}}
                     </button>
                 </mat-menu>
+                </div>
+              </div>
             </div>
         </div>
     </mat-card-content>
-    <mat-card-actions>
-        <button mat-button>Open</button>
+    <mat-card-actions class="actions">
+      <button mat-button routerLink="/workspace/{{workspace.name}}/{{selected.dataset.name}}">
+        <mat-icon svgIcon="open-in-new"></mat-icon>
+        Open
+      </button>
     </mat-card-actions>
 </mat-card>
