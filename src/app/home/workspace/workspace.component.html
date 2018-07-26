@@ -13,8 +13,8 @@
             <div class="col">
               <div class="row">
                 <div class="col-6"></div>
-                <div class="col"><span class='tiny-field'>Labelled:</span></div>
-                <div class="col"><span class='tiny-field'>Format:</span></div>
+                <div class="col"><span class='tiny-field'>flashes:</span></div>
+                <div class="col"><span class='tiny-field'>format:</span></div>
               </div>
               <div class="row">
                 <div class="col-6 d-flex align-items-center">
@@ -31,14 +31,10 @@
                   </mat-menu>
                 </div>
                 <div class="col">
-                    <span class="badge badge-pill" 
-                      [ngClass]="{'badge-danger': !selected.dataset.labelled, 
-                      'badge-primary': !!selected.dataset.labelled}">
-                        {{selected.dataset.labelled}}
-                    </span>
+                    <span class="badge badge-pill" [ngClass]="flashBadge"> {{flashcount}}</span>
                 </div>
                 <div class="col">
-                  <span class="badge badge-secondary badge-pill">{{selected.dataset.format}}</span>
+                  <span class="badge badge-pill" [ngClass]="formatBadge">{{selected.dataset.format}}</span>
                 </div>
               </div>
             </div>
@@ -46,23 +42,29 @@
             <div class="col">
               <div class="row">
                 <div class="col-6"></div>
-                <div class="col"><span class='tiny-field'>coverage:</span></div>
+                <div class="col"><span class='tiny-field'>has labels:</span></div>
                 <div class="col"><span class='tiny-field'>event types:</span></div>
               </div>
               <div class="row">
                 <div class="col-6 d-flex align-items-center">
-                <span class='field'>Label Scheme: </span>
-                <button mat-button 
-                  class="selection flex-grow-1" 
-                  [matMenuTriggerFor]="lsMenu">
-                    {{selected.labelscheme.name}}
-                </button>
-                <mat-menu #lsMenu="matMenu">
-                    <button (click)="selectLabels(scheme)" mat-menu-item *ngFor="let scheme of labelschemes">
-                        {{scheme.name}}
-                    </button>
-                </mat-menu>
+                  <span class='field'>Label Scheme: </span>
+                  <button mat-button 
+                    class="selection flex-grow-1" 
+                    [matMenuTriggerFor]="lsMenu">
+                      {{selected.labelscheme.name}}
+                  </button>
+                  <mat-menu #lsMenu="matMenu">
+                      <button (click)="selectLabels(scheme)" mat-menu-item *ngFor="let scheme of labelschemes">
+                          {{scheme.name}}
+                      </button>
+                  </mat-menu>
                 </div>
+                <div class="col">
+                  <span class="badge badge-pill" [ngClass]="hasLabelsBadge">{{selected.labelscheme.hasLabels}}</span>
+                </div>
+                <div class="col">
+                    <span class="badge badge-pill" [ngClass]="typesBadge">{{typescount}}</span>
+                  </div>
               </div>
             </div>
         </div>
