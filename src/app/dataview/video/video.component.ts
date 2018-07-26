@@ -55,7 +55,10 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   jumpTo(time: number) { this.api.seekTime(time) }
 
   vt(time: number = this.api.time.current) { return time.toFixed(2) }
-  dt(time: number = this.api.time.current) { return Math.round(this.sync.vidToData(time)) }
+  dt(time: number = this.api.time.current) {
+    if (this.sync.canSync) return Math.round(this.sync.vidToData(time))
+    else return "N/A"
+  }
   // #endregion
 
   // #region [Event Handlers]
