@@ -1,37 +1,3 @@
 <div class="flex-container">
     <app-workspace *ngFor="let workspace of workspaces" [workspace]="workspace"></app-workspace>
-
-</div>
-
-
-<div class="flex-container"[@workspace]="workspaces.length" >
-    <div *ngFor="let workspace of workspaces" class="card bg-light">
-        <div class="card-body">
-            <div class="card-title d-flex">
-                    <h5>{{workspace.name}}</h5>
-                    <div class="vid-icon ml-auto">
-                            <i *ngIf="workspace.hasVideo" class="material-icons">videocam</i>
-                            <i *ngIf="!workspace.hasVideo" class="material-icons">videocam_off</i>
-                    </div>
-            </div>
-            
-            <ul class="list-group">
-                <li class="list-group-item d-flex header list-group-item-info">
-                    <div class='mr-auto w-50 item-left'>Dataset</div>
-                    <div class='item-right'>Labelled</div>
-                    <div class='item-right'>Format</div>
-                </li>
-                <li class="list-group-item list-group-item-action d-flex" *ngFor="let dataset of workspace.visibleData">
-                    <div class='mr-auto w-50 item-left'><a routerLink="/workspace/{{workspace.name}}/{{dataset.name}}">{{dataset.name}}</a></div>
-                    <div class='item-right'>
-                        <span class="badge badge-pill" 
-                        [ngClass]="{'badge-danger': !dataset.labelled, 'badge-primary': !!dataset.labelled}">
-                            {{dataset.labelled}}
-                        </span>
-                    </div>
-                    <div class='item-right'><span class="badge badge-secondary badge-pill">{{dataset.format}}</span></div>
-                </li>
-            </ul>
-        </div>
-    </div>
 </div>
