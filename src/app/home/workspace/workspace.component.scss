@@ -24,6 +24,21 @@ mat-card-actions.actions {
 }
 // #endregion
 
+// #region [Icons]
+.icon-on {
+    color: black;
+}
+
+.icon-off {
+    color: slategray;
+}
+
+.iconsheet > div {
+    margin: 10px;
+    float: right;
+}
+// #endregion
+
 // #region [Fields]
 .field {
     font-weight: bold;

@@ -7,7 +7,24 @@
     </mat-card-header>
     <mat-card-content class="card-body bg-light">
         <div class="row">
-
+          <div class="col iconsheet d-flex flex-row-reverse">
+              <div>
+                  <mat-icon *ngIf="workspace.hasVideo" 
+                    class="icon-on" svgIcon="video"
+                    title="video data available"></mat-icon>
+                  <mat-icon *ngIf="!workspace.hasVideo" 
+                    class="icon-off" svgIcon="video-off" 
+                    title="no video data available"></mat-icon>
+              </div>
+              <div>
+                  <mat-icon *ngIf="workspace.hasEnergy" 
+                    class="icon-on" svgIcon="water"
+                    title="energy data available"></mat-icon>
+                  <mat-icon *ngIf="!workspace.hasEnergy" 
+                    class="icon-off" svgIcon="water-off"
+                    title="no energy data available"></mat-icon>
+              </div>
+          </div>
         </div>
         <div class="row">
             <div class="col">

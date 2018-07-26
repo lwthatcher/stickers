@@ -9,11 +9,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { WorkspaceComponent } from './workspace/workspace.component';
-import {MatIconModule} from '@angular/material/icon';
+import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
     CommonModule,
+    NgbModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     SettingsModule,
     DataLoaderModule,
@@ -25,4 +30,8 @@ import {MatIconModule} from '@angular/material/icon';
   ],
   declarations: [HomeComponent, WorkspaceComponent]
 })
-export class HomeModule { }
+export class HomeModule {
+  constructor(matIconRegistry: MatIconRegistry, domSanitizer: DomSanitizer) {
+    matIconRegistry.addSvgIconSet(domSanitizer.bypassSecurityTrustResourceUrl('./assets/mdi.svg'));
+  }
+}

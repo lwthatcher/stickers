@@ -17,15 +17,13 @@ interface SelectedInfo {
 export class WorkspaceComponent implements OnInit {
   // #region [Inputs]
   @Input() workspace: WorkspaceInfo;
-  @ViewChild('dsMenu') dsMenu: MatMenu;
-  @ViewChild('lsMenu') lsMenu: MatMenu;
   // #endregion
 
   // #region [Variables]
   datasets: DataInfo[];
   labelschemes: LabelScheme[];
   selected: SelectedInfo = {dataset: undefined, labelscheme: undefined}
-  classes: string;
+  canSync: boolean;
   // #endregion
 
   // #region [Constructors]
@@ -35,13 +33,10 @@ export class WorkspaceComponent implements OnInit {
     this.datasets = this.workspace.visibleData;
     this.labelschemes = this.workspace.labelschemes;
     this.labelschemes.push(this.workspace.EMPTY_SCHEME('None'))
-    // default dataset/labelscheme
     this.selected.dataset = this.defaultDataset();
     this.selected.labelscheme = this.defaultScheme();
-    // set dropdown classes
-    this.classes = 'drop-down-selection w-100';
-    this.dsMenu.classList = this.classes;
-    console.log('workspace', this);
+    this.canSync = this.checkCanSync();
+    console.debug('workspace', this);
   }
   // #endregion
 
@@ -86,6 +81,14 @@ export class WorkspaceComponent implements OnInit {
   // #endregion
 
   // #region [Helper Methods]
+  private checkCanSync() {
+    for (let v of this.workspace.videos) {
+      for (let d of this.workspace.data) {
+        if (v.sync(d).canSync) return true;
+      }
+    }
+    return false;
+  }
 
   private defaultDataset() {
     let datasets = this.datasets.filter((ds) => ds.flashes.length > 0);
@@ -110,7 +113,7 @@ export class WorkspaceComponent implements OnInit {
   }
 
   private sortByChannels(datasets) {
-    let comparator = (a,b) => { return a.channels.length - b.channels.length }
+    let comparator = (a,b) => { return b.channels.length - a.channels.length }
     return datasets.sort(comparator)
   }
 
