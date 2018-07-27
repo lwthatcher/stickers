@@ -43,13 +43,21 @@ p[matLine].dim-msg {
     margin-bottom: 8px;
 }
 
+.red-flash {
+    color: indianred;
+}
+
+.flipped {
+    transform: scaleX(-1);
+}
+
 mat-list-item button.hidden,
-mat-list-item  button.hidden * {
+mat-list-item button.hidden * {
     opacity: 0;
 }
 
 mat-list-item button.add-flash,
-mat-list-item  button.add-flash * {
+mat-list-item button.add-flash * {
     opacity: 0;
 }
 

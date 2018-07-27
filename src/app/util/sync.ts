@@ -30,7 +30,7 @@ export class Synchronizer {
         if (!this.canSync) throw ReferenceError('cannot convert: no values to sync!');
         let [d,v] = this.syncs[0];
         let offset = d - v;
-        return value - offset;
+        return (value - offset) / 1000;
     }
     // #endregion
 }

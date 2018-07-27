@@ -25,12 +25,18 @@
                 <p matLine class="dim-msg">Mark a flash to enable synchronization.</p>
             </div>
           </mat-list-item>
-          <mat-list-item class='d-flex' *ngFor="let flash of allFlashes" (click)="jumpTo(flash[1])">
-              <mat-icon class='flex-fill' matListIcon svgIcon="flash"></mat-icon>
-              <span class='flash-info flex-fill align-self-center'>{{ t(flash[1], 's') }}</span>
-              <span class='flash-info flex-fill align-self-center'>{{ t(flash[0], 'ms') }}</span>
-              <button class='flex-shrink-1 add-flash' mat-button isIconButton>
-                  <mat-icon svgIcon="flash-auto"></mat-icon>
+          <mat-list-item *ngFor="let flash of allFlashes"
+            class='d-flex' 
+            [disableRipple]="!hasBoth(flash)" 
+            (click)="jumpTo(flash.video)">
+              <mat-icon matListIcon class='flex-fill red-flash' svgIcon="flash"></mat-icon>
+              <span [ngClass]="flashClass(flash)">{{ t(flash, 's') }}</span>
+              <span [ngClass]="flashClass(flash)">{{ t(flash, 'ms') }}</span>
+              <button mat-button isIconButton
+                class='flex-shrink-1 add-flash'
+                [disabled]="!!flash.video" 
+                title="mark flash at current time">
+                  <mat-icon class='flipped' svgIcon="transfer"></mat-icon>
               </button>
           </mat-list-item>
         </mat-nav-list>

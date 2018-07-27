@@ -4,11 +4,22 @@ import { VgAPI } from 'videogular2/core';
 import { Synchronizer } from '../../util/sync';
 import { zip } from '../../util/util';
 
-  // #region [Constants]
-  const FPS = 30
-  const FRAME = 1 / FPS
-  const JUMP = 10
-  // #endregion
+// #region [Interfaces]
+interface FlashInfo {
+  video: number;
+  data: number;
+  i: number;
+  computed?: boolean;
+  inVideo?: boolean;
+}
+
+// #endregion
+
+// #region [Constants]
+const FPS = 30
+const FRAME = 1 / FPS
+const JUMP = 10
+// #endregion
 
 @Component({
   selector: 'app-video',
@@ -21,7 +32,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   api: VgAPI;
   video: VideoInfo;
   sync: Synchronizer;
-  allFlashes: [number,number][]
+  allFlashes: FlashInfo[]
   preload: string = 'auto';
   expanded: boolean = true;
   rates = ['0.25', '0.5', '1.0', '1.5', '2.0'];
@@ -41,7 +52,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     this.video = this.videos[0];
     this.sync = this.video.sync(this.dataInfo);
     this.videoElement = this.el.nativeElement.querySelector('vg-player > video');
-    this.allFlashes = zip(this.dataInfo.flashes, this.video.flashes);
+    this.allFlashes = this.combineFlashInfo();
     console.info('video component init', this);
     console.groupEnd();
   }
@@ -58,22 +69,39 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   get name() { return this.video.name }
   get src() { return 'video/' + this.video.path }
   get hasFlashes() { return this.video.flashes.length > 0 }
+  get synced() { return this.sync.canSync }
   // #endregion
 
   // #region [Public Methods]
   jumpTo(time: number) {
-    if (!!time) this.api.seekTime(time) 
+    if (this.defined(time)) this.api.seekTime(time) 
   }
 
-  t(time: number | null, unit: 's' | 'ms') {
-    if (time === null || time === undefined) return "N/A";
-    else return time.toString() + ' ' + unit;
+  t(flash: FlashInfo, unit: 's' | 'ms') {
+    let time = unit === 's' ? flash.video : flash.data;
+    let precision = unit === 's' ? 4 : 0;
+    if (!this.defined(time)) return "N/A";
+    else return time.toFixed(precision) + ' ' + unit;
+  }
+
+  hasBoth(flash: FlashInfo): boolean {
+    return (flash.data !== null && flash.data !== undefined) && 
+           (flash.video !== null && flash.video !== undefined)
+  }
+
+  flashClass(flash: FlashInfo) {
+    let result = {"flash-info": true, "flex-fill": true, "align-self-center": true}
+    return result;
   }
   // #endregion
 
   // #region [Event Handlers]
   onPlayerReady(api: VgAPI) {
     this.api = api;
+    this.api.getDefaultMedia().subscriptions.durationChange.subscribe(() => {
+      console.debug('duration change', this.api.duration);
+      this.allFlashes = this.allFlashes.map((flash) => this.checkInVideo(flash));
+    })
     console.log('video player ready', this.api);
   }
 
@@ -90,10 +118,10 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     else if (key === 'ArrowUp') this.playback('+');
     else if (key === 'ArrowDown') this.playback('-');
     if (event.target.tagName === 'BODY') return false;
-  }  
+  }
   // #endregion
 
-  // #region [Helper Methods]
+  // #region [Video Helper Methods]
   private toggle() {
     if (this.api.state == 'paused') this.api.play();
     else this.api.pause();
@@ -113,6 +141,33 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     if (dir === '+') di = Math.min(i+1, this.rates.length-1);
     if (dir === '-') di = Math.max(i-1, 0);
     this.api.playbackRate = this.rates[di];
+  }
+  // #endregion
+
+  // #region [Flash Helper Methods]
+  private combineFlashInfo(): FlashInfo[] {
+    let flashInfo = (dv, i) => {let [d,v] = dv; return {data: d, video: v, i, computed: false} }
+    let zipped = zip(this.dataInfo.flashes, this.video.flashes);
+    let result = zipped.map(flashInfo);
+    return result.map((flash) => this.inferSyncable(flash));
+  }
+
+  private defined(time) { return !(time === null || time === undefined) }
+
+  private inferSyncable(flash: FlashInfo): FlashInfo {
+    if (!this.defined(flash.video) && this.synced) {
+      flash.video = this.sync.dataToVid(flash.data);
+      flash.computed = true;
+    }
+    return flash;
+  }
+
+  private checkInVideo(flash: FlashInfo): FlashInfo {
+    if (this.defined(flash.video)) {
+      if (flash.video > 0 && flash.video < this.api.duration) flash.inVideo = true;
+      else flash.inVideo = false;
+    }
+    return flash;
   }
   // #endregion
 }
