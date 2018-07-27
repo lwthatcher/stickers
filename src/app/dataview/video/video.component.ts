@@ -1,7 +1,14 @@
-import { Component, OnInit, Input, ElementRef, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ChangeDetectorRef, AfterViewChecked, HostListener } from '@angular/core';
 import { WorkspaceInfo, DataInfo, VideoInfo } from '../../data-loader/workspace-info';
 import { VgAPI } from 'videogular2/core';
 import { Synchronizer } from '../../util/sync';
+import { zip } from '../../util/util';
+
+  // #region [Constants]
+  const FPS = 30
+  const FRAME = 1 / FPS
+  const JUMP = 10
+  // #endregion
 
 @Component({
   selector: 'app-video',
@@ -10,12 +17,13 @@ import { Synchronizer } from '../../util/sync';
 })
 export class VideoComponent implements OnInit, AfterViewChecked {
   // #region [Properties]
-  preload: string = 'auto';
-  expanded: boolean = true;
   videoElement: HTMLVideoElement;
   api: VgAPI;
   video: VideoInfo;
   sync: Synchronizer;
+  preload: string = 'auto';
+  expanded: boolean = true;
+  rates = ['0.25', '0.5', '1.0', '1.5', '2.0'];
   // #endregion
 
   // #region [Inputs]
@@ -50,13 +58,16 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   get name() { return this.video.name }
   get src() { return 'video/' + this.video.path }
   get hasFlashes() { return this.video.flashes.length > 0 }
+  get allFlashes() {
+    return zip(this.dataInfo.flashes, this.video.flashes)
+  }
   // #endregion
 
   // #region [Public Methods]
   jumpTo(time: number) { this.api.seekTime(time) }
 
-  vt(time: number = this.api.time.current) { return time.toFixed(2) }
-  dt(time: number = this.api.time.current) {
+  vt(time: number) { return time.toFixed(2) }
+  dt(time: number) {
     if (this.sync.canSync) return Math.round(this.sync.vidToData(time))
     else return "N/A"
   }
@@ -66,6 +77,43 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   onPlayerReady(api: VgAPI) {
     this.api = api;
     console.log('video player ready', this.api);
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  keypress(event) {
+    console.debug('keypress!', event.key);
+    let key = event.key;
+    if (key === ' ') this.toggle();
+    else if (key === 'ArrowRight') this.skip(FRAME, '+');
+    else if (key === 'ArrowLeft') this.skip(FRAME, '-');
+    else if (key === 'l') this.skip(JUMP, '+');
+    else if (key === 'j') this.skip(JUMP, '-');
+    else if (key === 'ArrowUp') this.playback('+');
+    else if (key === 'ArrowDown') this.playback('-');
+    return false;
+  }
+  // #endregion
+
+  // #region [Helper Methods]
+  private toggle() {
+    if (this.api.state == 'paused') this.api.play();
+    else this.api.pause();
+  }
+
+  private skip(Δt, dir: '+' | '-') {
+    let [t, dt] = [this.api.currentTime, this.api.currentTime]
+    if (dir === '+') dt = Math.min(t+Δt, this.api.duration);
+    if (dir === '-') dt = Math.max(t-Δt, 0);
+    this.api.seekTime(dt)
+  }
+
+  private playback(dir: '+' | '-') {
+    let target = (rate) => rate == this.api.playbackRate;
+    let [i, di] = [this.rates.findIndex(target), 0];
+    if (i === -1) console.warn('unexpected playback rate:', this.api.playbackRate, this.rates);
+    if (dir === '+') di = Math.min(i+1, this.rates.length-1);
+    if (dir === '-') di = Math.max(i-1, 0);
+    this.api.playbackRate = this.rates[di];
   }
   // #endregion
 }
