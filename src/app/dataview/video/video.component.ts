@@ -81,7 +81,8 @@ export class VideoComponent implements OnInit, AfterViewChecked {
 
   @HostListener('document:keydown', ['$event'])
   keypress(event) {
-    console.debug('keypress!', event.key);
+    console.debug('keypress!', event.key, event.target.tagName);
+    if (event.target.tagName === 'INPUT') return;
     let key = event.key;
     if (key === ' ') this.toggle();
     else if (key === 'ArrowRight') this.skip(FRAME, '+');
@@ -90,8 +91,8 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     else if (key === 'j') this.skip(JUMP, '-');
     else if (key === 'ArrowUp') this.playback('+');
     else if (key === 'ArrowDown') this.playback('-');
-    return false;
-  }
+    if (event.target.tagName === 'BODY') return false;
+  }  
   // #endregion
 
   // #region [Helper Methods]
