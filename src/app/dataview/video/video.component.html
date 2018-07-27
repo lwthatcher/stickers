@@ -22,10 +22,10 @@
                 <p matLine class="dim-msg">Mark a flash to enable synchronization.</p>
             </div>
           </mat-list-item>
-          <mat-list-item class='d-flex' *ngFor="let flash of flashes" (click)="jumpTo(flash)">
+          <mat-list-item class='d-flex' *ngFor="let flash of allFlashes" (click)="jumpTo(flash[1])">
               <mat-icon class='flex-fill' matListIcon svgIcon="flash"></mat-icon>
-              <span class='flash-info flex-fill'>{{ flash }} s</span>
-              <span class='flash-info flex-fill'>{{ sync.vidToData(flash) }} ms</span>
+              <span class='flash-info flex-fill'>{{ t(flash[1], 's') }}</span>
+              <span class='flash-info flex-fill'>{{ t(flash[0], 'ms') }}</span>
           </mat-list-item>
         </mat-nav-list>
       </div>

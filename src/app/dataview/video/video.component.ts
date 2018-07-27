@@ -21,6 +21,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   api: VgAPI;
   video: VideoInfo;
   sync: Synchronizer;
+  allFlashes: [number,number][]
   preload: string = 'auto';
   expanded: boolean = true;
   rates = ['0.25', '0.5', '1.0', '1.5', '2.0'];
@@ -39,9 +40,8 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     // select default video
     this.video = this.videos[0];
     this.sync = this.video.sync(this.dataInfo);
-    // video element
     this.videoElement = this.el.nativeElement.querySelector('vg-player > video');
-    console.log('video element:', this.videoElement);
+    this.allFlashes = zip(this.dataInfo.flashes, this.video.flashes);
     console.info('video component init', this);
     console.groupEnd();
   }
@@ -58,18 +58,16 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   get name() { return this.video.name }
   get src() { return 'video/' + this.video.path }
   get hasFlashes() { return this.video.flashes.length > 0 }
-  get allFlashes() {
-    return zip(this.dataInfo.flashes, this.video.flashes)
-  }
   // #endregion
 
   // #region [Public Methods]
-  jumpTo(time: number) { this.api.seekTime(time) }
+  jumpTo(time: number) {
+    if (!!time) this.api.seekTime(time) 
+  }
 
-  vt(time: number) { return time.toFixed(2) }
-  dt(time: number) {
-    if (this.sync.canSync) return Math.round(this.sync.vidToData(time))
-    else return "N/A"
+  t(time: number | null, unit: 's' | 'ms') {
+    if (time === null || time === undefined) return "N/A";
+    else return time.toString() + ' ' + unit;
   }
   // #endregion
 
@@ -81,9 +79,9 @@ export class VideoComponent implements OnInit, AfterViewChecked {
 
   @HostListener('document:keydown', ['$event'])
   keypress(event) {
-    console.debug('keypress!', event.key, event.target.tagName);
-    if (event.target.tagName === 'INPUT') return;
     let key = event.key;
+    console.debug('keypress!', key, event.target.tagName);
+    if (event.target.tagName === 'INPUT' || key === 'i') return;
     if (key === ' ') this.toggle();
     else if (key === 'ArrowRight') this.skip(FRAME, '+');
     else if (key === 'ArrowLeft') this.skip(FRAME, '-');
