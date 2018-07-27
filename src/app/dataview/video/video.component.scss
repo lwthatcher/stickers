@@ -30,6 +30,8 @@ span.flash-info {
     position: relative;
     display: inline-flex;
     color: darkslategray;
+    justify-content: center;
+    text-align: center;
 }
 
 span.list-header {
@@ -39,5 +41,20 @@ span.list-header {
 p[matLine].dim-msg {
     color: gray;
     margin-bottom: 8px;
+}
+
+mat-list-item button.hidden,
+mat-list-item  button.hidden * {
+    opacity: 0;
+}
+
+mat-list-item button.add-flash,
+mat-list-item  button.add-flash * {
+    opacity: 0;
+}
+
+mat-list-item:hover button.add-flash, 
+mat-list-item:hover button.add-flash * {
+    opacity: 1;
 }
 // #endregion

@@ -9,6 +9,7 @@ import { MatIconRegistry, MatIconModule } from '@angular/material';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {VgCoreModule} from 'videogular2/core';
 import {VgControlsModule} from 'videogular2/controls';
@@ -35,7 +36,8 @@ import { VideoComponent } from './video/video.component';
     VgBufferingModule,
     MatExpansionModule,
     MatListModule,
-    MatMenuModule
+    MatMenuModule,
+    MatButtonModule
   ],
   declarations: [
     DataviewComponent, 

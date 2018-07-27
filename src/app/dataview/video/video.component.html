@@ -10,8 +10,11 @@
         <mat-list>
             <mat-list-item class="d-flex">
               <span class="list-header flex-fill">Flashes:</span>
-              <span class='flash-info flex-fill'>Video Time:</span>
-              <span class='flash-info flex-fill'>Data Time:</span>
+              <span class='flash-info flex-fill align-self-center'>Video Time:</span>
+              <span class='flash-info flex-fill align-self-center'>Data Time:</span>
+              <button class='flex-shrink-1 hidden' disabled mat-button isIconButton>
+                  <mat-icon svgIcon="bomb"></mat-icon>
+              </button>
             </mat-list-item>
         </mat-list>
         <mat-nav-list>
@@ -24,12 +27,15 @@
           </mat-list-item>
           <mat-list-item class='d-flex' *ngFor="let flash of allFlashes" (click)="jumpTo(flash[1])">
               <mat-icon class='flex-fill' matListIcon svgIcon="flash"></mat-icon>
-              <span class='flash-info flex-fill'>{{ t(flash[1], 's') }}</span>
-              <span class='flash-info flex-fill'>{{ t(flash[0], 'ms') }}</span>
+              <span class='flash-info flex-fill align-self-center'>{{ t(flash[1], 's') }}</span>
+              <span class='flash-info flex-fill align-self-center'>{{ t(flash[0], 'ms') }}</span>
+              <button class='flex-shrink-1 add-flash' mat-button isIconButton>
+                  <mat-icon svgIcon="flash-auto"></mat-icon>
+              </button>
           </mat-list-item>
         </mat-nav-list>
       </div>
-      <div class="col-4">
+      <div class="col-5">
         <vg-player (onPlayerReady)="onPlayerReady($event)">
             <vg-overlay-play></vg-overlay-play>
             <vg-buffering></vg-buffering>
@@ -62,7 +68,7 @@
             </video>
         </vg-player>
       </div>
-      <div class="col"></div>
+      <div class="col-2"></div>
     </div>
   </mat-expansion-panel>
 </div>
