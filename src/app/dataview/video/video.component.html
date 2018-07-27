@@ -30,8 +30,8 @@
             [disableRipple]="!hasBoth(flash)" 
             (click)="jumpTo(flash.video)">
               <mat-icon matListIcon class='flex-fill red-flash' svgIcon="flash"></mat-icon>
-              <span [ngClass]="flashClass(flash)">{{ t(flash, 'video') }}</span>
-              <span [ngClass]="flashClass(flash)">{{ t(flash, 'data') }}</span>
+              <span [ngClass]="flashClass(flash, 'video')">{{ t(flash, 'video') }}</span>
+              <span [ngClass]="flashClass(flash, 'data')">{{ t(flash, 'data') }}</span>
               <button mat-button isIconButton
                 class='flex-shrink-1 add-flash'
                 [disabled]="!!flash.video" 

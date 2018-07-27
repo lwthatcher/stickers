@@ -51,6 +51,18 @@ p[matLine].dim-msg {
     transform: scaleX(-1);
 }
 
+span.computed {
+    font-style: italic;
+}
+
+span.in-video {
+    color: darkslateblue;
+}
+
+span.not-in-video {
+    color: slategray;
+}
+
 mat-list-item button.hidden,
 mat-list-item button.hidden * {
     opacity: 0;

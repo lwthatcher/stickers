@@ -77,7 +77,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
 
   // #region [Public Methods]
   jumpTo(time: number) {
-    if (this.defined(time)) this.api.seekTime(time) 
+    if (this.defined(time)) this.api.seekTime(time) ;
   }
 
   t(flash: FlashInfo, ds: 'video' | 'data') {
@@ -87,12 +87,16 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   }
 
   hasBoth(flash: FlashInfo): boolean {
-    return (flash.data !== null && flash.data !== undefined) && 
-           (flash.video !== null && flash.video !== undefined)
+    return this.defined(flash.data) && this.defined(flash.video);
   }
 
-  flashClass(flash: FlashInfo) {
+  flashClass(flash: FlashInfo, ds: 'video' | 'data') {
     let result = {"flash-info": true, "flex-fill": true, "align-self-center": true}
+    result['computed'] = ds === 'video' && flash.computed;
+    if ('inVideo' in flash) {
+      result['in-video'] = flash.inVideo;
+      result['not-in-video'] = !flash.inVideo;
+    }
     return result;
   }
   // #endregion
