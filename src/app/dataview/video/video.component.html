@@ -15,7 +15,7 @@
             </mat-list-item>
         </mat-list>
         <mat-nav-list>
-          <mat-list-item class="d-flex">
+          <mat-list-item *ngIf="!hasFlashes" class="d-flex">
             <mat-icon class='flex-fill w-33' matListIcon svgIcon="flash-off"></mat-icon>
             <div class="flex-fill">
                 <p matLine class="dim-msg">No flashes registered for this video.</p>

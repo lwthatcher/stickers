@@ -80,7 +80,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   @HostListener('document:keydown', ['$event'])
   keypress(event) {
     let key = event.key;
-    console.debug('keypress!', key, event.target.tagName);
+    console.debug('keypress', key, event.target.tagName);
     if (event.target.tagName === 'INPUT' || key === 'i') return;
     if (key === ' ') this.toggle();
     else if (key === 'ArrowRight') this.skip(FRAME, '+');
