@@ -19,6 +19,9 @@ interface FlashInfo {
 const FPS = 30
 const FRAME = 1 / FPS
 const JUMP = 10
+
+const UNIT = {video: 's', data: 'ms'}
+const PRECISION = {video: 4, data: 0}
 // #endregion
 
 @Component({
@@ -77,9 +80,8 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     if (this.defined(time)) this.api.seekTime(time) 
   }
 
-  t(flash: FlashInfo, unit: 's' | 'ms') {
-    let time = unit === 's' ? flash.video : flash.data;
-    let precision = unit === 's' ? 4 : 0;
+  t(flash: FlashInfo, ds: 'video' | 'data') {
+    let [time, unit, precision] = [flash[ds], UNIT[ds], PRECISION[ds]]
     if (!this.defined(time)) return "N/A";
     else return time.toFixed(precision) + ' ' + unit;
   }
