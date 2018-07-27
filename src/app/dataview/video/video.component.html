@@ -29,12 +29,14 @@
             class='d-flex' 
             [disableRipple]="!hasBoth(flash)" 
             (click)="jumpTo(flash.video)">
-              <mat-icon matListIcon class='flex-fill red-flash' svgIcon="flash"></mat-icon>
+              <mat-icon *ngIf="hasBoth(flash)" matListIcon class='flex-fill red-flash' svgIcon="flash"></mat-icon>
+              <mat-icon *ngIf="!hasBoth(flash)" matListIcon class='flex-fill gray-flash' svgIcon="flash-outline"></mat-icon>
               <span [ngClass]="flashClass(flash, 'video')">{{ t(flash, 'video') }}</span>
               <span [ngClass]="flashClass(flash, 'data')">{{ t(flash, 'data') }}</span>
               <button mat-button isIconButton
                 class='flex-shrink-1 add-flash'
-                [disabled]="!!flash.video" 
+                [disabled]="origSynced"
+                (click)="markFlash(flash)"
                 title="mark flash at current time">
                   <mat-icon class='flipped' svgIcon="transfer"></mat-icon>
               </button>

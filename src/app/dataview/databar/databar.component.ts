@@ -262,8 +262,16 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private register_video() {
-    if (this.video.defined && this.video.sync.canSync)
-      this.video.subscriptions.timeUpdate.subscribe(() => { this.drawer.draw_ctb() })
+    if (this.video.defined) {
+      if (this.video.sync.canSync)
+        this.video.subscriptions.timeUpdate.subscribe(() => { this.drawer.draw_ctb() })
+      else {
+        this.video.syncChange.subscribe((t) => {
+          this.video.subscriptions.timeUpdate.subscribe(() => { this.drawer.draw_ctb() })
+          this.drawer.draw_ctb();
+        })
+      }
+    }
   }
   // #endregion
 

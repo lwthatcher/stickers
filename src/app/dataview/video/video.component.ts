@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ChangeDetectorRef, AfterViewChecked, HostListener } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ChangeDetectorRef, AfterViewChecked, HostListener, Output, EventEmitter } from '@angular/core';
 import { WorkspaceInfo, DataInfo, VideoInfo } from '../../data-loader/workspace-info';
 import { VgAPI } from 'videogular2/core';
 import { Synchronizer } from '../../util/sync';
@@ -11,6 +11,7 @@ interface FlashInfo {
   i: number;
   computed?: boolean;
   inVideo?: boolean;
+  marked?: boolean
 }
 
 // #endregion
@@ -35,6 +36,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   api: VgAPI;
   video: VideoInfo;
   sync: Synchronizer;
+  origSynced: boolean;
   allFlashes: FlashInfo[]
   preload: string = 'auto';
   expanded: boolean = true;
@@ -46,6 +48,10 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   @Input() dataInfo: DataInfo;
   // #endregion
 
+  // #region [Outputs]
+  @Output() flashSync = new EventEmitter();
+  // #endregion
+
   // #region [Constructors]
   constructor(private el: ElementRef, private cdRef:ChangeDetectorRef) { }
 
@@ -54,6 +60,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     // select default video
     this.video = this.videos[0];
     this.sync = this.video.sync(this.dataInfo);
+    this.origSynced = this.sync.canSync;
     this.videoElement = this.el.nativeElement.querySelector('vg-player > video');
     this.allFlashes = this.combineFlashInfo();
     console.info('video component init', this);
@@ -67,19 +74,13 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   // #region [Accessors]
   get w() { return this.api.videogularElement.clientWidth }
   get h() { return this.api.videogularElement.clientHeight }
-  get flashes() { return this.workspace._video[this.name].flashes }
   get videos() { return this.workspace.videos }
   get name() { return this.video.name }
   get src() { return 'video/' + this.video.path }
   get hasFlashes() { return this.video.flashes.length > 0 }
-  get synced() { return this.sync.canSync }
   // #endregion
 
-  // #region [Public Methods]
-  jumpTo(time: number) {
-    if (this.defined(time)) this.api.seekTime(time) ;
-  }
-
+  // #region [Queries]
   t(flash: FlashInfo, ds: 'video' | 'data') {
     let [time, unit, precision] = [flash[ds], UNIT[ds], PRECISION[ds]]
     if (!this.defined(time)) return "N/A";
@@ -98,6 +99,24 @@ export class VideoComponent implements OnInit, AfterViewChecked {
       result['not-in-video'] = !flash.inVideo;
     }
     return result;
+  }
+  // #endregion
+
+  // #region [Public Methods]
+  jumpTo(time: number) { if (this.defined(time)) this.api.seekTime(time) }
+
+  markFlash(flash: FlashInfo) {
+    // get current time in video
+    let time = this.api.currentTime;
+    console.log('marking flash at:', time, flash.i);
+    // update video flashes
+    this.video.flashes = [];  // reset to allow users to remark
+    this.video.flashes[flash.i] = time;
+    // update synchronizer, infer flashes based on input
+    this.sync = this.video.sync(this.dataInfo);
+    this.allFlashes = this.combineFlashInfo().map((f) => this.checkInVideo(f));
+    // emit updated synchronizer
+    this.flashSync.emit(this.sync);
   }
   // #endregion
 
@@ -161,7 +180,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   private defined(time) { return !(time === null || time === undefined) }
 
   private inferSyncable(flash: FlashInfo): FlashInfo {
-    if (!this.defined(flash.video) && this.synced) {
+    if (!this.defined(flash.video) && this.sync.canSync) {
       flash.video = this.sync.dataToVid(flash.data);
       flash.computed = true;
     }
