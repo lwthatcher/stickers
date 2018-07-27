@@ -52,6 +52,7 @@ export class SettingsService {
   downsampling: DownsamplingMethod = 'dynamic';
   max_sensors: number = 3;
   filter_nulls: boolean = true;
+  auto_save: boolean = true;
   // #endregion
 
   // #region [Accessors]

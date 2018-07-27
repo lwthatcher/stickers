@@ -3,6 +3,7 @@ import { WorkspaceInfo, DataInfo, VideoInfo } from '../../data-loader/workspace-
 import { VgAPI } from 'videogular2/core';
 import { Synchronizer } from '../../util/sync';
 import { zip } from '../../util/util';
+import { SettingsService } from '../../settings/settings.service';
 
 // #region [Interfaces]
 interface FlashInfo {
@@ -53,7 +54,9 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   // #endregion
 
   // #region [Constructors]
-  constructor(private el: ElementRef, private cdRef:ChangeDetectorRef) { }
+  constructor(private el: ElementRef, 
+              private cdRef:ChangeDetectorRef,
+              private settings: SettingsService) { }
 
   ngOnInit() {
     console.groupCollapsed('video component init');

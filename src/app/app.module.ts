@@ -12,6 +12,7 @@ import { SettingsModule } from './settings/settings.module';
 import { DataLoaderModule } from './data-loader/data-loader.module';
 import { DataviewModule } from './dataview/dataview.module';
 import { HomeModule } from './home/home.module';
+import { SaverService } from './saver/saver.service';
 
 
 @NgModule({
@@ -31,7 +32,7 @@ import { HomeModule } from './home/home.module';
     DataviewModule,
     HomeModule
   ],
-  providers: [],
+  providers: [SaverService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
