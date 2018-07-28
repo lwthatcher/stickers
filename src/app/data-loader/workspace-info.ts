@@ -97,6 +97,7 @@ export class WorkspaceInfo {
 
 export class VideoInfo {
     // #region [Properties]
+    workspace: string;
     name: string;
     path: string;
     flashes: number[];
@@ -107,6 +108,7 @@ export class VideoInfo {
     // #region [Constructor]
     constructor(ws, info) {
         this.name = info.name;
+        this.workspace = info.workspace;
         this.path = info.path;
         this.flashes = info.flashes || [];
         this.ws = ws;

@@ -8,8 +8,8 @@ export class SaverService {
   constructor(private http: HttpClient) { }
 
   saveFlashes(video: VideoInfo) {
-    let request = {workspace: video}
-    return this.http.post("/api/save/flashes", request, { responseType: 'text' });
+    let request = {workspace: video.workspace, video: video.name, flashes: video.flashes}
+    return this.http.post("/api/save/flashes", request);
   }
 
   saveLabels(stuff) {
