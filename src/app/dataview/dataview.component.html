@@ -25,17 +25,17 @@
                 [channels]="channels">
             </toolbox-sensors>
 
+            <toolbox-modes 
+                [sensor]="sensor" 
+                [tracker]="mode">
+            </toolbox-modes>
+
             <toolbox-labelstreams 
                 [sensor]="sensor"
                 [workspace]="workspace"
                 [(labelstreams)]="labelStreams" 
                 (remove)="removeStream($event)">
             </toolbox-labelstreams>
-
-            <toolbox-modes 
-                [sensor]="sensor" 
-                [tracker]="mode">
-            </toolbox-modes>
 
             <toolbox-types 
                 [sensor]="sensor" 
