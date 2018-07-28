@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { VideoInfo } from '../data-loader/workspace-info';
+
+// #region [Interfaces]
+interface VideoInfoLike {
+  workspace: string;
+  name: string;
+  flashes: number[];
+}
+// #endregion
 
 @Injectable()
 export class SaverService {
 
   constructor(private http: HttpClient) { }
 
-  saveFlashes(video: VideoInfo) {
+  saveFlashes(video: VideoInfoLike) {
     let request = {workspace: video.workspace, video: video.name, flashes: video.flashes}
     return this.http.post("/api/save/flashes", request);
   }

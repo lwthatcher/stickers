@@ -20,12 +20,12 @@ export class NewLabelstreamPopoverComponent implements OnInit {
   // #endregion
 
   // #region [Public Methods]
-  valid_name(name: string): boolean { 
-    return name.length > 0 && !(name in this.streams)
+  validName(name: string): boolean { 
+    return !!name && name.length > 0 && !this.streams.includes(name);
   }
 
   create(name: string) {
-    if (!this.valid_name(name)) { return }
+    if (!this.validName(name)) { return }
     this.submit.emit(name);
   }
   // #endregion
