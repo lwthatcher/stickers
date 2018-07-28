@@ -4,6 +4,7 @@ import { VgAPI } from 'videogular2/core';
 import { Synchronizer } from '../../util/sync';
 import { zip } from '../../util/util';
 import { SettingsService } from '../../settings/settings.service';
+import { SaverService } from '../../saver/saver.service';
 
 // #region [Interfaces]
 interface FlashInfo {
@@ -56,7 +57,8 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   // #region [Constructors]
   constructor(private el: ElementRef, 
               private cdRef:ChangeDetectorRef,
-              private settings: SettingsService) { }
+              private settings: SettingsService,
+              private saver: SaverService) { }
 
   ngOnInit() {
     console.groupCollapsed('video component init');
@@ -120,6 +122,11 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     this.allFlashes = this.combineFlashInfo().map((f) => this.checkInVideo(f));
     // emit updated synchronizer
     this.flashSync.emit(this.sync);
+    // save flashes
+    if (this.settings.auto_save) {
+      let response = this.saver.saveFlashes(this.video.flashes);
+      response.subscribe((r) => {console.debug('save flashes response:', r)})
+    }
   }
   // #endregion
 

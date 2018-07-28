@@ -6,7 +6,15 @@ export class SaverService {
 
   constructor(private http: HttpClient) { }
 
-  saveFlashes() {}
+  saveFlashes(flashes) {
+    return this.http.post("/api/save/flashes", flashes, { responseType: 'text' });
+  }
 
-  saveLabels() {}
+  saveLabels(stuff) {
+    return this.http.post("/api/save/labels", stuff);
+  }
+
+  computeEnergy(stuff) {
+    return this.http.post("/api/compute/energy", stuff);
+  }
 }
