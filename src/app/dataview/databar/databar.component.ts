@@ -22,7 +22,7 @@ import { Drawer } from './drawer/drawer';
 import { ModeTracker } from '../modes/tool-mode';
 import { EnergyWellsTracker } from '../energy/energy-wells';
 import { VideoComponent } from '../video/video.component';
-import { VideoTracker } from '../video/video';
+import { VideoTracker } from '../video/video-tracker';
 // #endregion
 
  // #region [Interfaces]

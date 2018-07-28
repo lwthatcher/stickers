@@ -26,8 +26,6 @@ export class VideoTracker {
         this.vc.flashSync.subscribe((sync: Synchronizer) => {
             this.sync = sync;
             if (sync.canSync) { this.syncChange.emit(this.api.currentTime); }
-            console.debug('recognized flashes change: ', sync);
-            
         })
         if (!this.api) console.warn('Video API does not seem to be initialized:', this.api, this.vc);
         console.debug('Video Tracker', this);

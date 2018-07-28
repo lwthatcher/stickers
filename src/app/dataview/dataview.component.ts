@@ -20,7 +20,7 @@ import { SaveMenuComponent } from './save-menu/save-menu.component';
 import { EnergyWellsTracker } from './energy/energy-wells';
 import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
 import { VideoComponent } from './video/video.component';
-import { VideoTracker } from './video/video';
+import { VideoTracker } from './video/video-tracker';
 // #endregion
 
 // #region [Interfaces]
