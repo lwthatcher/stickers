@@ -73,8 +73,8 @@ export class LabelstreamToolboxComponent implements OnInit {
   }
 
   add_stream(name: string) {
-    if (!this.valid_name(name)) { return }
-    let scheme = this.workspace.EMPTY_SCHEME(name)
+    console.debug('adding stream', name);
+    let scheme = this.workspace.EMPTY_SCHEME(name);
     this.labelstreams[name] = new LabelStream(name, scheme);
     this.sensor.labelstream = name;
     this.popover.close();

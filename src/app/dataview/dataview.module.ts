@@ -22,6 +22,7 @@ import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { SaveMenuComponent } from './save-menu/save-menu.component';
 import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
 import { VideoComponent } from './video/video.component';
+import { NewLabelstreamPopoverComponent } from './labelstreams/popover/new-labelstream-popover.component';
 
 @NgModule({
   imports: [
@@ -45,7 +46,11 @@ import { VideoComponent } from './video/video.component';
     ModesToolboxComponent, 
     TypesToolboxComponent, 
     LabelstreamToolboxComponent, 
-    SensorsToolboxComponent, SaveMenuComponent, EnergyWellToolboxComponent, VideoComponent],
+    SensorsToolboxComponent, 
+    SaveMenuComponent, 
+    EnergyWellToolboxComponent, 
+    VideoComponent, 
+    NewLabelstreamPopoverComponent],
   providers: []
 })
 export class DataviewModule { 
