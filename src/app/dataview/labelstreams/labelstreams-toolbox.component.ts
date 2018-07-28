@@ -16,7 +16,7 @@ export interface StreamChange {
 @Component({
   selector: 'toolbox-labelstreams',
   templateUrl: './labelstreams-toolbox.component.html',
-  styleUrls: ['labelstreams-toolbox.component.css']
+  styleUrls: ['labelstreams-toolbox.component.scss']
 })
 export class LabelstreamToolboxComponent implements OnInit {
   // #region [Inputs]
@@ -46,13 +46,25 @@ export class LabelstreamToolboxComponent implements OnInit {
   }
   // #endregion
 
-  // #region [Public Methods]
-  toggleLabels() { this.sensor.toggle_labels() }
-
+  // #region [Queries]
   valid_name(name: string) { return name.length > 0 }
 
   can_remove(stream: string) {
     return this.streams.length > 1 && this.getStream(stream).isEmpty 
+  }
+  // #endregion
+
+  // #region [Public Methods]
+  toggleLabels() { this.sensor.toggle_labels() }
+
+  save(event) {
+    event.stopPropagation();
+    console.log('save stream:', this.sensor.labelstream) 
+  }
+
+  merge(stream: string, event) { 
+    event.stopPropagation();
+    console.log('merge two streams:', this.sensor.labelstream, stream);
   }
 
   selectStream(stream: string) {

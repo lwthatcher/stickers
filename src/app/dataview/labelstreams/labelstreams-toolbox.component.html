@@ -53,18 +53,30 @@
             <div class="dropdown-menu" ngbDropdownMenu>
                 <div *ngFor="let stream of streams" 
                   (click)="selectStream(stream)" 
-                  class="dropdown-item">
+                  class="dropdown-item d-flex justify-content-between">
                     {{stream}}
-                    <button class='btn btn-danger btn-icon'
-                      [disabled]="!can_remove(stream)"
-                      (click)="remove_stream(stream, $event)">
-                        <i class="material-icons icon">delete</i>
-                    </button>
+                    <div class='btn-box'>
+                        <button *ngIf="sensor.labelstream == stream"
+                        (click)="save($event)"
+                        class='btn btn-info btn-icon'>
+                            <i class="material-icons icon">save</i>
+                        </button>
+                        <button *ngIf="sensor.labelstream != stream" 
+                        (click)="merge(stream, $event)"
+                        class='btn btn-secondary btn-icon'>
+                            <i class="material-icons icon">merge_type</i>
+                        </button>
+                        <button class='btn btn-danger btn-icon'
+                        [disabled]="!can_remove(stream)"
+                        (click)="remove_stream(stream, $event)">
+                            <i class="material-icons icon">delete</i>
+                        </button>
+                    </div>
                 </div>
                 <div class="dropdown-item dropdown-button">
                     <button type="button" 
                       class="btn btn-outline-secondary add-stream" 
-                      title='new label stream'
+                      title='create new label scheme'
                       [ngbPopover]="addPopover"
                       #popover="ngbPopover"
                       placement="right" >

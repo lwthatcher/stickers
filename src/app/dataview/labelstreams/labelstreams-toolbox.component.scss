@@ -32,15 +32,20 @@ div.dropdown-item.dropdown-button {
     padding: 1px 1px;
 }
 
-div.dropdown-item > .btn-icon {
+div.dropdown-item > .btn-box {
     float: right;
-    padding: 0;
     visibility: hidden;
+    padding-left: 10px;
+    > button {
+        padding: 0;
+    }
 }
 
-div.dropdown-item:hover > .btn-icon {
+div.dropdown-item:hover > .btn-box {
     visibility: visible;
 }
+
+
 
 div.dropdown-menu {
     padding-bottom: 0;
