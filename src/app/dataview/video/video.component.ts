@@ -142,17 +142,17 @@ export class VideoComponent implements OnInit, AfterViewChecked {
 
   @HostListener('document:keydown', ['$event'])
   keypress(event) {
-    let key = event.key;
-    console.debug('keypress', key, event.target.tagName);
-    if (event.target.tagName === 'INPUT' || key === 'i') return;
-    if (key === ' ') this.toggle();
+    let [key, shift] = [event.key, event.shiftKey]
+    console.debug('keypress', key, event.target.tagName, shift);
+    if (this.shouldNotBlock(event)) return;
+    else if (key === ' ') this.toggle();
     else if (key === 'ArrowRight') this.skip(FRAME, '+');
     else if (key === 'ArrowLeft') this.skip(FRAME, '-');
     else if (key === 'l') this.skip(JUMP, '+');
     else if (key === 'j') this.skip(JUMP, '-');
     else if (key === 'ArrowUp') this.playback('+');
     else if (key === 'ArrowDown') this.playback('-');
-    if (event.target.tagName === 'BODY') return false;
+    if(this.shouldPreventDefault(event)) return false;
   }
   // #endregion
 
@@ -203,6 +203,18 @@ export class VideoComponent implements OnInit, AfterViewChecked {
       else flash.inVideo = false;
     }
     return flash;
+  }
+  // #endregion
+
+  // #region [Helper Methods]
+  private shouldPreventDefault(event): boolean {
+    return (event.target.tagName === 'BODY' || event.target.tagName === 'DIV');
+  }
+
+  private shouldNotBlock(event): boolean {
+    return (event.target.tagName === 'INPUT' || 
+            event.key === 'i' || 
+            event.key === 'F5')
   }
   // #endregion
 }
