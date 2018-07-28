@@ -124,7 +124,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
     this.flashSync.emit(this.sync);
     // save flashes
     if (this.settings.auto_save) {
-      let response = this.saver.saveFlashes(this.video.flashes);
+      let response = this.saver.saveFlashes(this.video);
       response.subscribe((r) => {console.debug('save flashes response:', r)})
     }
   }

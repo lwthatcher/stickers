@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { VideoInfo } from '../data-loader/workspace-info';
 
 @Injectable()
 export class SaverService {
 
   constructor(private http: HttpClient) { }
 
-  saveFlashes(flashes) {
-    return this.http.post("/api/save/flashes", flashes, { responseType: 'text' });
+  saveFlashes(video: VideoInfo) {
+    let request = {workspace: video}
+    return this.http.post("/api/save/flashes", request, { responseType: 'text' });
   }
 
   saveLabels(stuff) {
