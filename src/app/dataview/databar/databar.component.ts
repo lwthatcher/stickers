@@ -15,13 +15,12 @@ import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../sensors/sensor";
-import { Colorer} from '../types/colorer';
+import { Colorer} from '../event-types/colorer';
 import { Labeller } from './labeller/labeller';
 import { LabelStream } from '../labelstreams/labelstream';
 import { Drawer } from './drawer/drawer';
 import { ModeTracker } from '../modes/tool-mode';
 import { EnergyWellsTracker } from '../energy/energy-wells';
-import { VideoComponent } from '../video/video.component';
 import { VideoTracker } from '../video/video-tracker';
 // #endregion
 

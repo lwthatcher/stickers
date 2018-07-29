@@ -7,11 +7,11 @@ import { WorkspaceInfo, DataInfo, TypeMap, LabelScheme } from '../data-loader/wo
 import { SettingsService } from '../settings/settings.service';
 import { Label, LabelStream} from './labelstreams/labelstream';
 import { ModeTracker } from './modes/tool-mode';
-import { Colorer } from './types/colorer';
+import { Colorer } from './event-types/colorer';
 import { Sensor } from './sensors/sensor';
 import { Dataset } from '../data-loader/dataset';
 import { LabelsLoaderService } from '../data-loader/labels-loader.service';
-import { TypesToolboxComponent } from './types/types-toolbox.component';
+import { TypesToolboxComponent } from './event-types/types-toolbox.component';
 import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
