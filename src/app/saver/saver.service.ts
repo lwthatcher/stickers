@@ -15,6 +15,11 @@ interface SchemeLike {
   name: string;
   event_map: TypeMap; 
 }
+
+interface DataInfoLike {
+  workspace: string;
+  name: string;
+}
 // #endregion
 
 @Injectable()

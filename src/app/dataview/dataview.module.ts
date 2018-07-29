@@ -23,6 +23,7 @@ import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.compone
 import { VideoComponent } from './video/video.component';
 import { NewLabelstreamPopover } from './labelstreams/popover/new-labelstream-popover.component';
 import { EnergySettingsPopover } from './energy/popover/settings-popover.component';
+import { ComputeEnergyPopover } from './energy/popover/compute-popover.component';
 
 @NgModule({
   imports: [
@@ -49,7 +50,7 @@ import { EnergySettingsPopover } from './energy/popover/settings-popover.compone
     SensorsToolboxComponent,
     EnergyWellToolboxComponent, 
     VideoComponent, 
-    NewLabelstreamPopover, EnergySettingsPopover],
+    NewLabelstreamPopover, EnergySettingsPopover, ComputeEnergyPopover],
   providers: []
 })
 export class DataviewModule { 
