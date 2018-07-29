@@ -17,14 +17,15 @@ interface SchemeLike {
 }
 // #endregion
 
-// #region [Service]
 @Injectable()
 export class SaverService {
-
+  // #region [Constructor]
   constructor(private http: HttpClient) { }
+  // #endregion
 
-  saveFlashes(video: VideoInfo)
-  saveFlashes(video: VideoInfoLike) {
+  // #region [Public Methods]
+  saveFlashes(video: VideoInfoLike)
+  saveFlashes(video: VideoInfo) {
     let request = {workspace: video.workspace, video: video.name, flashes: video.flashes}
     return this.http.post("/api/save/flashes", request);
   }
@@ -32,6 +33,7 @@ export class SaverService {
   saveLabels(scheme: SchemeLike, labels?: Label[])
   saveLabels(scheme: LabelScheme, labels?: Label[]) {
     labels = labels || [];
+    labels = this.clean(labels);
     let request = { workspace: scheme.workspace, 
                     scheme: scheme.name,
                     labels: labels,
@@ -42,5 +44,11 @@ export class SaverService {
   computeEnergy(stuff) {
     return this.http.post("/api/compute/energy", stuff);
   }
+  // #endregion
+
+  // #region [Helper Methods]
+  private clean(labels: Label[]) {
+    return labels.map((lbl) => {let {start,end,label} = lbl; return {start,end,label}; })
+  }
+  // #endregion
 }
-// #endregion
