@@ -24,7 +24,7 @@ export class EnergySettingsPopover implements OnInit {
   constructor() { }
   ngOnInit() {
     this.displayMode = this.energy.displayMode;
-    this.energy.event$.subscribe((event) => this.tracked(event));
+    this.energy.event.subscribe((event) => this.tracked(event));
   }
   // #endregion
 

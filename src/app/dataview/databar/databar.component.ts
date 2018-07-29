@@ -257,7 +257,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private register_energy() {
-    this.energy.event$.subscribe((e) => { this.energy_update(e) })
+    this.energy.event.subscribe((e) => { this.energy_update(e) })
   }
 
   private register_video() {

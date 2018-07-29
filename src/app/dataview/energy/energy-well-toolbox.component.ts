@@ -8,11 +8,6 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./energy-well-toolbox.component.css']
 })
 export class EnergyWellToolboxComponent implements OnInit {
-  // #region [Properties]
-  displayMode: DisplayMode;
-  DISPLAY_MODE = DisplayMode;
-  // #endregion
-
   // #region [Inputs]
   @Input() energy: EnergyWellsTracker;
   @ViewChild('settingsMenu') menu: NgbPopover;
@@ -21,10 +16,7 @@ export class EnergyWellToolboxComponent implements OnInit {
   // #region [Constructors]
   constructor() { }
 
-  ngOnInit() {
-    this.displayMode = this.energy.displayMode;
-    this.energy.event$.subscribe((event) => this.tracked(event));
-  }
+  ngOnInit() { }
   // #endregion
 
   // #region [Accessors]
@@ -40,12 +32,6 @@ export class EnergyWellToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Event Handlers]
-  changed(mode: DisplayMode) { this.energy.updateMode(mode) }
-
-  tracked(event: EnergyUpdate) {
-    if (event.type === 'display-mode') this.displayMode = event.mode;
-  }
-
   close() { this.menu.close() }
   // #endregion
 }

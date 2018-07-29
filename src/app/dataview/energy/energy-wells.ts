@@ -31,7 +31,7 @@ export class EnergyWellsTracker {
     ds: Promise<Dataset>;
     visible: boolean;
     energyMap: EnergyMap;
-    event$ = new EventEmitter<EnergyUpdate>();
+    event = new EventEmitter<EnergyUpdate>();
     displayMode: DisplayMode;
     private dataloader: DataloaderService;
     private current: DataInfo;
@@ -92,12 +92,12 @@ export class EnergyWellsTracker {
 
     toggle() {
         this.visible = !this.visible;
-        this.event$.emit({type: 'toggle'});
+        this.event.emit({type: 'toggle'});
     }
 
     updateMode(mode: DisplayMode) {
         this.displayMode = mode;
-        this.event$.emit({type: 'display-mode', mode: mode});
+        this.event.emit({type: 'display-mode', mode: mode});
     }
 
     async at(x) {
