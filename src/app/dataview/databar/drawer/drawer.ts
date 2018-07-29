@@ -75,7 +75,7 @@ export class Drawer {
 
   get labeller() { return this.databar.labeller }
 
-  get label_type() { return this.ls.lbl_type }
+  get label_type() { return this.ls.eventType }
 
   get ls() { return this.databar.labelstream }
 

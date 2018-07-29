@@ -171,7 +171,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   mode_changed(change) { this.updateMode(this.mode) }
 
   type_changed(change) {
-    console.debug('type change:', change, this.labelstream.lbl_type);
+    console.debug('type change:', change, this.labelstream.eventType);
   }
 
   stream_update(event) {

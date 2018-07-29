@@ -75,14 +75,17 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   add_type(name: string): void {
     if (!this.valid_name(name)) { return }
     let lbl = this.emap.add(name);
+    this.labelstream.emit('add-type', name);
     this.labelstream.change_type(lbl);
     this.addMenu.close();
   }
 
-  edit_type(type: LabelKey, name: string): void {
-    let lbl = this.emap.edit(type, name);
+  edit_type(key: LabelKey, name: string): void {
+    let from = this.emap.get(key);
+    let lbl = this.emap.edit(key, name);
+    this.labelstream.emit('edit-type', {key, from, to: lbl});
     this.labelstream.change_type(lbl);
-    this.getMenu(type).close();
+    this.getMenu(key).close();
   }
 
   remove_type(type: LabelKey): void {
@@ -98,12 +101,12 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   stream_changed() {
     this.register_lblstream();
     console.debug('label-stream change:', this.labelstream);
-    this.lbl = this.labelstream.lbl_type.toString();
+    this.lbl = this.labelstream.eventType.toString();
   }
 
   stream_update(event) {
     if (event.type === 'change-type') 
-      this.lbl = this.labelstream.lbl_type.toString();
+      this.lbl = this.labelstream.eventType.toString();
   }
 
   toggleAddMenu(event) { this.closeOtherMenus() }

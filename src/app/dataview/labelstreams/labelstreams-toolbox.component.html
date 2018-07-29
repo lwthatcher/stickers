@@ -34,6 +34,7 @@
                     {{stream}}
                     <div class='btn-box'>
                         <button *ngIf="sensor.labelstream == stream"
+                        [disabled]="!can_save(stream)"
                         (click)="save($event)"
                         class='btn btn-info btn-icon'>
                             <i class="material-icons icon">save</i>

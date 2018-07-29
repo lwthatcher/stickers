@@ -52,6 +52,8 @@ export class LabelstreamToolboxComponent implements OnInit {
   can_remove(stream: string) {
     return this.streams.length > 1 && this.getStream(stream).isEmpty 
   }
+
+  can_save(stream: string) { return this.getStream(stream).changed }
   // #endregion
 
   // #region [Public Methods]
@@ -59,7 +61,8 @@ export class LabelstreamToolboxComponent implements OnInit {
 
   save(event) {
     event.stopPropagation();
-    console.log('save stream:', this.sensor.labelstream) 
+    console.log('save stream:', this.sensor.labelstream);
+    this.current.changed = false;
   }
 
   merge(stream: string, event) { 
