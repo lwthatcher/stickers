@@ -22,7 +22,7 @@ import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
 import { VideoComponent } from './video/video.component';
 import { NewLabelstreamPopoverComponent } from './labelstreams/popover/new-labelstream-popover.component';
-import { EnergySettingsPopoverComponent } from './energy/popover/energy-settings-popover.component';
+import { EnergySettingsPopoverComponent } from './energy/popover/settings-popover.component';
 
 @NgModule({
   imports: [
