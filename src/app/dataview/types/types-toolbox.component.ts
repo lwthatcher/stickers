@@ -131,7 +131,7 @@ export class TypesToolboxComponent implements OnInit, OnChanges {
   private register_lblstream() {
     if (!this.labelstream) return false;
     if (this.registration) this.registration.unsubscribe();
-    this.registration = this.labelstream.event$.subscribe((e) => { this.stream_update(e) })
+    this.registration = this.labelstream.event.subscribe((e) => { this.stream_update(e) })
     return true;
   }
   // #endregion

@@ -40,6 +40,8 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #region [Accessors]
   get streams(): string[] { return Object.keys(this.labelstreams) }
 
+  get current(): LabelStream { return this.labelstreams[this.sensor.labelstream] }
+
   get icon(): string {
     if (this.popover.isOpen()) return 'remove'
     else return 'add'
@@ -47,8 +49,6 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Queries]
-  valid_name(name: string) { return name.length > 0 }
-
   can_remove(stream: string) {
     return this.streams.length > 1 && this.getStream(stream).isEmpty 
   }

@@ -23,7 +23,7 @@ export class LabelStream {
     // #region [Variables]
     name: string;
     labels: Label[];
-    event$ = new EventEmitter<LabelStreamEvent>();
+    event = new EventEmitter<LabelStreamEvent>();
     emap: EventMap;
     private _type: LabelKey;
     private _i: number;
@@ -94,7 +94,7 @@ export class LabelStream {
     emit(type: string, target=undefined) {
         let event: LabelStreamEvent = {type, source: this.name}
         if (!!target) event.target = target;
-        this.event$.emit(event)
+        this.event.emit(event)
     }
 
     findType(type: LabelKey) {

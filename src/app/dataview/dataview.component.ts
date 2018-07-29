@@ -288,7 +288,7 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
     let result = {}
     for (let entry of Object.entries(this.labelStreams)) {
       let [key, value] = entry;
-      result[key] = value.event$.observers;
+      result[key] = value.event.observers;
     }
     return result;
   }
