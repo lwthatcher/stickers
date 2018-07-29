@@ -1,7 +1,8 @@
 <div class="energy-wells tools-box">
   <div class="btn-group">
     <button type="button" 
-      class="btn btn-outline-secondary" 
+      class="btn btn-info-secondary"
+      [disabled]="!energy.has_energy"
       (click)="energy.toggle()"
       title='toggle energy wells visibility'>
         <span>
@@ -13,17 +14,21 @@
       ngbDropdown
       role="group"
       #dropdown="ngbDropdown">
-        <button class="btn btn-outline-secondary" ngbDropdownToggle title="select energy dataset">
+        <button class="btn btn-info-secondary" ngbDropdownToggle title="select energy dataset">
           {{name}}
         </button>
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngFor="let ds of datasets" class="dropdown-item" (click)="energy.select(ds)">
             {{ds}}
           </div>
+          <button *ngIf="!energy.has_energy" class="btn btn-info dropdown-item" (click)="computeEnergy()" >
+            Compute Energy
+          </button>
         </div>
     </div>
     <button type="button"
-    class="btn btn-secondary"
+    class="btn btn-info"
+    [disabled]="!energy.has_energy"
     [ngbPopover]="settingsPopover"
     placement="right"
     #settingsMenu="ngbPopover"

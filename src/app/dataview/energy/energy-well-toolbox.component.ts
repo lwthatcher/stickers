@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { EnergyWellsTracker, DisplayMode, EnergyUpdate } from './energy-wells';
+import { EnergyWellsTracker } from './energy-wells';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -33,5 +33,7 @@ export class EnergyWellToolboxComponent implements OnInit {
 
   // #region [Event Handlers]
   close() { this.menu.close() }
+
+  computeEnergy() { console.log('compute that energy!') }
   // #endregion
 }

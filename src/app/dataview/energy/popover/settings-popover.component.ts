@@ -3,8 +3,7 @@ import { DisplayMode, EnergyWellsTracker, EnergyUpdate } from '../energy-wells';
 
 @Component({
   selector: 'app-energy-settings',
-  templateUrl: './settings-popover.component.html',
-  styleUrls: ['./settings-popover.component.scss']
+  templateUrl: './settings-popover.component.html'
 })
 export class EnergySettingsPopover implements OnInit {
   // #region [Properties]

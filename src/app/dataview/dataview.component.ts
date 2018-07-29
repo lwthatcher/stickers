@@ -109,7 +109,7 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
           .then((labels) => { this.setLabels(this.default_stream.name, labels) })
     }
     // load energy if available
-    this.energy = new EnergyWellsTracker(this.dataloader, this.workspace.energy_data);
+    this.energy = new EnergyWellsTracker(this.dataloader, this.workspace);
     // component initialized
     console.info('dataview initialized', this);
   }

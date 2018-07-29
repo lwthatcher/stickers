@@ -1,5 +1,5 @@
 import { Dataset } from "../../data-loader/dataset";
-import { DataInfo } from "../../data-loader/workspace-info";
+import { DataInfo, WorkspaceInfo } from "../../data-loader/workspace-info";
 import { DataloaderService } from "../../data-loader/data-loader.service";
 import { EventEmitter } from "@angular/core";
 import { Sensor } from "../sensors/sensor";
@@ -33,6 +33,7 @@ export class EnergyWellsTracker {
     energyMap: EnergyMap;
     event = new EventEmitter<EnergyUpdate>();
     displayMode: DisplayMode;
+    workspace: WorkspaceInfo
     private dataloader: DataloaderService;
     private current: DataInfo;
     private overlayedMap = new Map();
@@ -40,10 +41,11 @@ export class EnergyWellsTracker {
     // #endregion
 
     // #region [Constructor]
-    constructor(dataloader: DataloaderService,energySets: DataInfo[]) {
+    constructor(dataloader: DataloaderService, workspace: WorkspaceInfo) {
         this.dataloader = dataloader;
+        this.workspace = workspace;
         this.visible = false;
-        this.energyMap = this.toEnergyMap(energySets);
+        this.energyMap = this.toEnergyMap(workspace.energy_data);
         if (this.availableEnergySets.length > 0) {
             let default_set = this.availableEnergySets[0];
             this.select(default_set);
