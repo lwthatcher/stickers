@@ -16,12 +16,13 @@ import {VgControlsModule} from 'videogular2/controls';
 import {VgOverlayPlayModule} from 'videogular2/overlay-play';
 import {VgBufferingModule} from 'videogular2/buffering';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
-import { TypesToolboxComponent } from './types/types-toolbox.component';
+import { TypesToolboxComponent } from './event-types/types-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
 import { VideoComponent } from './video/video.component';
 import { NewLabelstreamPopoverComponent } from './labelstreams/popover/new-labelstream-popover.component';
+import { EnergySettingsPopoverComponent } from './energy/popover/energy-settings-popover.component';
 
 @NgModule({
   imports: [
@@ -48,7 +49,7 @@ import { NewLabelstreamPopoverComponent } from './labelstreams/popover/new-label
     SensorsToolboxComponent,
     EnergyWellToolboxComponent, 
     VideoComponent, 
-    NewLabelstreamPopoverComponent],
+    NewLabelstreamPopoverComponent, EnergySettingsPopoverComponent],
   providers: []
 })
 export class DataviewModule { 
