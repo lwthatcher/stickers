@@ -16,7 +16,6 @@ import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 import { DatabarComponent } from './databar/databar.component';
-import { SaveMenuComponent } from './save-menu/save-menu.component';
 import { EnergyWellsTracker } from './energy/energy-wells';
 import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
 import { VideoComponent } from './video/video.component';
@@ -51,7 +50,6 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
   @ViewChildren(LabelstreamToolboxComponent) tbLblStreams;
   @ViewChildren(EnergyWellToolboxComponent) tbEnergyWells;
   @ViewChildren(DatabarComponent) _databars;
-  @ViewChild(SaveMenuComponent) saveMenu;
   @ViewChild(VideoComponent) video;
   // #endregion
 
@@ -241,18 +239,16 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
     console.groupCollapsed('Dataview');
     console.log('name:', this.ws);
     console.groupCollapsed('workspace info');
-      
       console.log('data info:', this.info);
       console.log('workspace info:', this.workspace);
     console.groupEnd();
-    console.groupCollapsed('children')
+    console.groupCollapsed('children');
       console.log('video', this.video);
       console.log('sensors-toolboxes', this.tbSensors.toArray());
       console.log('labelstreams-toolboxes', this.tbLblStreams.toArray());
       console.log('modes-toolboxes', this.tbModes.toArray());
       console.log('types-toolboxes', this.tbTypes.toArray());
       console.log('energy-wells-toolboxes', this.tbEnergyWells.toArray());
-      console.log('save-menu', this.saveMenu);
     console.groupEnd()
     console.groupCollapsed('sensors');
       console.log('sensors:', this.sensors);
