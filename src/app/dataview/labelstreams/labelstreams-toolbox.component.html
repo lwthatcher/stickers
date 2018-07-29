@@ -39,7 +39,8 @@
                         class='btn btn-info btn-icon'>
                             <i class="material-icons icon">save</i>
                         </button>
-                        <button *ngIf="sensor.labelstream != stream" 
+                        <button *ngIf="sensor.labelstream != stream"
+                        [disabled]="true"
                         (click)="merge(stream, $event)"
                         class='btn btn-secondary btn-icon'>
                             <i class="material-icons icon">merge_type</i>

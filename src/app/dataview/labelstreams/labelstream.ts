@@ -51,7 +51,7 @@ export class LabelStream {
 
     get isEmpty(): boolean { return this.labels.length === 0 }
 
-    get scheme() { return this.emap.labelscheme }
+    get scheme(): LabelScheme { return this.emap.labelscheme }
     // #endregion
 
     // #region [Label Editting]

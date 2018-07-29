@@ -3,6 +3,7 @@ import { Sensor } from '../sensors/sensor';
 import { LabelStream } from './labelstream';
 import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { WorkspaceInfo } from '../../data-loader/workspace-info';
+import { SaverService } from '../../saver/saver.service';
 
 // #region [Interfaces]
 type LabelStreamMap = { [name: string]: LabelStream }
@@ -32,7 +33,7 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Constructors]
-  constructor() { }
+  constructor(private saver: SaverService) { }
 
   ngOnInit() { }
   // #endregion
@@ -61,7 +62,8 @@ export class LabelstreamToolboxComponent implements OnInit {
 
   save(event) {
     event.stopPropagation();
-    console.log('save stream:', this.sensor.labelstream);
+    let response = this.saver.saveLabels(this.current.scheme, this.current.labels);
+    response.subscribe((res) => { console.debug('labels saved:', res) })
     this.current.changed = false;
   }
 
