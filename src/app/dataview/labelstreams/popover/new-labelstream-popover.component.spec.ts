@@ -1,12 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { NewLabelstreamPopoverComponent } from './new-labelstream-popover.component';
+import { NewLabelstreamPopover } from './new-labelstream-popover.component';
 
-describe('NewLabelstreamPopoverComponent', () => {
+describe('NewLabelstreamPopover', () => {
   // #region [Variables]
-  let component: NewLabelstreamPopoverComponent;
-  let fixture: ComponentFixture<NewLabelstreamPopoverComponent>;
+  let component: NewLabelstreamPopover;
+  let fixture: ComponentFixture<NewLabelstreamPopover>;
   let streams = ["move", "pills"];
-  const declarations = [ NewLabelstreamPopoverComponent ]
+  const declarations = [ NewLabelstreamPopover ]
   // #endregion
 
   // #region [Before Each]
@@ -15,7 +15,7 @@ describe('NewLabelstreamPopoverComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NewLabelstreamPopoverComponent);
+    fixture = TestBed.createComponent(NewLabelstreamPopover);
     component = fixture.componentInstance;
     component.streams = streams;
     fixture.detectChanges();

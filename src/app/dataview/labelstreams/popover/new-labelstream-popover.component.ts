@@ -5,7 +5,7 @@ import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
   templateUrl: './new-labelstream-popover.component.html',
   styleUrls: ['./new-labelstream-popover.component.scss']
 })
-export class NewLabelstreamPopoverComponent implements OnInit {
+export class NewLabelstreamPopover implements OnInit {
   // #region [Inputs]
   @Input() streams: string[];
   // #endregion

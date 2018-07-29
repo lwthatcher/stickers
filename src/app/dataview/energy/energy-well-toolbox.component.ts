@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { EnergyWellsTracker, DisplayMode, EnergyUpdate } from './energy-wells';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { ToolMode } from '../modes/tool-mode';
 
 @Component({
   selector: 'toolbox-energy',
