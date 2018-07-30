@@ -75,13 +75,15 @@ export class Drawer {
 
   get labeller() { return this.databar.labeller }
 
-  get label_type() { return this.ls.lbl_type }
+  get label_type() { return this.ls.eventType }
 
   get ls() { return this.databar.labelstream }
 
   get isDomainSet() { return this.x && !arraysEqual(this.x.domain(), [0, 1]) }
 
   get energy() { return this.databar.energy }
+
+  get video() { return this.databar.video }
   // #endregion
 
   // #region [Callbacks]
@@ -117,6 +119,7 @@ export class Drawer {
     this.plot_signals(data);
     this.draw_labels();
     this.draw_handles();
+    this.draw_ctb();
   }
   
   draw_labels() {
@@ -168,21 +171,22 @@ export class Drawer {
   }
 
   draw_yAxis() {
+    let W = this.w + (this.databar.margin.right *.25)
     this.layers.axes.append('g')
         .attr('class', 'y-axis')
         .call(d3.axisLeft(this.Y[0]));
     if (this.yDims().length > 1) {
       this.layers.axes.append('g')
         .attr('class', 'y-axis')
-        .attr("transform", "translate( " +this.w + ", 0 )")
-        .call(d3.axisRight(this.Y[1]));
+        .attr("transform", "translate( " + W + ", 0 )")
+        .call(d3.axisLeft(this.Y[1]));
     }
     if (this.energy.has_energy) {
       let y = this.eyAxis();
       this.layers.axes.append('g')
           .attr('class', 'y-axis')
-          .attr("transform", "translate( " +this.w + ", 0 )")
-          .call(d3.axisLeft(y));
+          .attr("transform", "translate( " + W + ", 0 )")
+          .call(d3.axisRight(y));
     }
   }
 
@@ -217,6 +221,21 @@ export class Drawer {
         .attr('x', (d) => { return this.x(d.start) })
         .attr('width', this.width)
         .attr('fill', this.fill);
+  }
+
+  draw_ctb() {
+    this.clear('timebar');
+    if (!this.video.canPlay || !this.video.sync.canSync) { return; }
+    let t = this.x(this.video.dt)
+    this.layers.timebar.append('line')
+        .attr('x1', t)
+        .attr('x2', t)
+        .attr('y1', 0)
+        .attr('y2', this.h)
+        .attr("clip-path", "url(#clip)")
+        .attr('class', 'current-time-bar')
+        .append('svg:title')
+        .text('Current Time: ' + this.video.vt.toString())
   }
 
   async draw_energy() {

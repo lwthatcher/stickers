@@ -1,0 +1,7 @@
+<mat-nav-list>
+  <mat-list-item *ngFor="let dataset of datasets" (click)="compute(dataset)">
+    <div class="compute-choice">
+      {{dataset.name}}
+    </div>
+  </mat-list-item>
+</mat-nav-list>

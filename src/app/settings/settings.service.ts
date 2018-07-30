@@ -52,6 +52,7 @@ export class SettingsService {
   downsampling: DownsamplingMethod = 'dynamic';
   max_sensors: number = 3;
   filter_nulls: boolean = true;
+  auto_save: boolean = true;
   // #endregion
 
   // #region [Accessors]
@@ -60,7 +61,7 @@ export class SettingsService {
 
   // #region [Public Methods]
   version(): Observable<string> {
-    return this.http.get('/api/version', {responseType: 'text'});
+    return this.http.get('/version', {responseType: 'text'});
   }
   // #endregion
 }

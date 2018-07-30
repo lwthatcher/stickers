@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "name": "stickers"
+    "name": "stickers2"
   },
   "apps": [
     {
@@ -9,7 +9,7 @@
       "outDir": "dist",
       "assets": [
         "assets",
-        "src/favicon.ico"
+        "favicon.ico"
       ],
       "index": "index.html",
       "main": "main.ts",
@@ -19,9 +19,9 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.css",
-        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
-        "../node_modules/spin.js/spin.css"
+        "../node_modules/spin.js/spin.css",
+        "../node_modules/videogular2/fonts/videogular.css",
+        "styles.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
@@ -56,30 +56,8 @@
     }
   },
   "defaults": {
-    "styleExt": "css",
-    "class": {
-      "spec": false
-    },
-    "component": {
-      "inlineStyle": false,
-      "inlineTemplate": false,
-      "spec": false
-    },
-    "directive": {
-      "spec": false
-    },
-    "guard": {
-      "spec": false
-    },
-    "module": {
-      "spec": false
-    },
-    "pipe": {
-      "spec": false
-    },
-    "service": {
-      "spec": false
-    },
+    "styleExt": "scss",
+    "component": {},
     "serve": {
       "proxyConfig": "src/proxy.conf.json"
     }

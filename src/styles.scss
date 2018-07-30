@@ -1,7 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 /*#region [Material Icons] */
+@import 'variables';
+@import '../node_modules/bootstrap/scss/bootstrap';
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+/*#endregion */
 
+/*#region [Material Icons] */
 button.mat-menu-item {
     line-height: 24px !important;
   }
@@ -161,3 +165,20 @@ i.icon {
     vertical-align:middle;
 }
 /*#endregion */
+
+// #region [Flashes]
+mat-list-item.d-flex > .mat-list-item-content {
+    display: flex;
+    width: 100% !important;
+
+}
+// #endregion
+
+// #region [Current Time Bar]
+.current-time-bar {
+    stroke-width: 3;
+    fill: none;
+    stroke: lawngreen;
+    cursor: help;
+}
+// #endregion

@@ -102,9 +102,6 @@ is broken into a few helper classes to simplify things:
 in the provided _labelstream_
 
 
-#### `save-menu` component
-This is a simple non-repeating menu located at the bottom for saving user work.
-
 ## Directory Layout
 The directory layout mostly follows the design layout of the `dataview` component,
 with its child components and related helper classes generally grouped with them.

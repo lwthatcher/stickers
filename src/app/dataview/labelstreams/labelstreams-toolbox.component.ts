@@ -3,6 +3,7 @@ import { Sensor } from '../sensors/sensor';
 import { LabelStream } from './labelstream';
 import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { WorkspaceInfo } from '../../data-loader/workspace-info';
+import { SaverService } from '../../saver/saver.service';
 
 // #region [Interfaces]
 type LabelStreamMap = { [name: string]: LabelStream }
@@ -16,7 +17,7 @@ export interface StreamChange {
 @Component({
   selector: 'toolbox-labelstreams',
   templateUrl: './labelstreams-toolbox.component.html',
-  styleUrls: ['labelstreams-toolbox.component.css']
+  styleUrls: ['labelstreams-toolbox.component.scss']
 })
 export class LabelstreamToolboxComponent implements OnInit {
   // #region [Inputs]
@@ -32,7 +33,7 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Constructors]
-  constructor() { }
+  constructor(private saver: SaverService) { }
 
   ngOnInit() { }
   // #endregion
@@ -40,19 +41,35 @@ export class LabelstreamToolboxComponent implements OnInit {
   // #region [Accessors]
   get streams(): string[] { return Object.keys(this.labelstreams) }
 
+  get current(): LabelStream { return this.labelstreams[this.sensor.labelstream] }
+
   get icon(): string {
     if (this.popover.isOpen()) return 'remove'
     else return 'add'
   }
   // #endregion
 
+  // #region [Queries]
+  can_remove(stream: string) {
+    return this.streams.length > 1 && this.getStream(stream).isEmpty 
+  }
+
+  can_save(stream: string) { return this.getStream(stream).changed }
+  // #endregion
+
   // #region [Public Methods]
   toggleLabels() { this.sensor.toggle_labels() }
 
-  valid_name(name: string) { return name.length > 0 }
+  save(event) {
+    event.stopPropagation();
+    let response = this.saver.saveLabels(this.current.scheme, this.current.labels);
+    response.subscribe((res) => { console.debug('labels saved:', res) })
+    this.current.changed = false;
+  }
 
-  can_remove(stream: string) {
-    return this.streams.length > 1 && this.getStream(stream).isEmpty 
+  merge(stream: string, event) { 
+    event.stopPropagation();
+    console.log('merge two streams:', this.sensor.labelstream, stream);
   }
 
   selectStream(stream: string) {
@@ -61,8 +78,8 @@ export class LabelstreamToolboxComponent implements OnInit {
   }
 
   add_stream(name: string) {
-    if (!this.valid_name(name)) { return }
-    let scheme = this.workspace.EMPTY_SCHEME(name)
+    console.debug('adding stream', name);
+    let scheme = this.workspace.EMPTY_SCHEME(name);
     this.labelstreams[name] = new LabelStream(name, scheme);
     this.sensor.labelstream = name;
     this.popover.close();

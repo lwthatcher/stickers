@@ -1,7 +1,8 @@
 <div class="energy-wells tools-box">
   <div class="btn-group">
     <button type="button" 
-      class="btn btn-outline-secondary" 
+      class="btn btn-info-secondary"
+      [disabled]="!energy.has_energy"
       (click)="energy.toggle()"
       title='toggle energy wells visibility'>
         <span>
@@ -12,18 +13,29 @@
     <div class='btn-group'
       ngbDropdown
       role="group"
+      autoClose="outside"
       #dropdown="ngbDropdown">
-        <button class="btn btn-outline-secondary" ngbDropdownToggle title="select energy dataset">
+        <button class="btn btn-info-secondary" ngbDropdownToggle title="select energy dataset">
           {{name}}
         </button>
         <div class="dropdown-menu" ngbDropdownMenu>
           <div *ngFor="let ds of datasets" class="dropdown-item" (click)="energy.select(ds)">
             {{ds}}
           </div>
+          <button *ngIf="!energy.has_energy" 
+            class="btn btn-info dropdown-item"
+            [ngbPopover]="computePopover"
+            placement="right"
+            #computeMenu="ngbPopover"
+            popoverTitle="compute energy from:" >
+              <span>Compute Energy</span>
+              
+          </button>
         </div>
     </div>
     <button type="button"
-    class="btn btn-secondary"
+    class="btn btn-info"
+    [disabled]="!energy.has_energy"
     [ngbPopover]="settingsPopover"
     placement="right"
     #settingsMenu="ngbPopover"
@@ -35,33 +47,9 @@
 </div>
 
 <ng-template #settingsPopover>
-    <form>
-        <div class="form-group row">
-          <div class="col">
-            <div class="btn-group btn-group-toggle d-flex" 
-              ngbRadioGroup 
-              name="radiomode" 
-              [(ngModel)]="displayMode"
-              (ngModelChange)="changed($event)">
-                <label ngbButtonLabel class="btn-primary flex-fill">
-                  <input ngbButton type="radio" [value]="DISPLAY_MODE.Stacked"> Stacked
-                </label>
-                <label ngbButtonLabel class="btn-primary flex-fill">
-                  <input ngbButton type="radio" [value]="DISPLAY_MODE.Overlayed"> Overlayed
-                </label>
-            </div>
-          </div>
-            
-        </div>
-        <div class="form-group row">
-            <div class='col'>
-                <button class="btn btn-success btn-block"
-                    type="button"
-                    (click)="close()"
-                    title="create">
-                    <i class="material-icons icon">done</i>
-                </button>
-            </div>
-        </div>
-    </form>
+    <app-energy-settings [energy]="energy" (done)="close('settings')"></app-energy-settings>
+</ng-template>
+
+<ng-template #computePopover>
+  <app-compute-popover [workspace]="energy.workspace" (select)="computeEnergy($event)"></app-compute-popover>
 </ng-template>

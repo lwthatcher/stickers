@@ -48,6 +48,7 @@ export class LayerMap {
         this.addLayer('labels')
         this.addLayer('handles')
         this.addLayer('ghost')
+        this.addLayer('timebar')
         this.addLayer('cursor')
         this.addLayer('zoom', 'g.transform > rect.zoom')
         this.addLayer('clip', '#clip > rect.clip-rect')
@@ -78,6 +79,8 @@ export class LayerMap {
     get zoom() { return this.layers['zoom'].selection }
 
     get ghost() { return this.layers['ghost'].selection }
+    
+    get timebar() { return this.layers['timebar'].selection }
 
     get cursor() { return this.layers['cursor'].selection }
 

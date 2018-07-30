@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { EnergyWellsTracker, DisplayMode, EnergyUpdate } from './energy-wells';
+import { EnergyWellsTracker } from './energy-wells';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { ToolMode } from '../modes/tool-mode';
+import { Observable } from 'rxjs';
+import { DataInfo } from '../../data-loader/workspace-info';
 
 @Component({
   selector: 'toolbox-energy',
@@ -9,23 +10,16 @@ import { ToolMode } from '../modes/tool-mode';
   styleUrls: ['./energy-well-toolbox.component.css']
 })
 export class EnergyWellToolboxComponent implements OnInit {
-  // #region [Properties]
-  displayMode: DisplayMode;
-  DISPLAY_MODE = DisplayMode;
-  // #endregion
-
   // #region [Inputs]
   @Input() energy: EnergyWellsTracker;
-  @ViewChild('settingsMenu') menu: NgbPopover;
+  @ViewChild('settingsMenu') sMenu: NgbPopover;
+  @ViewChild('computeMenu') cMenu: NgbPopover;
   // #endregion
 
   // #region [Constructors]
   constructor() { }
 
-  ngOnInit() {
-    this.displayMode = this.energy.displayMode;
-    this.energy.event$.subscribe((event) => this.tracked(event));
-  }
+  ngOnInit() { }
   // #endregion
 
   // #region [Accessors]
@@ -41,12 +35,29 @@ export class EnergyWellToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Event Handlers]
-  changed(mode: DisplayMode) { this.energy.updateMode(mode) }
-
-  tracked(event: EnergyUpdate) {
-    if (event.type === 'display-mode') this.displayMode = event.mode;
+  close(menu: 'settings' | 'compute') { 
+    if (menu === 'settings')
+      this.sMenu.close() 
+    else this.cMenu.close()
   }
 
-  close() { this.menu.close() }
+  computeEnergy(response) { 
+    this.close('compute');
+    response.subscribe((res) => {
+      console.log('computed energy:', res);
+      let name = res.datum.name;
+      let info = this.toDataInfo(res.datum);
+      this.energy.energyMap[name] = info;
+      this.energy.select(name);
+    })
+  }
+  // #endregion
+
+  // #region [Helper Methods]
+  toDataInfo(datum): DataInfo {
+    let ws = this.energy.workspace;
+    datum.workspace = ws.name;
+    return new DataInfo(ws, datum);
+  }
   // #endregion
 }

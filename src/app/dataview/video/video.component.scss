@@ -1,0 +1,84 @@
+// #region [Container]
+.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+// #endregion
+
+// #region [Border]
+mat-expansion-panel,
+mat-expansion-panel-header {
+    border-radius: 0.25rem;
+}
+// #endregion
+
+// #region [Header]
+mat-expansion-panel-header.header:focus,
+mat-expansion-panel-header.header {
+    background-color: rgb(230, 230, 230) !important;
+    font-size: 1rem;
+}
+
+mat-expansion-panel-header.header:hover {
+    background-color: rgb(200, 200, 200) !important;
+}
+// #endregion
+
+// #region [Flashes]
+span.flash-info {
+    // margin-left: 30%;
+    position: relative;
+    display: inline-flex;
+    color: darkslategray;
+    justify-content: center;
+    text-align: center;
+}
+
+span.list-header {
+    font-weight: bold;
+}
+
+p[matLine].dim-msg {
+    color: gray;
+    margin-bottom: 8px;
+}
+
+.red-flash {
+    color: indianred;
+}
+
+.gray-flash {
+    color: darkslategray;
+}
+
+.flipped {
+    transform: scaleX(-1);
+}
+
+span.computed {
+    font-style: italic;
+}
+
+span.in-video {
+    color: darkslateblue;
+}
+
+span.not-in-video {
+    color: slategray;
+}
+
+mat-list-item button.hidden,
+mat-list-item button.hidden * {
+    opacity: 0;
+}
+
+mat-list-item button.add-flash,
+mat-list-item button.add-flash * {
+    opacity: 0;
+}
+
+mat-list-item:hover button.add-flash, 
+mat-list-item:hover button.add-flash * {
+    opacity: 1;
+}
+// #endregion

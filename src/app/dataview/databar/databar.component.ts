@@ -15,12 +15,13 @@ import { DataInfo } from '../../data-loader/workspace-info';
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../sensors/sensor";
-import { Colorer} from '../types/colorer';
+import { Colorer} from '../event-types/colorer';
 import { Labeller } from './labeller/labeller';
 import { LabelStream } from '../labelstreams/labelstream';
 import { Drawer } from './drawer/drawer';
 import { ModeTracker } from '../modes/tool-mode';
 import { EnergyWellsTracker } from '../energy/energy-wells';
+import { VideoTracker } from '../video/video-tracker';
 // #endregion
 
  // #region [Interfaces]
@@ -47,6 +48,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() colorer: Colorer;
   @Input() dataset: Promise<Dataset>;
   @Input() energy: EnergyWellsTracker;
+  @Input() video: VideoTracker;
   // #endregion
 
   // #region [Outputs]
@@ -54,7 +56,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #endregion
 
   // #region [Variables]
-  margin = {top: 4, right: 40, bottom: 20, left: 50}
+  margin = {top: 4, right: 50, bottom: 20, left: 50}
   container: Element;
   // zoom handler
   _zoom;
@@ -137,10 +139,11 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   // #region [Lifecycle Hooks]
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    let {transform, labelstream, lbl_type} = changes;
+    let {transform, labelstream, lbl_type, video} = changes;
     if (transform && !transform.firstChange) this.updateZoom(transform.currentValue);
     if (labelstream && !labelstream.firstChange) this.stream_changed(labelstream);
     if (lbl_type && !lbl_type.firstChange) this.type_changed(lbl_type);
+    if (video && !video.firstChange) this.video_changed(video);
   }
 
   ngOnDestroy() {
@@ -149,18 +152,11 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   // #endregion
 
   // #region [Event Handlers]
-  stream_update(event) {
-    if (event.type === 'change-type') { this.type_changed(event) }
-    else if (event.type === 'grow') { this.drawer.updateLabel(event.target) }
-    else { this.redraw_labels() }
-  }
-
-  energy_update(event) {
-    if (event.type === 'display-mode') { 
-      this.drawer.clear('energy', 'y-axis');
-      this.drawer.draw_yAxis();
+  video_changed(change) {
+    if (!!change.currentValue) {
+      console.log('video tracker ready:', change, this.video);
+      this.register_video();
     }
-    this.drawer.draw_energy();
   }
 
   stream_changed(change) {
@@ -174,8 +170,21 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   mode_changed(change) { this.updateMode(this.mode) }
 
   type_changed(change) {
-    console.debug('type change:', change, this.labelstream.lbl_type);
-    // todo: if selected-label -> change-type?
+    console.debug('type change:', change, this.labelstream.eventType);
+  }
+
+  stream_update(event) {
+    if (event.type === 'change-type') { this.type_changed(event) }
+    else if (event.type === 'grow') { this.drawer.updateLabel(event.target) }
+    else { this.redraw_labels() }
+  }
+
+  energy_update(event) {
+    if (event.type === 'display-mode') { 
+      this.drawer.clear('energy', 'y-axis');
+      this.drawer.draw_yAxis();
+    }
+    this.drawer.draw_energy();
   }
 
   sensor_update(event) {
@@ -226,6 +235,8 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     // redraw labels
     this.drawer.updateLabels();
     this.drawer.draw_handles();
+    // redraw current-time-bar
+    this.drawer.draw_ctb();
   }
   // #endregion
 
@@ -233,7 +244,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   private register_lblstream() {
     if (!this.labelstream) return false;
     if (this.registration) this.registration.unsubscribe();
-    this.registration = this.labelstream.event$.subscribe((e) => { this.stream_update(e) })
+    this.registration = this.labelstream.event.subscribe((e) => { this.stream_update(e) })
     return true;
   }
 
@@ -246,7 +257,20 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private register_energy() {
-    this.energy.event$.subscribe((e) => { this.energy_update(e) })
+    this.energy.event.subscribe((e) => { this.energy_update(e) })
+  }
+
+  private register_video() {
+    if (this.video.defined) {
+      if (this.video.sync.canSync)
+        this.video.subscriptions.timeUpdate.subscribe(() => { this.drawer.draw_ctb() })
+      else {
+        this.video.syncChange.subscribe((t) => {
+          this.video.subscriptions.timeUpdate.subscribe(() => { this.drawer.draw_ctb() })
+          this.drawer.draw_ctb();
+        })
+      }
+    }
   }
   // #endregion
 

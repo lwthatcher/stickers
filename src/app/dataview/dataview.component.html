@@ -1,3 +1,10 @@
+<div *ngIf="workspace.hasVideo" class="card border-secondary video-card">
+    <app-video 
+    [workspace]="workspace"
+    [dataInfo]="info">
+    </app-video>
+</div>
+
 <div class="card border-primary sensor-bars">
     <div class="card-header ws-name">
         <div class="detail">
@@ -18,17 +25,17 @@
                 [channels]="channels">
             </toolbox-sensors>
 
+            <toolbox-modes 
+                [sensor]="sensor" 
+                [tracker]="mode">
+            </toolbox-modes>
+
             <toolbox-labelstreams 
                 [sensor]="sensor"
                 [workspace]="workspace"
                 [(labelstreams)]="labelStreams" 
                 (remove)="removeStream($event)">
             </toolbox-labelstreams>
-
-            <toolbox-modes 
-                [sensor]="sensor" 
-                [tracker]="mode">
-            </toolbox-modes>
 
             <toolbox-types 
                 [sensor]="sensor" 
@@ -55,6 +62,7 @@
             [mode]="mode"
             [transform]="zoom_transform"
             [colorer]="colorer"
+            [video]="vt"
             [(labelstream)]="labelStreams[sensor.labelstream]"
             (zoom)="onZoom($event)">
         </app-databar>
@@ -67,5 +75,3 @@
         </div>
     </div>
 </div>
-
-<app-save-menu [labelstreams]="labelStreams" [default]="default_stream"></app-save-menu>

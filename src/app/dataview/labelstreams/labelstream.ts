@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import { EventMap, LabelKey } from '../types/event-types';
+import { EventMap, LabelKey } from '../event-types/event-types';
 import { LabelScheme } from '../../data-loader/workspace-info';
 
 // #region [Interfaces]
@@ -15,16 +15,22 @@ export interface Label {
 export interface LabelStreamEvent {
     type: string;
     source: string;
+    changed: boolean;
     target?: Label;
 }
 // #endregion
 
 export class LabelStream {
+    // #region [Constants]
+    NON_EDITS = ["change-type", "set-labels"]
+    // #endregion
+
     // #region [Variables]
     name: string;
     labels: Label[];
-    event$ = new EventEmitter<LabelStreamEvent>();
+    event = new EventEmitter<LabelStreamEvent>();
     emap: EventMap;
+    changed: boolean;
     private _type: LabelKey;
     private _i: number;
     // #endregion
@@ -35,15 +41,17 @@ export class LabelStream {
         this.emap = new EventMap(scheme);
         this._type = this.emap.initial;
         this.set_labels(labels);
+        this.changed = false;
+        this.event.subscribe((e) => this.updated(e))
     }
     // #endregion
 
     // #region [Accessors]
-    get lbl_type(): number { return EventMap.toInt(this._type) }
+    get eventType(): number { return EventMap.toInt(this._type) }
 
     get isEmpty(): boolean { return this.labels.length === 0 }
 
-    get scheme() { return this.emap.labelscheme }
+    get scheme(): LabelScheme { return this.emap.labelscheme }
     // #endregion
 
     // #region [Label Editting]
@@ -90,11 +98,19 @@ export class LabelStream {
     }
     // #endregion
 
+    // #region [Event Handlers]
+    private updated(event) {
+        if (event.changed) { this.changed = true; }
+    }
+    // #endregion
+
     // #region [Utility Methods]
-    emit(type: string, target=undefined) {
-        let event: LabelStreamEvent = {type, source: this.name}
-        if (!!target) event.target = target;
-        this.event$.emit(event)
+    emit(type: string, target?, changed?) {
+        if (!this.defined(changed))
+            changed = this.inferChanged(type);
+        let event: LabelStreamEvent = {type, changed, source: this.name}
+        if (!!target) { event.target = target }
+        this.event.emit(event);
     }
 
     findType(type: LabelKey) {
@@ -125,6 +141,12 @@ export class LabelStream {
         let compare = (a,b) => { return a.start - b.start }
         labels.sort(compare);
         return labels;
+    }
+
+    private defined(variable) { return !(typeof variable === 'undefined' || variable === null) }
+
+    private inferChanged(type: string) {
+        return !(type === 'change-type' || type === 'set-labels')
     }
     // #endregion
 }

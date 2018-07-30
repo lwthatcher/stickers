@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" routerLink='/home' title="version: {{version | async}}">{{title}}</a>
-</nav>
+<mat-toolbar>
+  <a routerLink='/home' title="version: {{version | async}}">{{title}}</a>
+</mat-toolbar>
 <router-outlet></router-outlet>

@@ -1,32 +1,28 @@
 // #region [Imports]
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, HostListener, ViewChildren, ViewChild } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChildren, ViewChild, 
+         ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
 import { WorkspaceInfo, DataInfo, TypeMap, LabelScheme } from '../data-loader/workspace-info';
 import { SettingsService } from '../settings/settings.service';
 import { Label, LabelStream} from './labelstreams/labelstream';
 import { ModeTracker } from './modes/tool-mode';
-import { Colorer } from './types/colorer';
+import { Colorer } from './event-types/colorer';
 import { Sensor } from './sensors/sensor';
-import { EventMap } from './types/event-types';
 import { Dataset } from '../data-loader/dataset';
 import { LabelsLoaderService } from '../data-loader/labels-loader.service';
-import { TypesToolboxComponent } from './types/types-toolbox.component';
+import { TypesToolboxComponent } from './event-types/types-toolbox.component';
 import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 import { DatabarComponent } from './databar/databar.component';
-import { SaveMenuComponent } from './save-menu/save-menu.component';
 import { EnergyWellsTracker } from './energy/energy-wells';
+import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
+import { VideoComponent } from './video/video.component';
+import { VideoTracker } from './video/video-tracker';
 // #endregion
 
 // #region [Interfaces]
-interface SensorInfo {
-  name: string;
-  index: number;
-  channel?: string;
-}
-
 interface datum {
   d: number;
   i: number;
@@ -34,10 +30,7 @@ interface datum {
 }
 
 type ArrayLike = Float32Array | Int32Array | Uint8Array | number[] | any[]
-
 type LabelStreamMap = { [name: string]: LabelStream }
-
-type IdxEntries = [number, number[]][]
 type IndexMap = Map<number,number[]>
 // #endregion
 
@@ -49,14 +42,15 @@ type IndexMap = Map<number,number[]>
   providers: [DataloaderService]
 })
 // #endregion
-export class DataviewComponent implements OnInit {
+export class DataviewComponent implements OnInit, AfterViewChecked {
   // #region [Child Components]
   @ViewChildren(TypesToolboxComponent) tbTypes;
   @ViewChildren(SensorsToolboxComponent) tbSensors;
   @ViewChildren(ModesToolboxComponent) tbModes;
   @ViewChildren(LabelstreamToolboxComponent) tbLblStreams;
+  @ViewChildren(EnergyWellToolboxComponent) tbEnergyWells;
   @ViewChildren(DatabarComponent) _databars;
-  @ViewChild(SaveMenuComponent) saveMenu;
+  @ViewChild(VideoComponent) video;
   // #endregion
 
   // #region [Properties]
@@ -71,6 +65,7 @@ export class DataviewComponent implements OnInit {
   mode: ModeTracker;
   colorer: Colorer;
   energy: EnergyWellsTracker;
+  vt: VideoTracker;
   private _idx_map: Map<number,number[]>;
   // #endregion
 
@@ -78,7 +73,8 @@ export class DataviewComponent implements OnInit {
   constructor(private route: ActivatedRoute, 
               private dataloader: DataloaderService,
               private labelsloader: LabelsLoaderService,
-              private _settings: SettingsService) { 
+              private _settings: SettingsService,
+              private cdRef:ChangeDetectorRef) { 
     this.mode = new ModeTracker();
   }
 
@@ -113,15 +109,19 @@ export class DataviewComponent implements OnInit {
           .then((labels) => { this.setLabels(this.default_stream.name, labels) })
     }
     // load energy if available
-    this.energy = new EnergyWellsTracker(this.dataloader, this.workspace.energy_data)
+    this.energy = new EnergyWellsTracker(this.dataloader, this.workspace);
     // component initialized
     console.info('dataview initialized', this);
   }
 
   ngAfterViewInit() {
+    this.vt = new VideoTracker(this.video);
     console.debug('dataview children initialized', this);
     console.groupEnd();
   }
+
+  /** This prevents errors from changing the playback rate */
+  ngAfterViewChecked() { this.cdRef.detectChanges() }
   // #endregion
 
   // #region [Accessors]
@@ -134,7 +134,11 @@ export class DataviewComponent implements OnInit {
   }
 
   get default_stream(): LabelStream {
-    if (!this.is_labelled) return this.labelStreams['user-labels'];
+    if (this.route.snapshot.paramMap.has('labels'))
+      return this.labelStreams[this.route.snapshot.paramMap.get('labels')]
+    else if (!this.is_labelled) 
+      return this.labelStreams['user-labels'];
+    console.log('DEFAULT STREAM', this.route.snapshot);
     return this.labelStreams[<string>this.info.labelled];
   }
 
@@ -235,16 +239,16 @@ export class DataviewComponent implements OnInit {
     console.groupCollapsed('Dataview');
     console.log('name:', this.ws);
     console.groupCollapsed('workspace info');
-      
       console.log('data info:', this.info);
       console.log('workspace info:', this.workspace);
     console.groupEnd();
-    console.groupCollapsed('children')
+    console.groupCollapsed('children');
+      console.log('video', this.video);
       console.log('sensors-toolboxes', this.tbSensors.toArray());
       console.log('labelstreams-toolboxes', this.tbLblStreams.toArray());
       console.log('modes-toolboxes', this.tbModes.toArray());
       console.log('types-toolboxes', this.tbTypes.toArray());
-      console.log('save-menu', this.saveMenu);
+      console.log('energy-wells-toolboxes', this.tbEnergyWells.toArray());
     console.groupEnd()
     console.groupCollapsed('sensors');
       console.log('sensors:', this.sensors);
@@ -280,7 +284,7 @@ export class DataviewComponent implements OnInit {
     let result = {}
     for (let entry of Object.entries(this.labelStreams)) {
       let [key, value] = entry;
-      result[key] = value.event$.observers;
+      result[key] = value.event.observers;
     }
     return result;
   }

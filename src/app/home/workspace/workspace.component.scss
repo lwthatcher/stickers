@@ -1,0 +1,57 @@
+// #region [Cards]
+.card {
+    margin-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+// #endregion
+
+// #region [Buttons]
+.selection[mat-button] {
+    background: whitesmoke;
+}
+
+.cdk-overlay-container .mat-menu-panel.my-menu {
+    max-width: 400px;
+  }
+
+.drop-down-selection {
+    color: blue;
+}
+
+mat-card-actions.actions {
+    margin-left: 0;
+}
+// #endregion
+
+// #region [Icons]
+.icon-on {
+    color: black;
+}
+
+.icon-off {
+    color: slategray;
+}
+
+.iconsheet > div {
+    margin: 10px;
+    float: right;
+}
+// #endregion
+
+// #region [Fields]
+.field {
+    font-weight: bold;
+}
+
+.tiny-field {
+    font-size: 12px;
+    color: grey;
+}
+// #endregion
+
+// #region [Header]
+mat-card-header {
+    font-size: 16px;
+}
+// #endregion

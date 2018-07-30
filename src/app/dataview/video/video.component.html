@@ -1,0 +1,82 @@
+<div class="container-fluid">
+  <mat-expansion-panel [expanded]="expanded">
+    <mat-expansion-panel-header class="header">
+        <mat-panel-title><i class="material-icons">videocam</i></mat-panel-title>
+        <mat-panel-description>Video: {{name}}</mat-panel-description>
+    </mat-expansion-panel-header>
+    
+    <div class="row">
+      <div class="col">
+        <mat-list>
+            <mat-list-item class="d-flex">
+              <span class="list-header flex-fill">Flashes:</span>
+              <span class='flash-info flex-fill align-self-center'>Video Time:</span>
+              <span class='flash-info flex-fill align-self-center'>Data Time:</span>
+              <button class='flex-shrink-1 hidden' disabled mat-button isIconButton>
+                  <mat-icon svgIcon="bomb"></mat-icon>
+              </button>
+            </mat-list-item>
+        </mat-list>
+        <mat-nav-list>
+          <mat-list-item *ngIf="!hasFlashes" class="d-flex">
+            <mat-icon class='flex-fill w-33' matListIcon svgIcon="flash-off"></mat-icon>
+            <div class="flex-fill">
+                <p matLine class="dim-msg">No flashes registered for this video.</p>
+                <p matLine class="dim-msg">Mark a flash to enable synchronization.</p>
+            </div>
+          </mat-list-item>
+          <mat-list-item *ngFor="let flash of allFlashes"
+            class='d-flex' 
+            [disableRipple]="!hasBoth(flash)" 
+            (click)="jumpTo(flash.video)">
+              <mat-icon *ngIf="hasBoth(flash)" matListIcon class='flex-fill red-flash' svgIcon="flash"></mat-icon>
+              <mat-icon *ngIf="!hasBoth(flash)" matListIcon class='flex-fill gray-flash' svgIcon="flash-outline"></mat-icon>
+              <span [ngClass]="flashClass(flash, 'video')">{{ t(flash, 'video') }}</span>
+              <span [ngClass]="flashClass(flash, 'data')">{{ t(flash, 'data') }}</span>
+              <button mat-button isIconButton
+                class='flex-shrink-1 add-flash'
+                [disabled]="origSynced"
+                (click)="markFlash(flash)"
+                title="mark flash at current time">
+                  <mat-icon class='flipped' svgIcon="transfer"></mat-icon>
+              </button>
+          </mat-list-item>
+        </mat-nav-list>
+      </div>
+      <div class="col-5">
+        <vg-player (onPlayerReady)="onPlayerReady($event)">
+            <vg-overlay-play></vg-overlay-play>
+            <vg-buffering></vg-buffering>
+
+            <vg-scrub-bar>
+                <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+            </vg-scrub-bar>
+
+            <vg-controls>
+                <vg-play-pause></vg-play-pause>
+                
+                <vg-mute></vg-mute>
+                <vg-volume></vg-volume>
+
+                <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+        
+                <vg-scrub-bar style="pointer-events: none;"></vg-scrub-bar>
+        
+                <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
+                <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+
+                <vg-playback-button [playbackValues]="rates"></vg-playback-button>
+                <vg-track-selector></vg-track-selector>
+                <vg-fullscreen></vg-fullscreen>
+            </vg-controls>
+
+            <video [vgMedia]="media" #media id="singleVideo" [preload]="preload" crossorigin>
+                <source [src]="src" type="video/mp4">
+            </video>
+        </vg-player>
+      </div>
+      <div class="col-2"></div>
+    </div>
+  </mat-expansion-panel>
+</div>
