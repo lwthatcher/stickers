@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { EnergyWellsTracker } from './energy-wells';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
+import { DataInfo } from '../../data-loader/workspace-info';
 
 @Component({
   selector: 'toolbox-energy',
@@ -41,11 +42,22 @@ export class EnergyWellToolboxComponent implements OnInit {
   }
 
   computeEnergy(response) { 
-    console.log('compute that energy!', event);
     this.close('compute');
-    response.subscribe((d) => {
-      console.log('computed energy:', d);
+    response.subscribe((res) => {
+      console.log('computed energy:', res);
+      let name = res.datum.name;
+      let info = this.toDataInfo(res.datum);
+      this.energy.energyMap[name] = info;
+      this.energy.select(name);
     })
+  }
+  // #endregion
+
+  // #region [Helper Methods]
+  toDataInfo(datum): DataInfo {
+    let ws = this.energy.workspace;
+    datum.workspace = ws.name;
+    return new DataInfo(ws, datum);
   }
   // #endregion
 }

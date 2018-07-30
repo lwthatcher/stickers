@@ -49,7 +49,7 @@ export class SaverService {
   computeEnergy(data: DataInfoLike)
   computeEnergy(data: DataInfo) {
     let request = { workspace: data.workspace, dataset: data.name }
-    return this.http.post("/api/compute/energy", request, { responseType: 'text' });
+    return this.http.post("/api/compute/energy", request);
   }
   // #endregion
 
