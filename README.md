@@ -15,6 +15,16 @@ Node:         ^8.3.0
 npm:          ^5.3.0
 ```
 
+### Installing Dependencies
+The rest of the dependencies used in this project are handles using `npm`.
+After cthe repo has been cloned, to install/initialize these dependencies run:
+```
+npm install
+```
+
+> **Note:** Whenever any other dependency changes have been made you'll have to run this step again.
+In general it is a good idea to run this command after each pull.
+
 ## Project Structure
 The main application code is housed in the `/src/app/` directory.
 This is further broken down into several 
