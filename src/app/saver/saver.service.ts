@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { VideoInfo, TypeMap, LabelScheme } from '../data-loader/workspace-info';
+import { VideoInfo, TypeMap, LabelScheme, DataInfo } from '../data-loader/workspace-info';
 import { Label } from '../dataview/labelstreams/labelstream';
 
 // #region [Interfaces]
@@ -46,8 +46,10 @@ export class SaverService {
     return this.http.post("/api/save/labels", request);
   }
 
-  computeEnergy(stuff) {
-    return this.http.post("/api/compute/energy", stuff);
+  computeEnergy(data: DataInfoLike)
+  computeEnergy(data: DataInfo) {
+    let request = { workspace: data.workspace, dataset: data.name }
+    return this.http.post("/api/compute/energy", request, { responseType: 'text' });
   }
   // #endregion
 

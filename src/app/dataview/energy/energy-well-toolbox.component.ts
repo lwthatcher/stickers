@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { EnergyWellsTracker } from './energy-wells';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'toolbox-energy',
@@ -10,7 +11,8 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 export class EnergyWellToolboxComponent implements OnInit {
   // #region [Inputs]
   @Input() energy: EnergyWellsTracker;
-  @ViewChild('settingsMenu') menu: NgbPopover;
+  @ViewChild('settingsMenu') sMenu: NgbPopover;
+  @ViewChild('computeMenu') cMenu: NgbPopover;
   // #endregion
 
   // #region [Constructors]
@@ -32,8 +34,18 @@ export class EnergyWellToolboxComponent implements OnInit {
   // #endregion
 
   // #region [Event Handlers]
-  close() { this.menu.close() }
+  close(menu: 'settings' | 'compute') { 
+    if (menu === 'settings')
+      this.sMenu.close() 
+    else this.cMenu.close()
+  }
 
-  computeEnergy() { console.log('compute that energy!') }
+  computeEnergy(response) { 
+    console.log('compute that energy!', event);
+    this.close('compute');
+    response.subscribe((d) => {
+      console.log('computed energy:', d);
+    })
+  }
   // #endregion
 }

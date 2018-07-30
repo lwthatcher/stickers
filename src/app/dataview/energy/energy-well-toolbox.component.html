@@ -13,6 +13,7 @@
     <div class='btn-group'
       ngbDropdown
       role="group"
+      autoClose="outside"
       #dropdown="ngbDropdown">
         <button class="btn btn-info-secondary" ngbDropdownToggle title="select energy dataset">
           {{name}}
@@ -21,8 +22,14 @@
           <div *ngFor="let ds of datasets" class="dropdown-item" (click)="energy.select(ds)">
             {{ds}}
           </div>
-          <button *ngIf="!energy.has_energy" class="btn btn-info dropdown-item" (click)="computeEnergy()" >
-            Compute Energy
+          <button *ngIf="!energy.has_energy" 
+            class="btn btn-info dropdown-item"
+            [ngbPopover]="computePopover"
+            placement="right"
+            #computeMenu="ngbPopover"
+            popoverTitle="compute energy from:" >
+              <span>Compute Energy</span>
+              
           </button>
         </div>
     </div>
@@ -40,5 +47,9 @@
 </div>
 
 <ng-template #settingsPopover>
-    <app-energy-settings [energy]="energy" (done)="close()"></app-energy-settings>
+    <app-energy-settings [energy]="energy" (done)="close('settings')"></app-energy-settings>
+</ng-template>
+
+<ng-template #computePopover>
+  <app-compute-popover [workspace]="energy.workspace" (select)="computeEnergy($event)"></app-compute-popover>
 </ng-template>
