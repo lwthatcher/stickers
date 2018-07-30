@@ -107,7 +107,7 @@ export class LabelStream {
     // #region [Utility Methods]
     emit(type: string, target?, changed?) {
         if (!this.defined(changed))
-            changed = !this.inferChanged(type)
+            changed = this.inferChanged(type);
         let event: LabelStreamEvent = {type, changed, source: this.name}
         if (!!target) { event.target = target }
         this.event.emit(event);
