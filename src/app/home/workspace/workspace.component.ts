@@ -1,6 +1,5 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { WorkspaceInfo, DataInfo, LabelScheme } from '../../data-loader/workspace-info';
-import { MatMenu } from '@angular/material/menu';
 
 // #region [Interfaces]
 interface SelectedInfo {
@@ -77,6 +76,14 @@ export class WorkspaceComponent implements OnInit {
   get typesBadge() {
     return {'badge-primary': this.typescount > 0,
             'badge-secondary': this.typescount === 0}
+  }
+
+  get hasCSV() {
+    return this.workspace.visibleData.some((d) => d.format === 'csv')
+  }
+
+  get hasLabels() {
+    return this.workspace.labelschemes.some((d) => d.hasLabels)
   }
   // #endregion
 

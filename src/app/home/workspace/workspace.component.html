@@ -32,6 +32,14 @@
                     class="icon-off" svgIcon="sync-off"
                     title="video/data synchronization unavailable"></mat-icon>
               </div>
+              <div *ngIf="hasCSV">
+                <mat-icon class="icon-on" svgIcon="file-delimited"
+                  title="has .CSV dataset available"></mat-icon>
+              </div>
+              <div *ngIf="hasCSV">
+                <mat-icon class="icon-on" svgIcon="label"
+                  title="has labelled data"></mat-icon>
+              </div>
           </div>
         </div>
         <div class="row">
