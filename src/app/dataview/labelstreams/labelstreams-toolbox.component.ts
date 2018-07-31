@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angu
 import { Sensor } from '../sensors/sensor';
 import { LabelStream } from './labelstream';
 import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { WorkspaceInfo } from '../../data-loader/workspace-info';
+import { WorkspaceInfo } from '../../data-loader/info/workspace-info';
 import { SaverService } from '../../saver/saver.service';
 
 // #region [Interfaces]

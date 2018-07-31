@@ -1,4 +1,4 @@
-import { WorkspaceInfo } from '../workspace-info';
+import { WorkspaceInfo } from './workspace-info';
 export class DataInfo {
     // #region [Constants]
     static MILLISECONDS = 1000;

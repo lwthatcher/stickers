@@ -1,6 +1,6 @@
 import { EventEmitter } from '@angular/core';
 import { EventMap, LabelKey } from '../event-types/event-types';
-import { LabelScheme } from '../../data-loader/workspace-info';
+import { LabelScheme } from '../../data-loader/info/workspace-info';
 
 // #region [Interfaces]
 export interface Label {

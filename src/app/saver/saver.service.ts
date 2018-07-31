@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { VideoInfo, TypeMap, LabelScheme } from '../data-loader/workspace-info';
+import { VideoInfo, TypeMap, LabelScheme } from '../data-loader/info/workspace-info';
 import { DataInfo } from "../data-loader/info/data-info";
 import { Label } from '../dataview/labelstreams/labelstream';
 

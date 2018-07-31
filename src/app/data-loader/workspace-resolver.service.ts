@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router, Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { WorkspaceInfo } from './workspace-info';
+import { WorkspaceInfo } from './info/workspace-info';
 import { WorkspaceLoaderService } from './workspace-loader.service';
 
 @Injectable()

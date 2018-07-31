@@ -1,7 +1,7 @@
-import { DataInfo } from './info/data-info';
+import { DataInfo } from './data-info';
 
-import {zip, invert} from '../util/util'
-import { Synchronizer } from '../util/sync';
+import { invert } from '../../util/util';
+import { Synchronizer } from '../../util/sync';
 
 // #region [Interfaces]
 export interface TypeMap {

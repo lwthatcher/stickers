@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef, ChangeDetectorRef, AfterViewChecked, HostListener, Output, EventEmitter } from '@angular/core';
-import { WorkspaceInfo, VideoInfo } from '../../data-loader/workspace-info';
+import { WorkspaceInfo, VideoInfo } from '../../data-loader/info/workspace-info';
 import { DataInfo } from "../../data-loader/info/data-info";
 import { VgAPI } from 'videogular2/core';
 import { Synchronizer } from '../../util/sync';
