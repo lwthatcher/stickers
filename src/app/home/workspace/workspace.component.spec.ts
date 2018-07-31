@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkspaceComponent } from './workspace.component';
 import {APP_BASE_HREF} from '@angular/common';
 import { AppModule } from '../../app.module';
-import { WorkspaceInfo } from '../../data-loader/workspace-info';
+import { WorkspaceInfo } from '../../data-loader/info/workspace-info';
 
 // #region [Interfaces]
 interface Info {

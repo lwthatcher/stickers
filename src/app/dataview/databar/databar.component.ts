@@ -11,7 +11,7 @@ import { Component,
          OnDestroy } from '@angular/core';
 import { SettingsService, DownsamplingMethod } from '../../settings/settings.service';
 import { Dataset } from '../../data-loader/dataset';
-import { DataInfo } from '../../data-loader/workspace-info';
+import { DataInfo } from "../../data-loader/info/data-info";
 import { Spinner } from 'spin.js';
 import { largestTriangleThreeBucket } from 'd3fc-sample';
 import { Sensor } from "../sensors/sensor";

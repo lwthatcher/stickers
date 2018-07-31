@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { WorkspaceInfo, DataInfo } from '../../../data-loader/workspace-info';
+import { WorkspaceInfo } from '../../../data-loader/info/workspace-info';
+import { DataInfo } from "../../../data-loader/info/data-info";
 import { SaverService } from '../../../saver/saver.service';
 
 @Component({

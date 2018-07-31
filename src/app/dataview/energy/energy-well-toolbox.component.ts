@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { EnergyWellsTracker } from './energy-wells';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
-import { DataInfo } from '../../data-loader/workspace-info';
+import { DataInfo } from "../../data-loader/info/data-info";
 
 @Component({
   selector: 'toolbox-energy',
