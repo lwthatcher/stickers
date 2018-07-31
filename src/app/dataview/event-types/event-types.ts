@@ -1,5 +1,6 @@
 import { EventEmitter } from '@angular/core';
-import { LabelScheme, TypeMap } from '../../data-loader/info/workspace-info';
+import { TypeMap } from '../../data-loader/info/workspace-info';
+import { LabelScheme } from "../../data-loader/info/label-scheme";
 
 // #region [Interfaces]
 export type LabelKey = number | string

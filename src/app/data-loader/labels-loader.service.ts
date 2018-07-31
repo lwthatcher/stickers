@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { LabelScheme } from './info/workspace-info';
+import { LabelScheme } from "./info/label-scheme";
 import { Synchronizer } from '../util/sync';
 
 @Injectable()

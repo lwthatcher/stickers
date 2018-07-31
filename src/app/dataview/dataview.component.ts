@@ -3,7 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, HostListener, ViewChildren, ViewChild, 
          ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { DataloaderService } from '../data-loader/data-loader.service';
-import { WorkspaceInfo, TypeMap, LabelScheme } from '../data-loader/info/workspace-info';
+import { WorkspaceInfo, TypeMap } from '../data-loader/info/workspace-info';
+import { LabelScheme } from "../data-loader/info/label-scheme";
 import { DataInfo } from "../data-loader/info/data-info";
 import { SettingsService } from '../settings/settings.service';
 import { Label, LabelStream} from './labelstreams/labelstream';
