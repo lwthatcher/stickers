@@ -1,6 +1,6 @@
 import { Dataset } from "../../data-loader/dataset";
 import { WorkspaceInfo } from "../../data-loader/workspace-info";
-import { DataInfo } from "../../data-loader/DataInfo";
+import { DataInfo } from "../../data-loader/info/data-info";
 import { DataloaderService } from "../../data-loader/data-loader.service";
 import { EventEmitter } from "@angular/core";
 import { Sensor } from "../sensors/sensor";

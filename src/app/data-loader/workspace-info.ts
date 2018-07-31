@@ -1,4 +1,4 @@
-import { DataInfo } from './DataInfo';
+import { DataInfo } from './info/data-info';
 
 import {zip, invert} from '../util/util'
 import { Synchronizer } from '../util/sync';

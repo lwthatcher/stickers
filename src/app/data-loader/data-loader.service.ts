@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { DataInfo } from "./DataInfo";
+import { DataInfo } from "./info/data-info";
 import { parse } from "tfjs-npy";
 import * as tf from "@tensorflow/tfjs-core";
 import * as d3 from "d3";

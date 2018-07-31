@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { WorkspaceInfo, LabelScheme } from '../../data-loader/workspace-info';
-import { DataInfo } from "../../data-loader/DataInfo";
+import { DataInfo } from "../../data-loader/info/data-info";
 
 // #region [Interfaces]
 interface SelectedInfo {
