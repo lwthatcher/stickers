@@ -1,4 +1,4 @@
-import { DataInfo } from "./workspace-info";
+import { DataInfo } from "./DataInfo";
 import * as tf from "@tensorflow/tfjs-core";
 import * as math from 'mathjs';
 
