@@ -1,4 +1,4 @@
-import { DataInfo } from "./info/data-info";
+import { DataInfo, SensorLike } from "./info/data-info";
 import * as tf from "@tensorflow/tfjs-core";
 import * as math from 'mathjs';
 
@@ -9,11 +9,6 @@ interface datum {
     i: number;
   }
   
-interface SensorLike {
-channel?: string;
-idxs: number[];
-}
-
 interface ReadingsMap {
     [channel: string]: bdldatum[]
 }
@@ -40,6 +35,13 @@ export abstract class Dataset {
     // #region [Public Methods]
     abstract get(sensor: SensorLike): datum[][]
     abstract all(): datum[][]
+    // #endregion
+
+    // #region [Accessors]
+    get duration(): number {
+        let ax = this.get(this.info.toSensor(0));
+        return ax[0][ax[0].length-1].i;
+    }
     // #endregion
 
     // #region [Helper Methods]

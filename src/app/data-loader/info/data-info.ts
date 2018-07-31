@@ -1,4 +1,13 @@
 import { WorkspaceInfo } from './workspace-info';
+import { Sensor } from '../../dataview/sensors/sensor';
+
+// #region [Interfaces]
+export interface SensorLike {
+    channel?: string;
+    idxs: number[];
+}
+// #endregion
+
 export class DataInfo {
     // #region [Constants]
     static MILLISECONDS = 1000;
@@ -43,5 +52,14 @@ export class DataInfo {
     // #region [Accessors]
     get rate() { return DataInfo.MILLISECONDS / this.Hz; }
     get isEnergy() { return this.type === 'energy'; }
+    // #endregion
+
+    // #region [Public Methods]
+    toSensor(i: number): SensorLike {
+        let idx_map = Sensor.gen_idx_map(this.channels);
+        let channel = this.channels[i];
+        let idxs = idx_map.get(i);
+        return {channel, idxs}
+    }
     // #endregion
 }
