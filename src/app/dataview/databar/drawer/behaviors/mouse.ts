@@ -48,6 +48,7 @@ export class MouseBehavior {
         // get the custom cursor path, or null if no custom cursor applies to this setting
         let overlaps = this.overlaps();
         let cursor = this.custom_cursor(this.drawer.region(), this.mode, overlaps);
+        if (cursor === this.BRUSH) { this.drawer.clear('ghost') }
         this.drawer.layers.svg.classed('custom-cursor', !!cursor);
         this.drawer.draw_cursor(cursor);
         if (!overlaps) this.drawer.draw_ghost();
@@ -55,7 +56,7 @@ export class MouseBehavior {
     
     private mouse_leave() {
         this.drawer.layers.svg.classed('custom-cursor', false);
-        this.drawer.clear('cursor');
+        this.drawer.clear('cursor', 'ghost');
         this.drawer.behaviors.pour.end();
     }
     
