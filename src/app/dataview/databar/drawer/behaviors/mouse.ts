@@ -40,6 +40,7 @@ export class MouseBehavior {
             selection.on('mouseleave', () => {this.mouse_leave()})
             selection.on('mousedown', () => {this.mouse_down()})
             selection.on('mouseup', () => {this.mouse_up()})
+            selection.on('dblclick', () => {this.double_click()})
         }
         return behavior;
     }
@@ -104,6 +105,13 @@ export class MouseBehavior {
     lbl_clicked(lbl) {
         if (this.mode.selection) this.drawer.labeller.select(lbl)
         if (this.mode.click)     this.drawer.labeller.change_label(lbl, this.drawer.label_type)
+    }
+
+    double_click() {
+        let event = d3.event;
+        let [x,y] = this.drawer.xy();
+        this.drawer.video.jumpTo(this.drawer.x.invert(x));
+        console.log('double click!', this.drawer.x.invert(x));
     }
 
     /** call-back for pressing the middle scroll-wheel button */
