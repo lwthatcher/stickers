@@ -46,4 +46,21 @@ export class VideoTracker {
         else return this.api.canPlay;
     }
     // #endregion
+
+    // #region [Public Methods]
+    jumpTo(t, dt=true) {
+       if (dt) t = this.sync.dataToVid(t);
+       console.log('jump to', t);
+       if (this.inVideo(t)) {
+            this.api.seekTime(t); 
+       }
+       
+    }
+    // #endregion
+
+    // #region [Helper Methods]
+    private inVideo(t) {
+        return t > 0 && t < this.api.duration;
+    }
+    // #endregion
 }
