@@ -216,6 +216,7 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   private shouldNotBlock(event): boolean {
     return (event.target.tagName === 'INPUT' || 
             event.key === 'i' || 
+            event.key === 'Delete' ||
             event.key === 'F5')
   }
   // #endregion
