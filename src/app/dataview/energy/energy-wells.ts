@@ -114,7 +114,7 @@ export class EnergyWellsTracker {
             for (let i of this.short_dims) {result += d[i]}
             return result;
         }
-        return sum(this.closest(x,data));
+        return sum(this.closestPoint(x,data));
     }
     // #endregion
 
@@ -141,6 +141,18 @@ export class EnergyWellsTracker {
         let Δi = (d) => Math.abs(d.i - x)
         let i = d3.scan(data, (a,b) => {return Δi(a) - Δi(b) })
         return data[i];
+    }
+
+    private closestPoint(x, data) {
+        return this.binarySearch(data, x, 0, data.length-1);
+    }
+
+    private binarySearch(d, t, s, e) {
+        const m = Math.floor((s+e) / 2)
+        if (t == d[m].i) return d[m];
+        if (e - 1 === s) return Math.abs(d[s].i - t) > Math.abs(d[e].i - t) ? d[e] : d[s];
+        if (t > d[m].i) return this.binarySearch(d,t,m,e);
+        if (t < d[m].i) return this.binarySearch(d,t,s,m);
     }
     // #endregion
 }
