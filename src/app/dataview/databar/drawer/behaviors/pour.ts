@@ -61,7 +61,8 @@ export class PourBehavior {
     async start() {
         if (!this.energy.has_energy) return;
         let [x,y] = this.drawer.xy();
-        this.pour_timer = d3.interval((t) => this.pour_tick(x), this.TICK);
+        let x_twiddle = d3.randomNormal(x)
+        this.pour_timer = d3.interval((t) => this.pour_tick(x_twiddle), this.TICK);
         let formatted = await this.energy.formatted;
         let ys = this.yDepth(formatted);
         let roll = this.roll(ys);
@@ -80,7 +81,8 @@ export class PourBehavior {
     // #region [Helper Methods]
     private pour_tick(x) {
         // add particle
-        let point = {x, y: 0}
+        let point = {x: x(), y: 1}
+        
         let nodes = this.simulation.nodes();
         nodes.push(point);
         // update simulation
