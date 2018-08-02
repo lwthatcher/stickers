@@ -1,6 +1,7 @@
 import { Drawer } from "../drawer";
 import * as d3 from "d3";
 import d3ForceSurface from 'd3-force-surface';
+import { Label } from "../../../labelstreams/labelstream";
 
 // # region [Interfaces]
 interface Point { x: number; y: number; }
@@ -22,7 +23,7 @@ export class PourBehavior {
     drawer: Drawer;
     particles;
     simulation;
-    surfaces: Surface[];
+    boundaries: Surface[];
     private pour_timer;
     private current_lbl;
     // #endregion
@@ -31,11 +32,11 @@ export class PourBehavior {
     constructor(drawer: Drawer) {
         this.drawer = drawer;
         this.particles = [];
-        this.surfaces = [
-            {from: {x:0,y:0}, to: {x:0, y:this.drawer.h}},
-            {from: {x:0,y:this.drawer.h}, to: {x:this.drawer.w, y:this.drawer.h}},
-            {from: {x:this.drawer.w,y:this.drawer.h}, to: {x:this.drawer.w, y:0}},
-            {from: {x:this.drawer.w,y:0}, to: {x:0, y:0}}
+        this.boundaries = [
+            {from: {x:0, y:0}, to: {x:0, y:this.h}},
+            {from: {x:0, y:this.h}, to: {x:this.w, y:this.h}},
+            {from: {x:this.w, y:this.h}, to: {x:this.w, y:0}},
+            {from: {x:this.w, y:0}, to: {x:0, y:0}}
         ]
     }
     // #endregion
@@ -48,6 +49,10 @@ export class PourBehavior {
     get x() { return this.drawer.x }
 
     get y() { return this.drawer.ys }
+
+    get w() { return this.drawer.w }
+
+    get h() { return this.drawer.h }
 
     get color() { return this.drawer.databar.colorer.labels(this.drawer.ls.name).get(this.label_type)}
     // #endregion
@@ -76,13 +81,14 @@ export class PourBehavior {
     async start() {
         if (!this.energy.has_energy) return;
         let [x,y] = this.drawer.xy();
-        let x_twiddle = d3.randomNormal(x)
+        let x_twiddle = d3.randomNormal(x);
         this.pour_timer = d3.interval((t) => this.pour_tick(x_twiddle), this.TICK);
         let formatted = await this.energy.formatted;
         let ys = this.yDepth(formatted);
         let roll = this.roll(ys);
+        let lblWalls = this.labelWalls(this.drawer.labels);
         this.current_lbl = this.drawer.labeller.add(x, this.label_type, 1);
-        this.simulation = this.createSimulation(ys, roll);
+        this.simulation = this.createSimulation(ys, roll, lblWalls);
     }
     
     end() {
@@ -122,13 +128,11 @@ export class PourBehavior {
             .attr('cy', (d) => d.y);
     }
 
-    private createSimulation(ys, roll) {
+    private createSimulation(ys, roll, walls) {
         return d3.forceSimulation(this.particles)
                  .force('collide', d3.forceCollide(this.COLLIDE_RADIUS))
-                 .force('container', d3ForceSurface()
-                                        .surfaces(this.surfaces)
-                                        .oneWay(true)
-                                        .radius(1))
+                 .force('boundaries', this.container(this.boundaries))
+                 .force('labels', this.container(walls))
                  .force('fall', d3.forceY((d) => {return ys(d.x) }))
                  .force('roll', d3.forceX((d) => {return roll(d.x) }))
                  .alphaDecay(this.ALPHA_DECAY)
@@ -145,8 +149,18 @@ export class PourBehavior {
         this.particles = [];
     }
 
-    private extents() {
-        return d3.extent(this.particles, (d) => d.x);
+    private labelWalls(labels: Label[]): Surface[] {
+        let result = []
+        for (let l of labels) {
+            let [xl, xr] = [this.x(l.start), this.x(l.end)]
+            result.push({from: {x: xl, y: this.h}, to: {x: xl, y: 0}}); // left
+            result.push({from: {x: xr, y: 0}, to: {x: xr, y: this.h}}); // right
+        }
+        return result;
     }
+
+    private extents() { return d3.extent(this.particles, (d) => d.x) }
+
+    private container(surfaces) { return d3ForceSurface().surfaces(surfaces).oneWay(true) }
     // #endregion
 }
