@@ -31,6 +31,9 @@ export class PourBehavior {
         this.drawer = drawer;
         this.particles = [];
         this.surfaces = [
+            {from: {x:0,y:0}, to: {x:0, y:this.drawer.h}},
+            {from: {x:0,y:this.drawer.h}, to: {x:this.drawer.w, y:this.drawer.h}},
+            {from: {x:this.drawer.w,y:this.drawer.h}, to: {x:this.drawer.w, y:0}},
             {from: {x:this.drawer.w,y:0}, to: {x:0, y:0}}
         ]
     }
