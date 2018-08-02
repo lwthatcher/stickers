@@ -1,5 +1,12 @@
 import { Drawer } from "../drawer";
 import * as d3 from "d3";
+import d3ForceSurface from 'd3-force-surface';
+
+// # region [Interfaces]
+interface Point { x: number; y: number; }
+
+interface Surface { from: Point; to: Point; }
+// #endregion
 
 export class PourBehavior {
     // #region [Constants]
@@ -14,6 +21,7 @@ export class PourBehavior {
     drawer: Drawer;
     particles;
     simulation;
+    surfaces: Surface[];
     private pour_timer;
     private current_lbl;
     // #endregion
@@ -22,6 +30,9 @@ export class PourBehavior {
     constructor(drawer: Drawer) {
         this.drawer = drawer;
         this.particles = [];
+        this.surfaces = [
+            {from: {x:this.drawer.w,y:0}, to: {x:0, y:0}}
+        ]
     }
     // #endregion
 
@@ -108,6 +119,10 @@ export class PourBehavior {
     private createSimulation(ys, roll) {
         return d3.forceSimulation(this.particles)
                  .force('collide', d3.forceCollide(this.COLLIDE_RADIUS))
+                 .force('container', d3ForceSurface()
+                                        .surfaces(this.surfaces)
+                                        .oneWay(true)
+                                        .radius(1))
                  .force('fall', d3.forceY((d) => {return ys(d.x) }))
                  .force('roll', d3.forceX((d) => {return roll(d.x) }))
                  .alphaDecay(this.ALPHA_DECAY)
