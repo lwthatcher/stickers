@@ -15,6 +15,7 @@ export class PourBehavior {
     COLLIDE_RADIUS = 5;
     DX = 10;
     TICK = 100;
+    PPT = 2;
     // #endregion
     
     // #region [Properties]
@@ -94,11 +95,13 @@ export class PourBehavior {
     
     // #region [Helper Methods]
     private pour_tick(x) {
-        // add particle
-        let point = {x: x(), y: 1}
-        
+        // create new particles
+        let points = []
+        for (let i = 0; i < this.PPT; i++) 
+            points.push({x: x(), y: 1});
+        // add particles
         let nodes = this.simulation.nodes();
-        nodes.push(point);
+        nodes.push(...points);
         // update simulation
         this.simulation.nodes(nodes);
         this.simulation.restart();
@@ -133,7 +136,6 @@ export class PourBehavior {
     }
 
     private clearParticles() {
-        
         this.drawer.layers.ghost
             .selectAll('circle')
             .transition()
