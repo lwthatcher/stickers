@@ -3,7 +3,7 @@ import * as d3 from "d3";
 
 export class PourBehavior {
     // #region [Constants]
-    ALPHA_DECAY = 0.001;
+    ALPHA_DECAY = 0.000;
     PARTICLE_RADIUS = 2;
     COLLIDE_RADIUS = 5;
     DX = 10;
@@ -31,6 +31,8 @@ export class PourBehavior {
     get label_type() { return this.drawer.label_type}
 
     get x() { return this.drawer.x }
+
+    get y() { return this.drawer.ys }
 
     get color() { return this.drawer.databar.colorer.labels(this.drawer.ls.name).get(this.label_type)}
     // #endregion
@@ -87,7 +89,6 @@ export class PourBehavior {
         // update label
         let [start, end] = this.extents();
         this.current_lbl = this.drawer.labeller.grow(this.current_lbl, start, end);
-        console.debug('pour', this.current_lbl);
     }
 
     private ticked() {
