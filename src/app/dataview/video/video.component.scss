@@ -13,14 +13,27 @@ mat-expansion-panel-header {
 // #endregion
 
 // #region [Header]
-mat-expansion-panel-header.header:focus,
+// mat-expansion-panel-header.header:focus,
+// mat-expansion-panel-header.header {
+//     background-color: rgb(230, 230, 230) !important;
+//     font-size: 1rem;
+// }
+
+// mat-expansion-panel-header.header:hover {
+//     background-color: rgb(200, 200, 200) !important;
+// }
+
 mat-expansion-panel-header.header {
-    background-color: rgb(230, 230, 230) !important;
     font-size: 1rem;
 }
 
-mat-expansion-panel-header.header:hover {
-    background-color: rgb(200, 200, 200) !important;
+.mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
 }
 // #endregion
 

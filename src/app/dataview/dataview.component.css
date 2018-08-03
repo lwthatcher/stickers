@@ -1,23 +1,33 @@
 /*#region [Sensor Bars] */
-app-save-menu,
+mat-expansion-panel.card,
 div.card {
     margin-left: 1px;
-}
-
-div.card.sensor-bars {
-    margin-top: 5px;
-    margin-bottom: 5px;
 }
 
 div.card-footer {
     padding: 0px;
 }
+
+
 /*#endregion */
 
 /*#region [Headers] */
+mat-expansion-panel-header.header {
+    font-size: 1rem;
+}
+
+.mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+}
+
 div.card-header.toolbar {
     padding: 0px;
-    background-color: rgba(230, 230, 230, 1);
+    /* background-color: rgba(230, 230, 230, 1); */
 }
 
 div.card-header.ws-name {
@@ -51,7 +61,6 @@ div.card-header > div.right {
     align-items: flex-end;
 }
 /*#endregion */
-
 
 /*#region [Icons] */
 button > i.material-icons,

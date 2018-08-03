@@ -18,6 +18,12 @@ button.mat-menu-item {
   }
 /*#endregion */
 
+// #region [Expansion Panels]
+mat-expansion-panel.sensor-bars > div > .mat-expansion-panel-body {
+    padding: 0;
+}
+// #endregion
+
 /*#region [Labels] */
 rect.label {
     opacity: 0.5;
