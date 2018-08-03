@@ -2,6 +2,7 @@ import { Drawer } from "../drawer";
 import * as d3 from "d3";
 import d3ForceSurface from 'd3-force-surface';
 import { Label } from "../../../labelstreams/labelstream";
+import { nodeChildrenAsMap } from "@angular/router/src/utils/tree";
 
 // # region [Interfaces]
 interface Point { x: number; y: number; }
@@ -128,6 +129,16 @@ export class PourBehavior {
             .attr('cy', (d) => d.y);
     }
 
+    private clearParticles() {
+        this.drawer.layers.ghost
+            .selectAll('circle')
+            .transition()
+            .duration(750)
+            .attr('opacity', 0)
+            .remove();
+        this.particles = [];
+    }
+
     private createSimulation(ys, roll, walls) {
         return d3.forceSimulation(this.particles)
                  .force('collide', d3.forceCollide(this.COLLIDE_RADIUS))
@@ -139,14 +150,12 @@ export class PourBehavior {
                  .on('tick', () => this.ticked());
     }
 
-    private clearParticles() {
-        this.drawer.layers.ghost
-            .selectAll('circle')
-            .transition()
-            .duration(750)
-            .attr('opacity', 0)
-            .remove();
-        this.particles = [];
+    private container(surfaces) { 
+        return d3ForceSurface()
+                .surfaces(surfaces)
+                .oneWay(true)
+                .radius(this.PARTICLE_RADIUS)
+                .onImpact((node, surface) => this.impact(node, surface))
     }
 
     private labelWalls(labels: Label[]): Surface[] {
@@ -159,8 +168,17 @@ export class PourBehavior {
         return result;
     }
 
+    private impact(_, surface) {
+        if (this.isVertical(surface)) {
+            if (this.isLeft(surface)) this.current_lbl.end = this.x.invert(surface.to.x);
+            else this.current_lbl.start = this.x.invert(surface.to.x);
+        }
+    }
+
     private extents() { return d3.extent(this.particles, (d) => d.x) }
 
-    private container(surfaces) { return d3ForceSurface().surfaces(surfaces).oneWay(true) }
+    private isVertical(s: Surface) { return s.from.x === s.to.x }
+
+    private isLeft(s: Surface) { return s.from.y > s.to.y }
     // #endregion
 }
