@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
+import { Resolve, RouterStateSnapshot, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WorkspaceInfo } from './info/workspace-info';
@@ -7,15 +7,15 @@ import { WorkspaceLoaderService } from './workspace-loader.service';
 
 @Injectable()
 export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
+  // #region [Constructor]
   _workspaces: Observable<WorkspaceInfo[]>;
-
   constructor(private loader: WorkspaceLoaderService) { }
+  // #endregion
 
   // #region [Accessors]
   get workspaces() {
     if (!this._workspaces) {
       let ws = this.loader.listWorkspaces();
-      // @ts-ignore
       this._workspaces = ws.pipe(map(this.convert))
     }
     else { console.debug('loading memoized workspace list', this._workspaces); }
