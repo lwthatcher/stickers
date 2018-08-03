@@ -37,12 +37,11 @@ export class WorkspaceComponent implements OnInit {
     this.selected.dataset = this.defaultDataset();
     this.selected.labelscheme = this.defaultScheme();
     this.canSync = this.checkCanSync();
-    console.debug('workspace', this);
   }
   // #endregion
 
   // #region [Public Methods]
-  selectData(dataset: DataInfo) { this.selected.dataset = dataset; }
+  selectData(dataset: DataInfo) { this.selected.dataset = dataset }
 
   selectLabels(labelscheme: LabelScheme) { this.selected.labelscheme = labelscheme }
   // #endregion
