@@ -6,9 +6,7 @@ import { WorkspaceInfo } from './info/workspace-info';
 import { WorkspaceLoaderService } from './workspace-loader.service';
 
 // #region [Interfaces]
-interface ProjectMap {
-  [name: string]: WorkspaceInfo
-}
+interface ProjectMap { [name: string]: WorkspaceInfo[] }
 interface ProjectResponse {
   workspaces: WorkspaceInfo[]
   projects: ProjectMap

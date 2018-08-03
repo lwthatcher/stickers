@@ -1,3 +1,14 @@
 <div class="flex-container">
-    <app-workspace *ngFor="let workspace of workspaces" [workspace]="workspace"></app-workspace>
+    <mat-accordion>
+        <mat-expansion-panel *ngFor="let name of project_names">
+            <mat-expansion-panel-header>
+                <mat-panel-title>{{name}}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <app-workspace *ngFor="let workspace of projects[name]" [workspace]="workspace"></app-workspace>
+        </mat-expansion-panel>
+    </mat-accordion>
 </div>
+
+<!-- <div class="flex-container">
+    <app-workspace *ngFor="let workspace of workspaces" [workspace]="workspace"></app-workspace>
+</div> -->
