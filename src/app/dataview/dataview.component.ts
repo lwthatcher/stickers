@@ -86,7 +86,7 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
     this.ws = this.route.snapshot.paramMap.get('workspace');
     this.ds = this.route.snapshot.paramMap.get('dataset');
     // get resolved data
-    this.workspace = this.route.snapshot.data.workspace[0];
+    this.workspace = this.route.snapshot.data.workspace;
     this.info = this.workspace.getData(this.ds);
     // setup helper class(es)
     this.colorer = new Colorer(this);

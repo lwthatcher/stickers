@@ -6,9 +6,7 @@ import { WorkspaceResolver } from './workspace-resolver.service';
 import { LabelsLoaderService } from './labels-loader.service';
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
   declarations: [],
   providers: [DataloaderService, WorkspaceLoaderService, WorkspaceResolver, LabelsLoaderService]
 })

@@ -5,8 +5,12 @@ import { map } from 'rxjs/operators';
 import { WorkspaceInfo } from './info/workspace-info';
 import { WorkspaceLoaderService } from './workspace-loader.service';
 
+// #region [Interfaces]
+type WorkspaceResponse = WorkspaceInfo | WorkspaceInfo[]
+// #endregion
+
 @Injectable()
-export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
+export class WorkspaceResolver implements Resolve<WorkspaceResponse> {
   // #region [Constructor]
   _workspaces: Observable<WorkspaceInfo[]>;
   constructor(private loader: WorkspaceLoaderService) { }
@@ -25,10 +29,11 @@ export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
 
   // #region [Implementation]
   // @ts-ignore
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<WorkspaceInfo[]> {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<WorkspaceResponse> {
     if ('workspace' in route.params) {
       let finder = this.find(route.params.workspace);
-      return this.workspaces.pipe(map(finder));
+      // @ts-ignore
+      return this.workspaces.pipe(map(finder)) as WorkspaceResponse;
     }
     return this.workspaces;
   }
@@ -41,7 +46,7 @@ export class WorkspaceResolver implements Resolve<WorkspaceInfo[]> {
 
   private find(name) {
     let checkname = (workspace) => { return workspace.name === name; }
-    return (ws: WorkspaceInfo[]) => {return ws.filter(checkname)}
+    return (ws: WorkspaceInfo[]) => {return ws.filter(checkname)[0]}
   }
   // #endregion
 }
