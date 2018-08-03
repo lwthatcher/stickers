@@ -37,12 +37,11 @@ export class WorkspaceComponent implements OnInit {
     this.selected.dataset = this.defaultDataset();
     this.selected.labelscheme = this.defaultScheme();
     this.canSync = this.checkCanSync();
-    console.debug('workspace', this);
   }
   // #endregion
 
   // #region [Public Methods]
-  selectData(dataset: DataInfo) { this.selected.dataset = dataset; }
+  selectData(dataset: DataInfo) { this.selected.dataset = dataset }
 
   selectLabels(labelscheme: LabelScheme) { this.selected.labelscheme = labelscheme }
   // #endregion
@@ -61,18 +60,18 @@ export class WorkspaceComponent implements OnInit {
   get typescount() { return Object.keys(this.selected.labelscheme.event_map).length }
 
   get flashBadge() { 
-    return {'badge-danger': this.flashcount === 0,
-            'badge-success': this.flashcount > 0} 
+    return {'badge-warning': this.flashcount === 0,
+            'badge-primary': this.flashcount > 0} 
   }
 
   get formatBadge() {
     return {'badge-primary': this.selected.dataset.format === 'csv',
-            'badge-secondary': this.selected.dataset.format !== 'csv'}
+            'badge-warning': this.selected.dataset.format !== 'csv'}
   }
 
   get hasLabelsBadge() {
-    return {'badge-success': this.selected.labelscheme.hasLabels,
-            'badge-danger': !this.selected.labelscheme.hasLabels}
+    return {'badge-primary': this.selected.labelscheme.hasLabels,
+            'badge-warning': !this.selected.labelscheme.hasLabels}
   }
 
   get typesBadge() {

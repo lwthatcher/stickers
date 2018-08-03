@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { WorkspaceComponent } from './workspace/workspace.component';
 import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -26,7 +27,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatMenuModule,
     MatButtonModule,
     MatDividerModule,
-    MatIconModule
+    MatIconModule,
+    MatExpansionModule
   ],
   declarations: [HomeComponent, WorkspaceComponent]
 })
