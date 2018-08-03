@@ -27,6 +27,8 @@ const JUMP = 10
 
 const UNIT = {video: 's', data: 'ms'}
 const PRECISION = {video: 4, data: 0}
+const MODIFIER_KEYS = ['Fn', 'Control', 'Shift', 'Alt']
+const USED_KEYS = [' ', 'ArrowRight', 'ArrowLeft', 'l', 'j', 'ArrowUp', 'ArrowDown']
 // #endregion
 
 @Component({
@@ -214,10 +216,9 @@ export class VideoComponent implements OnInit, AfterViewChecked {
   }
 
   private shouldNotBlock(event): boolean {
-    return (event.target.tagName === 'INPUT' || 
-            event.key === 'i' || 
-            event.key === 'Delete' ||
-            event.key === 'F5')
+    // true -> block, false -> continue
+    if (event.target.tagName === 'INPUT' || MODIFIER_KEYS.includes(event.key)) return true;
+    else return !USED_KEYS.includes(event.key)
   }
   // #endregion
 }
