@@ -61,18 +61,18 @@ export class WorkspaceComponent implements OnInit {
   get typescount() { return Object.keys(this.selected.labelscheme.event_map).length }
 
   get flashBadge() { 
-    return {'badge-danger': this.flashcount === 0,
-            'badge-success': this.flashcount > 0} 
+    return {'badge-warning': this.flashcount === 0,
+            'badge-primary': this.flashcount > 0} 
   }
 
   get formatBadge() {
     return {'badge-primary': this.selected.dataset.format === 'csv',
-            'badge-secondary': this.selected.dataset.format !== 'csv'}
+            'badge-warning': this.selected.dataset.format !== 'csv'}
   }
 
   get hasLabelsBadge() {
-    return {'badge-success': this.selected.labelscheme.hasLabels,
-            'badge-danger': !this.selected.labelscheme.hasLabels}
+    return {'badge-primary': this.selected.labelscheme.hasLabels,
+            'badge-warning': !this.selected.labelscheme.hasLabels}
   }
 
   get typesBadge() {
