@@ -18,6 +18,7 @@ export class WorkspaceInfo {
     _labels: Object;
     _video: Object;
     name: string;
+    workspace: string;
     _info;
     // #endregion
 
@@ -27,6 +28,7 @@ export class WorkspaceInfo {
         this._labels = info.labels;
         this._video = info.video;
         this._info = info;
+        this.workspace = info.workspace;
         this.name = info.workspace.join('.');
     }
     // #endregion

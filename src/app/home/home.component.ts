@@ -12,8 +12,8 @@ export class HomeComponent implements OnInit {
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.workspaces = this.route.snapshot.data.workspaces;
-    console.info('workspaces', this.workspaces);
+    this.workspaces = this.route.snapshot.data.workspaces.workspaces;
+    console.info('workspaces', this.route.snapshot.data.workspaces);
   }
   // #endregion
 }

@@ -6,7 +6,14 @@ import { WorkspaceInfo } from './info/workspace-info';
 import { WorkspaceLoaderService } from './workspace-loader.service';
 
 // #region [Interfaces]
-type WorkspaceResponse = WorkspaceInfo | WorkspaceInfo[]
+interface ProjectMap {
+  [name: string]: WorkspaceInfo
+}
+interface ProjectResponse {
+  workspaces: WorkspaceInfo[]
+  projects: ProjectMap
+}
+type WorkspaceResponse = WorkspaceInfo | WorkspaceInfo[] | ProjectResponse
 // #endregion
 
 @Injectable()
@@ -18,11 +25,8 @@ export class WorkspaceResolver implements Resolve<WorkspaceResponse> {
 
   // #region [Accessors]
   get workspaces() {
-    if (!this._workspaces) {
-      let ws = this.loader.listWorkspaces();
-      this._workspaces = ws.pipe(map(this.convert))
-    }
-    else { console.debug('loading memoized workspace list', this._workspaces); }
+    if (!this._workspaces)
+      this._workspaces = this.loader.listWorkspaces().pipe(map(this.convert))
     return this._workspaces;
   }
   // #endregion
@@ -31,11 +35,10 @@ export class WorkspaceResolver implements Resolve<WorkspaceResponse> {
   // @ts-ignore
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<WorkspaceResponse> {
     if ('workspace' in route.params) {
-      let finder = this.find(route.params.workspace);
       // @ts-ignore
-      return this.workspaces.pipe(map(finder)) as WorkspaceResponse;
+      return this.workspaces.pipe(map(this.find(route.params.workspace)));
     }
-    return this.workspaces;
+    return this.toResponse(this.workspaces);
   }
   // #endregion
 
@@ -48,5 +51,26 @@ export class WorkspaceResolver implements Resolve<WorkspaceResponse> {
     let checkname = (workspace) => { return workspace.name === name; }
     return (ws: WorkspaceInfo[]) => {return ws.filter(checkname)[0]}
   }
+
+  private toResponse(WS: Observable<WorkspaceInfo[]>) {
+    return WS.pipe(map((workspaces) => {
+      let projects = this.toProjects(workspaces)
+      return {workspaces, projects}
+    }))
+  }
+
+  private toProjects(workspaces: WorkspaceInfo[]): ProjectMap {
+    let result = this.initProjMap(workspaces);
+    for (let ws of workspaces) { result[ws.workspace[0]].push(ws) }
+    return result
+  }
+
+  private initProjMap(workspaces: WorkspaceInfo[]) {
+    let result = {}
+    let projects = new Set(workspaces.map((ws) => ws.workspace[0]))
+    for (let p of projects) { result[p] = [] }
+    return result
+  }
+
   // #endregion
 }
