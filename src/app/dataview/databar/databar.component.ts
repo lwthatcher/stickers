@@ -189,6 +189,10 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.drawer.draw_energy();
   }
 
+  gradient_update(event) {
+    console.log('gradient update!', event)
+  }
+
   sensor_update(event) {
     console.debug('sensor update detected:', event, this.sensor);
     if (event === 'redraw') {
@@ -260,6 +264,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
 
   private register_energy() {
     this.energy.event.subscribe((e) => { this.energy_update(e) })
+    this.gradient.event.subscribe((e) => { this.gradient_update(e) })
   }
 
   private register_video() {
