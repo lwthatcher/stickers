@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { EnergyWellsTracker } from './energy-wells';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
 import { DataInfo } from "../../data-loader/info/data-info";
+import { EnergyGradientTracker } from './energy-gradient';
 
 @Component({
   selector: 'toolbox-energy',
@@ -12,6 +12,7 @@ import { DataInfo } from "../../data-loader/info/data-info";
 export class EnergyWellToolboxComponent implements OnInit {
   // #region [Inputs]
   @Input() energy: EnergyWellsTracker;
+  @Input() gradient: EnergyGradientTracker;
   @ViewChild('settingsMenu') sMenu: NgbPopover;
   @ViewChild('computeMenu') cMenu: NgbPopover;
   // #endregion

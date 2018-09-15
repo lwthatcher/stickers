@@ -22,6 +22,7 @@ import { Drawer } from './drawer/drawer';
 import { ModeTracker } from '../modes/tool-mode';
 import { EnergyWellsTracker } from '../energy/energy-wells';
 import { VideoTracker } from '../video/video-tracker';
+import { EnergyGradientTracker } from '../energy/energy-gradient';
 // #endregion
 
  // #region [Interfaces]
@@ -48,6 +49,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() colorer: Colorer;
   @Input() dataset: Promise<Dataset>;
   @Input() energy: EnergyWellsTracker;
+  @Input() gradient: EnergyGradientTracker;
   @Input() video: VideoTracker;
   // #endregion
 
