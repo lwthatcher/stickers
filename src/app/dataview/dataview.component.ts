@@ -19,6 +19,7 @@ import { ModesToolboxComponent } from './modes/modes-toolbox.component';
 import { LabelstreamToolboxComponent } from './labelstreams/labelstreams-toolbox.component';
 import { DatabarComponent } from './databar/databar.component';
 import { EnergyWellsTracker } from './energy/energy-wells';
+import { EnergyGradientTracker } from './energy/energy-gradient';
 import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
 import { VideoComponent } from './video/video.component';
 import { VideoTracker } from './video/video-tracker';
@@ -67,6 +68,7 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
   mode: ModeTracker;
   colorer: Colorer;
   energy: EnergyWellsTracker;
+  gradient: EnergyGradientTracker;
   vt: VideoTracker;
   private _idx_map: Map<number,number[]>;
   // #endregion
@@ -112,6 +114,7 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
     }
     // load energy if available
     this.energy = new EnergyWellsTracker(this.dataloader, this.workspace);
+    this.gradient = new EnergyGradientTracker(this.dataloader, this.workspace);
     // component initialized
     console.info('dataview initialized', this);
   }
@@ -265,6 +268,7 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
       console.log('dataset name:', this.ds);
       console.log('dataset:', this.dataset);
       console.log('energy:', this.energy);
+      console.log('energy gradient:', this.gradient);
     console.groupEnd()
     console.log('dataview component', this);
     console.groupEnd();

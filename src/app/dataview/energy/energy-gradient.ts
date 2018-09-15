@@ -24,7 +24,7 @@ export enum DisplayMode {
 }
 // #endregion
 
-export class EnergyGraidentTracker {
+export class EnergyGradientTracker {
 
         // #region [Properties]
         ds: Promise<Dataset>;
