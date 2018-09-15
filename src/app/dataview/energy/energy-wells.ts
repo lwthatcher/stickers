@@ -29,7 +29,7 @@ export enum DisplayMode {
 
 export class EnergyWellsTracker {
     // #region [Properties]
-    ds: Promise<Dataset>;
+    private ds: Promise<Dataset>;
     visible: boolean;
     energyMap: EnergyMap;
     event = new EventEmitter<EnergyUpdate>();

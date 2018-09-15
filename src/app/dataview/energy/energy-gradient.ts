@@ -27,12 +27,12 @@ export enum DisplayMode {
 export class EnergyGradientTracker {
 
         // #region [Properties]
-        ds: Promise<Dataset>;
         visible: boolean;
         energyMap: EnergyMap;
         event = new EventEmitter<EnergyUpdate>();
         displayMode: DisplayMode;
-        workspace: WorkspaceInfo
+        workspace: WorkspaceInfo;
+        private ds: Promise<Dataset>;
         private dataloader: DataloaderService;
         private current: DataInfo;
         // #endregion
