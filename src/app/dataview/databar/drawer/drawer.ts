@@ -83,6 +83,8 @@ export class Drawer {
 
   get energy() { return this.databar.energy }
 
+  get gradient() { return this.databar.gradient }
+
   get video() { return this.databar.video }
   // #endregion
 
