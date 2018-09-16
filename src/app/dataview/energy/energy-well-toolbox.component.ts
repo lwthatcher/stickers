@@ -25,8 +25,8 @@ export class EnergyWellToolboxComponent implements OnInit {
 
   // #region [Accessors]
   get name() {
-    if (!this.energy.has_energy) {return 'No Energy Data'}
-    else return this.energy.name;
+    if (!this.gradient.exists) {return 'No Energy-Gradient Data'}
+    else return this.gradient.name;
   }
 
   get datasets() {

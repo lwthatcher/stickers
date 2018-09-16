@@ -43,11 +43,15 @@ export class EnergyGradientTracker {
         this.workspace = workspace;
         this.visible = false;
         this.energyMap = this.toEnergyMap(workspace.gradient_data);
+        if (this.availableEnergySets.length > 0) {
+            let default_set = this.availableEnergySets[0];
+            this.select(default_set);
+        }
     }
     // #endregion
 
     // #region [Accessors]
-    get has_energy() { return }
+    get exists() { return !!this.ds }
 
     get availableEnergySets() { return Object.keys(this.energyMap) }
 
@@ -59,11 +63,17 @@ export class EnergyGradientTracker {
 
     get short_dims() { return  }
 
-    get name() { return }
+    get name() { return this.current.name }
     // #endregion
 
     // #region [Public Methods]
-    select(name: string) { }
+    select(name: string) {
+        if (!(name in this.energyMap)) 
+            throw ReferenceError('Given name not a valid energy-gradient set:' + name);
+        console.log('using energy dataset:', name);
+        this.current = this.energyMap[name];
+        this.ds = this.dataloader.loadDataset(this.energyMap[name]);
+    }
 
     toggle() {
         this.visible = !this.visible;
