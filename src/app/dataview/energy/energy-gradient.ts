@@ -13,14 +13,8 @@ interface datum {
     i: number;
 }
 
-export interface EnergyUpdate {
+export interface GradientUpdate {
     type: string;
-    mode?: DisplayMode;
-}
-
-export enum DisplayMode {
-    Overlayed,
-    Stacked
 }
 // #endregion
 
@@ -29,8 +23,7 @@ export class EnergyGradientTracker {
     // #region [Properties]
     visible: boolean;
     energyMap: EnergyMap;
-    event = new EventEmitter<EnergyUpdate>();
-    displayMode: DisplayMode;
+    event = new EventEmitter<GradientUpdate>();
     workspace: WorkspaceInfo;
     private ds: Promise<Dataset>;
     private dataloader: DataloaderService;
@@ -78,11 +71,6 @@ export class EnergyGradientTracker {
     toggle() {
         this.visible = !this.visible;
         this.event.emit({type: 'toggle'});
-    }
-
-    updateMode(mode: DisplayMode) {
-        this.displayMode = mode;
-        this.event.emit({type: 'display-mode', mode: mode});
     }
 
     atSycn(x, data) {
