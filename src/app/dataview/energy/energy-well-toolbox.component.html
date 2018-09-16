@@ -15,11 +15,11 @@
       role="group"
       autoClose="outside"
       #dropdown="ngbDropdown">
-        <button class="btn btn-info-secondary" ngbDropdownToggle title="select energy dataset">
+        <button class="btn btn-info-secondary" ngbDropdownToggle title="select energy-gradient dataset">
           {{name}}
         </button>
         <div class="dropdown-menu" ngbDropdownMenu>
-          <div *ngFor="let ds of datasets" class="dropdown-item" (click)="energy.select(ds)">
+          <div *ngFor="let ds of datasets" class="dropdown-item" (click)="gradient.select(ds)">
             {{ds}}
           </div>
           <button *ngIf="!energy.has_energy" 

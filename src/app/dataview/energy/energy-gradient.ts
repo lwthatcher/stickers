@@ -70,7 +70,7 @@ export class EnergyGradientTracker {
     select(name: string) {
         if (!(name in this.energyMap)) 
             throw ReferenceError('Given name not a valid energy-gradient set:' + name);
-        console.log('using energy dataset:', name);
+        console.log('using energy-gradient dataset:', name);
         this.current = this.energyMap[name];
         this.ds = this.dataloader.loadDataset(this.energyMap[name]);
     }

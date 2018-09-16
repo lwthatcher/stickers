@@ -30,8 +30,8 @@ export class EnergyWellToolboxComponent implements OnInit {
   }
 
   get datasets() {
-    if (!this.energy.has_energy) {return []}
-    else return this.energy.availableEnergySets;
+    if (!this.gradient.exists) {return []}
+    else return this.gradient.availableEnergySets;
   }
   // #endregion
 
