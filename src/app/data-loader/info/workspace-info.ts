@@ -48,6 +48,8 @@ export class WorkspaceInfo {
 
     get energy_data(): DataInfo[] { return this.data.filter((data) => data.isEnergy) }
 
+    get gradient_data(): DataInfo[] { return this.data.filter((data) => data.isGradient) }
+
     get visibleData(): DataInfo[] {
         let visible = (data: DataInfo) => { return !data.hide && !data.isEnergy }
         return this.data.filter(visible);

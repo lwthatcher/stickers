@@ -26,28 +26,30 @@ export enum DisplayMode {
 
 export class EnergyGradientTracker {
 
-        // #region [Properties]
-        visible: boolean;
-        energyMap: EnergyMap;
-        event = new EventEmitter<EnergyUpdate>();
-        displayMode: DisplayMode;
-        workspace: WorkspaceInfo;
-        private ds: Promise<Dataset>;
-        private dataloader: DataloaderService;
-        private current: DataInfo;
-        // #endregion
+    // #region [Properties]
+    visible: boolean;
+    energyMap: EnergyMap;
+    event = new EventEmitter<EnergyUpdate>();
+    displayMode: DisplayMode;
+    workspace: WorkspaceInfo;
+    private ds: Promise<Dataset>;
+    private dataloader: DataloaderService;
+    private current: DataInfo;
+    // #endregion
 
     // #region [Constructor]
     constructor(dataloader: DataloaderService, workspace: WorkspaceInfo) {
         this.dataloader = dataloader;
         this.workspace = workspace;
+        this.visible = false;
+        this.energyMap = this.toEnergyMap(workspace.gradient_data);
     }
     // #endregion
 
     // #region [Accessors]
     get has_energy() { return }
 
-    get availableEnergySets() { return }
+    get availableEnergySets() { return Object.keys(this.energyMap) }
 
     get data(): Promise<datum[][]> {
         return Promise.resolve([])
@@ -60,21 +62,31 @@ export class EnergyGradientTracker {
     get name() { return }
     // #endregion
 
-        // #region [Public Methods]
-        select(name: string) { }
-    
-        toggle() {
-            this.visible = !this.visible;
-            this.event.emit({type: 'toggle'});
-        }
-    
-        updateMode(mode: DisplayMode) {
-            this.displayMode = mode;
-            this.event.emit({type: 'display-mode', mode: mode});
-        }
+    // #region [Public Methods]
+    select(name: string) { }
 
-        atSycn(x, data) {
+    toggle() {
+        this.visible = !this.visible;
+        this.event.emit({type: 'toggle'});
+    }
 
+    updateMode(mode: DisplayMode) {
+        this.displayMode = mode;
+        this.event.emit({type: 'display-mode', mode: mode});
+    }
+
+    atSycn(x, data) {
+
+    }
+    // #endregion
+
+    // #region [Helper Methods]
+    private toEnergyMap(infos: DataInfo[]) {
+        let result = {}
+        for (let info of infos) {
+            result[info.name] = info;
         }
-        // #endregion
+        return result;
+    }
+    // #endregion
 }

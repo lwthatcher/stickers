@@ -52,6 +52,7 @@ export class DataInfo {
     // #region [Accessors]
     get rate() { return DataInfo.MILLISECONDS / this.Hz; }
     get isEnergy() { return this.type === 'energy'; }
+    get isGradient() { return this.type === 'gradient'; }
     // #endregion
 
     // #region [Public Methods]
