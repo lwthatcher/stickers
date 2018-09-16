@@ -55,8 +55,6 @@ export class EnergyGradientTracker {
 
     get formatted() { return }
 
-    get channels() { return  }
-
     get short_dims() { return  }
 
     get name() { return }

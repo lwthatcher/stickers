@@ -74,9 +74,7 @@ export class EnergyWellsTracker {
         return this.stackedMap.get(this.name);
     }
 
-    get channels() { return this.current.channels }
-
-    get short_dims() { return Sensor.short_names(this.channels) }
+    get short_dims() { return Sensor.short_names(this.current.channels) }
 
     get name() { return this.current.name }
     // #endregion
