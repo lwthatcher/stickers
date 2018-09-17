@@ -2,12 +2,12 @@
   <div class="btn-group">
     <button type="button" 
       class="btn btn-info-secondary"
-      [disabled]="!energy.has_energy"
-      (click)="energy.toggle()"
-      title='toggle energy wells visibility'>
+      [disabled]="!gradient.exists"
+      (click)="gradient.toggle()"
+      title='toggle energy gradient visibility'>
         <span>
-          <i *ngIf='energy.visible' class="material-icons">visibility</i>
-          <i *ngIf='!energy.visible' class="material-icons">visibility_off</i>
+          <i *ngIf='gradient.visible' class="material-icons">visibility</i>
+          <i *ngIf='!gradient.visible' class="material-icons">visibility_off</i>
         </span>
     </button>
     <div class='btn-group'
@@ -22,12 +22,12 @@
           <div *ngFor="let ds of datasets" class="dropdown-item" (click)="gradient.select(ds)">
             {{ds}}
           </div>
-          <button *ngIf="!energy.has_energy" 
+          <button *ngIf="!gradient.exists" 
             class="btn btn-info dropdown-item"
             [ngbPopover]="computePopover"
             placement="right"
             #computeMenu="ngbPopover"
-            popoverTitle="compute energy from:" >
+            popoverTitle="compute energy gradient from:" >
               <span>Compute Energy</span>
               
           </button>
@@ -37,5 +37,5 @@
 </div>
 
 <ng-template #computePopover>
-  <app-compute-popover [workspace]="energy.workspace" (select)="computeEnergy($event)"></app-compute-popover>
+  <app-compute-popover [workspace]="gradient.workspace" (select)="computeEnergy($event)"></app-compute-popover>
 </ng-template>

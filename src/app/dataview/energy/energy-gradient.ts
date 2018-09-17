@@ -49,7 +49,8 @@ export class EnergyGradientTracker {
     get availableEnergySets() { return Object.keys(this.energyMap) }
 
     get data(): Promise<datum[][]> {
-        return Promise.resolve([])
+        if (!this.exists) return Promise.reject('No gradient data available.')
+        return this.ds.then(dataset => dataset.all())   // assumes gradient is only channel
     }
 
     get formatted() { return }

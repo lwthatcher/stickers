@@ -423,6 +423,7 @@ export class Drawer {
   }
 
   private plotGradient(series) {
+    series = series[0];   // assumes only one channel for gradient
     console.log('plotting gradient!', series)
 
   }
