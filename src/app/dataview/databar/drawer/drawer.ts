@@ -252,6 +252,13 @@ export class Drawer {
       this.plotOverlayed(data);
     }
   }
+
+  async draw_gradient() {
+    if (!this.gradient.exists) { return }
+    if (!this.gradient.visible) { this.clear('energy'); return; }
+    let data = await this.gradient.data;
+    this.plotGradient(data);
+  }
   // #endregion
 
   // #region [Update Methods]
@@ -270,6 +277,10 @@ export class Drawer {
       this.energyWells.attr('d', this.area);
     else if (this.energy.displayMode === DisplayMode.Stacked)
       this.energyWells.attr('d', this.stacked_area);
+  }
+
+  updateGradient() {
+    console.log('updating gradient')
   }
 
   updateLabels() {
@@ -409,6 +420,11 @@ export class Drawer {
                         .attr("clip-path", "url(#clip)")
                         .attr('d', this.area);
     }
+  }
+
+  private plotGradient(series) {
+    console.log('plotting gradient!', series)
+
   }
   // #endregion
 
