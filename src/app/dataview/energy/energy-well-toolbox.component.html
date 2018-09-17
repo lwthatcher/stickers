@@ -33,22 +33,8 @@
           </button>
         </div>
     </div>
-    <!-- <button type="button"
-    class="btn btn-info"
-    [disabled]="!energy.has_energy"
-    [ngbPopover]="settingsPopover"
-    placement="right"
-    #settingsMenu="ngbPopover"
-    title='settings'
-    popoverTitle="Energy Wells Settings:">
-      <span><i class="material-icons icon">settings</i></span>
-    </button> -->
   </div>
 </div>
-
-<!-- <ng-template #settingsPopover>
-    <app-energy-settings [energy]="energy" (done)="close('settings')"></app-energy-settings>
-</ng-template> -->
 
 <ng-template #computePopover>
   <app-compute-popover [workspace]="energy.workspace" (select)="computeEnergy($event)"></app-compute-popover>
