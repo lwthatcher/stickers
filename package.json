@@ -1,6 +1,6 @@
 {
   "name": "stickers",
-  "version": "2.2.0-β.0",
+  "version": "2.2.0-β.1",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
