@@ -24,6 +24,10 @@ export class Drawer {
   behaviors;
   // #endregion
 
+  // #region [Constants]
+  GRADIENT_COLOR = "darkslateblue"
+  // #endregion
+
   // #region [Constructor]
   constructor(databar: DatabarComponent) {
     this.databar = databar;
@@ -240,19 +244,6 @@ export class Drawer {
         .text('Current Time: ' + this.video.vt.toString())
   }
 
-  // async draw_energy() {
-  //   if (!this.energy.has_energy) { return }
-  //   if (!this.energy.visible) { this.clear('energy'); return; }
-  //   if (this.energy.displayMode === DisplayMode.Stacked) {
-  //     let series = await this.stackedSeries();
-  //     this.plotStacked(series);
-  //   }
-  //   else if (this.energy.displayMode === DisplayMode.Overlayed) {
-  //     let data = await this.energy.data;
-  //     this.plotOverlayed(data);
-  //   }
-  // }
-
   async draw_gradient() {
     if (!this.gradient.exists) { return }
     if (!this.gradient.visible) { this.clear('energy'); return; }
@@ -281,6 +272,7 @@ export class Drawer {
 
   updateGradient() {
     console.log('updating gradient')
+    this.energyWells.attr('d', this.area);
   }
 
   updateLabels() {
@@ -423,9 +415,17 @@ export class Drawer {
   }
 
   private plotGradient(series) {
-    series = series[0];   // assumes only one channel for gradient
-    console.log('plotting gradient!', series)
-
+    // update selection
+    let wells = this.layers.energy.selectAll('path').data(series);
+    // exit selection
+    wells.exit().remove()
+    // merged selection
+    wells = wells.enter().append('path')
+                 .merge(wells)
+                 .attr('class', 'energy')
+                 .attr("clip-path", "url(#clip)")
+                 .attr('fill', this.GRADIENT_COLOR)
+                 .attr('d', this.area);
   }
   // #endregion
 
