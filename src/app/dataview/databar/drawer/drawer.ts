@@ -117,7 +117,7 @@ export class Drawer {
     this.databar.stop_spinner();
     this.draw_xAxis();
     this.draw_yAxis();
-    this.draw_energy();
+    this.draw_gradient();
     this.plot_signals(data);
     this.draw_labels();
     this.draw_handles();
@@ -240,18 +240,18 @@ export class Drawer {
         .text('Current Time: ' + this.video.vt.toString())
   }
 
-  async draw_energy() {
-    if (!this.energy.has_energy) { return }
-    if (!this.energy.visible) { this.clear('energy'); return; }
-    if (this.energy.displayMode === DisplayMode.Stacked) {
-      let series = await this.stackedSeries();
-      this.plotStacked(series);
-    }
-    else if (this.energy.displayMode === DisplayMode.Overlayed) {
-      let data = await this.energy.data;
-      this.plotOverlayed(data);
-    }
-  }
+  // async draw_energy() {
+  //   if (!this.energy.has_energy) { return }
+  //   if (!this.energy.visible) { this.clear('energy'); return; }
+  //   if (this.energy.displayMode === DisplayMode.Stacked) {
+  //     let series = await this.stackedSeries();
+  //     this.plotStacked(series);
+  //   }
+  //   else if (this.energy.displayMode === DisplayMode.Overlayed) {
+  //     let data = await this.energy.data;
+  //     this.plotOverlayed(data);
+  //   }
+  // }
 
   async draw_gradient() {
     if (!this.gradient.exists) { return }
@@ -272,12 +272,12 @@ export class Drawer {
     }
   }
 
-  updateEnergy() {
-    if (this.energy.displayMode === DisplayMode.Overlayed)
-      this.energyWells.attr('d', this.area);
-    else if (this.energy.displayMode === DisplayMode.Stacked)
-      this.energyWells.attr('d', this.stacked_area);
-  }
+  // updateEnergy() {
+  //   if (this.energy.displayMode === DisplayMode.Overlayed)
+  //     this.energyWells.attr('d', this.area);
+  //   else if (this.energy.displayMode === DisplayMode.Stacked)
+  //     this.energyWells.attr('d', this.stacked_area);
+  // }
 
   updateGradient() {
     console.log('updating gradient')

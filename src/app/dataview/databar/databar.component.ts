@@ -181,14 +181,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     else { this.redraw_labels() }
   }
 
-  energy_update(event) {
-    if (event.type === 'display-mode') { 
-      this.drawer.clear('energy', 'y-axis');
-      this.drawer.draw_yAxis();
-    }
-    this.drawer.draw_energy();
-  }
-
   gradient_update(event) {
     console.log('gradient update!', event)
     this.drawer.draw_gradient();
@@ -235,7 +227,7 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
     this.drawer.xe.domain(t.rescaleX(this.x0).domain());
     // redraw signals
     this.drawer.updateSignals();
-    this.drawer.updateEnergy();
+    // this.drawer.updateEnergy();
     this.drawer.updateGradient();
     // redraw x-axis
     this.drawer.clear('x-axis');
@@ -265,7 +257,6 @@ export class DatabarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private register_energy() {
-    this.energy.event.subscribe((e) => { this.energy_update(e) })
     this.gradient.event.subscribe((e) => { this.gradient_update(e) })
   }
 
