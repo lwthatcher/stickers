@@ -67,6 +67,7 @@ export class EnergyGradientTracker {
         console.log('using energy-gradient dataset:', name);
         this.current = this.energyMap[name];
         this.ds = this.dataloader.loadDataset(this.energyMap[name]);
+        this.ds.then((data) => { this.event.emit({type: 'load'}) })
     }
 
     toggle() {

@@ -478,9 +478,9 @@ export class Drawer {
   }
 
   async energy_domains() {
-    if (!this.energy.has_energy) { return }
+    if (!this.gradient.exists) { return }
     // await data
-    let axes = await this.energy.data;
+    let axes = await this.gradient.data;
     let series = await this.stackedSeries();
     // helper methods
     let imax = axes[0][axes[0].length-1].i;
