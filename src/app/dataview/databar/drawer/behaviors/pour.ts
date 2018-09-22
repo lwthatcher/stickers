@@ -18,6 +18,7 @@ export class PourBehavior {
     DX = 10;
     TICK = 100;
     PPT = 2;
+    ADD_RATE = 5;
     // #endregion
     
     // #region [Properties]
@@ -27,6 +28,7 @@ export class PourBehavior {
     boundaries: Surface[];
     private pour_timer;
     private current_lbl;
+    private ti = 0;
     // #endregion
 
     // #region [Constructor]
@@ -115,6 +117,7 @@ export class PourBehavior {
         // update label
         let [start, end] = this.extents();
         this.current_lbl = this.drawer.labeller.grow(this.current_lbl, start, end);
+        console.count('pour-tick')
     }
 
     private ticked() {
@@ -127,6 +130,12 @@ export class PourBehavior {
             .merge(u)
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);
+        
+        if (this.ti % this.ADD_RATE === 0) {
+            console.log('TICK', this.particles, this.simulation.nodes());
+        }
+
+        this.ti += 1;
     }
 
     private clearParticles() {
@@ -140,6 +149,7 @@ export class PourBehavior {
     }
 
     private createSimulation(ys, roll, walls) {
+        this.ti = 0;
         return d3.forceSimulation(this.particles)
                  .force('collide', d3.forceCollide(this.COLLIDE_RADIUS))
                  .force('boundaries', this.container(this.boundaries))
