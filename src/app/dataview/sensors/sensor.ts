@@ -12,7 +12,8 @@ export class Sensor {
         'G': ['x', 'y', 'z'],
         'C': ['x', 'y', 'z'],
         'L': ['both', 'infrared'],
-        'B': ['altitude', 'temperature']
+        'B': ['altitude', 'temperature'],
+        '∇': ['gradient-magnitude']
       }
 
     static SENSOR_NAMES = {
@@ -20,7 +21,8 @@ export class Sensor {
         'G': 'Gyroscope',
         'C': 'Compass',
         'L': 'Light',
-        'B': 'Barometer'
+        'B': 'Barometer',
+        '∇': 'Gradient'
     }
 
     static SHORT_NAMES = {
@@ -28,7 +30,8 @@ export class Sensor {
         'G': ['Gx', 'Gy', 'Gz'],
         'C': ['Cx', 'Cy', 'Cz'],
         'L': ['Lt', 'Li'],
-        'B': ['alt', 'temp'], 
+        'B': ['alt', 'temp'],
+        '∇': ['|∇E|']
     }
     // #endregion
 
