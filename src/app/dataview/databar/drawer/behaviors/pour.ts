@@ -29,6 +29,7 @@ export class PourBehavior {
     private pour_timer;
     private current_lbl;
     private ti = 0;
+    private x_twiddle;
     // #endregion
 
     // #region [Constructor]
@@ -85,6 +86,7 @@ export class PourBehavior {
         if (!this.energy.has_energy) return;
         let [x,y] = this.drawer.xy();
         let x_twiddle = d3.randomNormal(x);
+        this.x_twiddle = d3.randomNormal(x);
         this.pour_timer = d3.interval((t) => this.pour_tick(x_twiddle), this.TICK);
         let formatted = await this.energy.formatted;
         let ys = this.yDepth(formatted);
@@ -105,15 +107,15 @@ export class PourBehavior {
     // #region [Helper Methods]
     private pour_tick(x) {
         // create new particles
-        let points = []
-        for (let i = 0; i < this.PPT; i++) 
-            points.push({x: x(), y: 1});
-        // add particles
-        let nodes = this.simulation.nodes();
-        nodes.push(...points);
-        // update simulation
-        this.simulation.nodes(nodes);
-        this.simulation.restart();
+        // let points = []
+        // for (let i = 0; i < this.PPT; i++) 
+        //     points.push({x: x(), y: 1});
+        // // add particles
+        // let nodes = this.simulation.nodes();
+        // nodes.push(...points);
+        // // update simulation
+        // this.simulation.nodes(nodes);
+        // this.simulation.restart();
         // update label
         let [start, end] = this.extents();
         this.current_lbl = this.drawer.labeller.grow(this.current_lbl, start, end);
@@ -121,6 +123,10 @@ export class PourBehavior {
     }
 
     private ticked() {
+        if (this.ti % this.ADD_RATE === 0) {
+            this.addParticles();
+        }
+
         let u = this.drawer.layers.ghost.selectAll('circle').data(this.particles);
         u.enter()
             .append('circle')
@@ -131,11 +137,20 @@ export class PourBehavior {
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);
         
-        if (this.ti % this.ADD_RATE === 0) {
-            console.log('TICK', this.particles, this.simulation.nodes());
-        }
+        
 
         this.ti += 1;
+    }
+
+    private addParticles() {
+        let points = []
+        let x = this.x_twiddle;
+        for (let i = 0; i < this.PPT; i++) 
+            points.push({x: x(), y: 1});
+        this.particles.push(...points);
+        this.simulation.nodes(this.particles);
+        this.simulation.restart();
+        console.log('adding particles', this.particles.length, this.simulation.nodes().length)
     }
 
     private clearParticles() {
