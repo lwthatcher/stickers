@@ -40,6 +40,7 @@
     "rxjs-compat": "^6.3.2",
     "spin.js": "^4.0.0",
     "tfjs-npy": "0.0.3",
+    "url-parse": "^1.4.3",
     "videogular2": "^6.3.0",
     "zone.js": "^0.8.19"
   },
@@ -59,7 +60,7 @@
     "karma-coverage-istanbul-reporter": "^1.2.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
-    "protractor": "~5.1.2",
+    "protractor": "^5.4.1",
     "ts-node": "~4.1.0",
     "tslint": "~5.9.1",
     "typescript": "~2.5.3"
