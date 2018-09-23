@@ -85,9 +85,7 @@ export class PourBehavior {
     async start() {
         if (!this.energy.has_energy) return;
         let [x,y] = this.drawer.xy();
-        let x_twiddle = d3.randomNormal(x);
         this.x_twiddle = d3.randomNormal(x);
-        this.pour_timer = d3.interval((t) => this.pour_tick(x_twiddle), this.TICK);
         let formatted = await this.energy.formatted;
         let ys = this.yDepth(formatted);
         let roll = this.roll(ys);
@@ -105,28 +103,10 @@ export class PourBehavior {
     // #endregion
     
     // #region [Helper Methods]
-    private pour_tick(x) {
-        // create new particles
-        // let points = []
-        // for (let i = 0; i < this.PPT; i++) 
-        //     points.push({x: x(), y: 1});
-        // // add particles
-        // let nodes = this.simulation.nodes();
-        // nodes.push(...points);
-        // // update simulation
-        // this.simulation.nodes(nodes);
-        // this.simulation.restart();
-        // update label
-        let [start, end] = this.extents();
-        this.current_lbl = this.drawer.labeller.grow(this.current_lbl, start, end);
-        console.count('pour-tick')
-    }
-
     private ticked() {
         if (this.ti % this.ADD_RATE === 0) {
             this.addParticles();
         }
-
         let u = this.drawer.layers.ghost.selectAll('circle').data(this.particles);
         u.enter()
             .append('circle')
@@ -136,9 +116,8 @@ export class PourBehavior {
             .merge(u)
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);
-        
-        
-
+        let [start, end] = this.extents();
+        this.current_lbl = this.drawer.labeller.grow(this.current_lbl, start, end);
         this.ti += 1;
     }
 
@@ -150,7 +129,6 @@ export class PourBehavior {
         this.particles.push(...points);
         this.simulation.nodes(this.particles);
         this.simulation.restart();
-        console.log('adding particles', this.particles.length, this.simulation.nodes().length)
     }
 
     private clearParticles() {
