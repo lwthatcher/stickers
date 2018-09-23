@@ -58,7 +58,7 @@ export class PourBehavior {
 
     get color() { return this.drawer.databar.colorer.labels(this.drawer.ls.name).get(this.label_type)}
 
-    get pouring() { return !!this.current_lbl }
+    get pouring() { return !!this.current_lbl || !!this.simulation }
     // #endregion
 
     // #region [Callbacks]
@@ -110,12 +110,6 @@ export class PourBehavior {
         this.simulation = undefined;
         this.particles = [];
     }
-
-    kill() {
-        this.simulation.stop();
-        this.current_lbl = undefined;
-        console.log('kill!', this.pouring);
-    }
     // #endregion
     
     // #region [Helper Methods]
@@ -138,7 +132,6 @@ export class PourBehavior {
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);
         // extend label
-
         let [start, end] = this.extents();
         this.current_lbl = this.drawer.labeller.grow(this.current_lbl, start, end);
         // increment
