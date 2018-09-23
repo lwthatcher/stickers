@@ -71,6 +71,8 @@ export class EnergyWellsTracker {
         if (!this.has_energy) return Promise.reject('No energy data available.')
         else if (!this.stackedMap.has(this.name))
             this.stackedMap.set(this.name, this.stackFormat(this.ds))
+        let blah = this.summedFormat(this.ds);
+        console.log('stacked', this.stackedMap.get(this.name), blah);
         return this.stackedMap.get(this.name);
     }
 
@@ -134,6 +136,18 @@ export class EnergyWellsTracker {
         .then((axes) => {
             let rowmap = (acc,cur,i) => { acc[this.short_dims[i]] = cur.d; acc.i = cur.i; return acc; }
             return math.transpose(axes).map((row) => row.reduce(rowmap, {}));
+        })
+    }
+
+    private summedFormat(dataset) {
+        return dataset.then((ds) => ds.all())
+        .then((axes) => {
+            let sum = (row) => {
+                let i = row[0].i;
+                let d = row.map(d => d.d).reduce((acc,cur) => acc + cur, 0);
+                return {d,i}
+            }
+            return math.transpose(axes).map((row) => sum(row));
         })
     }
 
