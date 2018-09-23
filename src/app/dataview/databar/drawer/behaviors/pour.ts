@@ -2,7 +2,6 @@ import { Drawer } from "../drawer";
 import * as d3 from "d3";
 import d3ForceSurface from 'd3-force-surface';
 import { Label } from "../../../labelstreams/labelstream";
-import { nodeChildrenAsMap } from "@angular/router/src/utils/tree";
 
 // # region [Interfaces]
 interface Point { x: number; y: number; }
@@ -18,6 +17,7 @@ export class PourBehavior {
     DX = 10;
     TICK = 100;
     PPT = 2;
+    ADD_RATE = 5;
     // #endregion
     
     // #region [Properties]
@@ -25,8 +25,9 @@ export class PourBehavior {
     particles;
     simulation;
     boundaries: Surface[];
-    private pour_timer;
     private current_lbl;
+    private ti = 0;
+    private x_twiddle;
     // #endregion
 
     // #region [Constructor]
@@ -56,6 +57,8 @@ export class PourBehavior {
     get h() { return this.drawer.h }
 
     get color() { return this.drawer.databar.colorer.labels(this.drawer.ls.name).get(this.label_type)}
+
+    get pouring() { return !!this.current_lbl || !!this.simulation }
     // #endregion
 
     // #region [Callbacks]
@@ -81,9 +84,14 @@ export class PourBehavior {
     // #region [Public Methods]
     async start() {
         if (!this.energy.has_energy) return;
+        if (this.simulation) {
+            console.warn('simulation already in progress', this.simulation);
+            this.end();
+            return;
+        }
+        console.debug('start pour!');
         let [x,y] = this.drawer.xy();
-        let x_twiddle = d3.randomNormal(x);
-        this.pour_timer = d3.interval((t) => this.pour_tick(x_twiddle), this.TICK);
+        this.x_twiddle = d3.randomNormal(x);
         let formatted = await this.energy.formatted;
         let ys = this.yDepth(formatted);
         let roll = this.roll(ys);
@@ -93,31 +101,27 @@ export class PourBehavior {
     }
     
     end() {
-        if (this.pour_timer) this.pour_timer.stop();
-        if (this.simulation) this.simulation.stop();
-        this.current_lbl = undefined;
+        if (this.simulation) {
+            this.simulation.stop();
+            this.simulation.on('tick', null);
+        }
         this.clearParticles();
+        this.current_lbl = undefined;
+        this.simulation = undefined;
+        this.particles = [];
     }
     // #endregion
     
     // #region [Helper Methods]
-    private pour_tick(x) {
-        // create new particles
-        let points = []
-        for (let i = 0; i < this.PPT; i++) 
-            points.push({x: x(), y: 1});
-        // add particles
-        let nodes = this.simulation.nodes();
-        nodes.push(...points);
-        // update simulation
-        this.simulation.nodes(nodes);
-        this.simulation.restart();
-        // update label
-        let [start, end] = this.extents();
-        this.current_lbl = this.drawer.labeller.grow(this.current_lbl, start, end);
-    }
-
     private ticked() {
+        // add particles
+        if (this.ti % this.ADD_RATE === 0) this.addParticles();
+        // stop if error
+        if (this.particles.length === 0) {
+            console.warn('No particles!');
+            return;
+        }
+        // update particle positions
         let u = this.drawer.layers.ghost.selectAll('circle').data(this.particles);
         u.enter()
             .append('circle')
@@ -127,6 +131,21 @@ export class PourBehavior {
             .merge(u)
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);
+        // extend label
+        let [start, end] = this.extents();
+        this.current_lbl = this.drawer.labeller.grow(this.current_lbl, start, end);
+        // increment
+        this.ti += 1;
+    }
+
+    private addParticles() {
+        let points = []
+        let x = this.x_twiddle;
+        for (let i = 0; i < this.PPT; i++) 
+            points.push({x: x(), y: 1});
+        this.particles.push(...points);
+        this.simulation.nodes(this.particles);
+        this.simulation.restart();
     }
 
     private clearParticles() {
@@ -136,10 +155,11 @@ export class PourBehavior {
             .duration(750)
             .attr('opacity', 0)
             .remove();
-        this.particles = [];
     }
 
     private createSimulation(ys, roll, walls) {
+        this.ti = 0;
+        if (this.simulation) this.simulation.stop();
         return d3.forceSimulation(this.particles)
                  .force('collide', d3.forceCollide(this.COLLIDE_RADIUS))
                  .force('boundaries', this.container(this.boundaries))
