@@ -100,7 +100,7 @@ export class EnergyWellsTracker {
         this.event.emit({type: 'display-mode', mode: mode});
     }
 
-    atSycn(x, data) {
+    at(x, data) {
         let sum = (d) => {
             let result = 0;
             for (let i of this.short_dims) {result += d[i]}

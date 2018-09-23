@@ -65,7 +65,7 @@ export class PourBehavior {
     get xi() { return (x) => this.x.invert(x); }
 
     yDepth(formatted) {
-        let e = (x) => {return this.energy.atSycn(this.xi(x), formatted)}
+        let e = (x) => {return this.energy.at(this.xi(x), formatted)}
         return (x) => { return this.drawer.ys(e(x)) }
     }
 
