@@ -100,11 +100,6 @@ export class EnergyWellsTracker {
         this.event.emit({type: 'display-mode', mode: mode});
     }
 
-    async at(x) {
-        let data = await this.formatted;
-        return this.atSycn(x, data);
-    }
-
     atSycn(x, data) {
         let sum = (d) => {
             let result = 0;
