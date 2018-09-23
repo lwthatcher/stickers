@@ -127,7 +127,7 @@ export class MouseBehavior {
     backward_click() { this.drawer.ls.cycleDown() }
 
     /** call-back for performing a right-click on the mouse */
-    right_click() { if (this.mode.pour) {this.drawer.behaviors.pour.kill()} }
+    right_click() { }
 
     /** call-back for performing a left-click on the mouse */
     left_click() {

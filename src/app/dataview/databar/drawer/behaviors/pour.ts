@@ -2,7 +2,6 @@ import { Drawer } from "../drawer";
 import * as d3 from "d3";
 import d3ForceSurface from 'd3-force-surface';
 import { Label } from "../../../labelstreams/labelstream";
-import { nodeChildrenAsMap } from "@angular/router/src/utils/tree";
 
 // # region [Interfaces]
 interface Point { x: number; y: number; }
@@ -58,6 +57,8 @@ export class PourBehavior {
     get h() { return this.drawer.h }
 
     get color() { return this.drawer.databar.colorer.labels(this.drawer.ls.name).get(this.label_type)}
+
+    get pouring() { return !!this.current_lbl }
     // #endregion
 
     // #region [Callbacks]
@@ -82,8 +83,13 @@ export class PourBehavior {
 
     // #region [Public Methods]
     async start() {
-        console.debug('start pour!')
         if (!this.energy.has_energy) return;
+        if (this.simulation) {
+            console.warn('simulation already in progress', this.simulation);
+            this.end();
+            return;
+        }
+        console.debug('start pour!');
         let [x,y] = this.drawer.xy();
         this.x_twiddle = d3.randomNormal(x);
         let formatted = await this.energy.formatted;
@@ -95,14 +101,20 @@ export class PourBehavior {
     }
     
     end() {
-        if (this.simulation) this.simulation.stop();
-        this.current_lbl = undefined;
+        if (this.simulation) {
+            this.simulation.stop();
+            this.simulation.on('tick', null);
+        }
         this.clearParticles();
+        this.current_lbl = undefined;
+        this.simulation = undefined;
+        this.particles = [];
     }
 
     kill() {
         this.simulation.stop();
-        console.log('kill!', this.simulation)
+        this.current_lbl = undefined;
+        console.log('kill!', this.pouring);
     }
     // #endregion
     
@@ -150,11 +162,11 @@ export class PourBehavior {
             .duration(750)
             .attr('opacity', 0)
             .remove();
-        this.particles = [];
     }
 
     private createSimulation(ys, roll, walls) {
         this.ti = 0;
+        if (this.simulation) this.simulation.stop();
         return d3.forceSimulation(this.particles)
                  .force('collide', d3.forceCollide(this.COLLIDE_RADIUS))
                  .force('boundaries', this.container(this.boundaries))
