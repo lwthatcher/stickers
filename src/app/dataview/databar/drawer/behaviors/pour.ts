@@ -26,7 +26,6 @@ export class PourBehavior {
     particles;
     simulation;
     boundaries: Surface[];
-    private pour_timer;
     private current_lbl;
     private ti = 0;
     private x_twiddle;
@@ -83,6 +82,7 @@ export class PourBehavior {
 
     // #region [Public Methods]
     async start() {
+        console.debug('start pour!')
         if (!this.energy.has_energy) return;
         let [x,y] = this.drawer.xy();
         this.x_twiddle = d3.randomNormal(x);
@@ -95,18 +95,27 @@ export class PourBehavior {
     }
     
     end() {
-        if (this.pour_timer) this.pour_timer.stop();
         if (this.simulation) this.simulation.stop();
         this.current_lbl = undefined;
         this.clearParticles();
+    }
+
+    kill() {
+        this.simulation.stop();
+        console.log('kill!', this.simulation)
     }
     // #endregion
     
     // #region [Helper Methods]
     private ticked() {
-        if (this.ti % this.ADD_RATE === 0) {
-            this.addParticles();
+        // add particles
+        if (this.ti % this.ADD_RATE === 0) this.addParticles();
+        // stop if error
+        if (this.particles.length === 0) {
+            console.warn('No particles!');
+            return;
         }
+        // update particle positions
         let u = this.drawer.layers.ghost.selectAll('circle').data(this.particles);
         u.enter()
             .append('circle')
@@ -116,8 +125,11 @@ export class PourBehavior {
             .merge(u)
             .attr('cx', (d) => d.x)
             .attr('cy', (d) => d.y);
+        // extend label
+
         let [start, end] = this.extents();
         this.current_lbl = this.drawer.labeller.grow(this.current_lbl, start, end);
+        // increment
         this.ti += 1;
     }
 
