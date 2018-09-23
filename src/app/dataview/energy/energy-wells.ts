@@ -4,6 +4,7 @@ import { DataInfo } from "../../data-loader/info/data-info";
 import { DataloaderService } from "../../data-loader/data-loader.service";
 import { EventEmitter } from "@angular/core";
 import { Sensor } from "../sensors/sensor";
+import { LazyMap } from "./lazy-map";
 import * as math from 'mathjs';
 import * as d3 from "d3";
 
@@ -37,8 +38,9 @@ export class EnergyWellsTracker {
     private ds: Promise<Dataset>;
     private dataloader: DataloaderService;
     private current: DataInfo;
-    private overlayedMap = new Map();
-    private stackedMap = new Map();
+    private overlayedMap: LazyMap;
+    private stackedMap: LazyMap;
+    private summedMap: LazyMap;
     // #endregion
 
     // #region [Constructor]
@@ -52,6 +54,9 @@ export class EnergyWellsTracker {
             this.select(default_set);
         }
         this.displayMode = DisplayMode.Stacked;
+        this.overlayedMap = new LazyMap(() => this.overlayedFormat(this.ds))
+        this.stackedMap = new LazyMap(() => this.stackFormat(this.ds))
+        this.summedMap = new LazyMap(() => this.summedFormat(this.ds))
     }
     // #endregion
 
@@ -62,17 +67,11 @@ export class EnergyWellsTracker {
 
     get data(): Promise<datum[][]> {
         if (!this.has_energy) return Promise.reject('No energy data available.')
-        else if (!this.overlayedMap.has(this.name))
-            this.overlayedMap.set(this.name, this.overlayedFormat(this.ds))
         return this.overlayedMap.get(this.name);
     }
 
     get formatted() {
         if (!this.has_energy) return Promise.reject('No energy data available.')
-        else if (!this.stackedMap.has(this.name))
-            this.stackedMap.set(this.name, this.stackFormat(this.ds))
-        let blah = this.summedFormat(this.ds);
-        console.log('stacked', this.stackedMap.get(this.name), blah);
         return this.stackedMap.get(this.name);
     }
 
@@ -89,10 +88,6 @@ export class EnergyWellsTracker {
         console.log('using energy dataset:', name);
         this.current = this.energyMap[name];
         this.ds = this.dataloader.loadDataset(this.energyMap[name]);
-        if (!this.overlayedMap.has(name))
-            this.overlayedMap.set(name, this.overlayedFormat(this.ds));
-        if (!this.stackedMap.has(name))
-            this.stackedMap.set(name, this.stackFormat(this.ds));
     }
 
     toggle() {
@@ -120,15 +115,7 @@ export class EnergyWellsTracker {
     }
     // #endregion
 
-    // #region [Helper Methods]
-    private toEnergyMap(infos: DataInfo[]) {
-        let result = {}
-        for (let info of infos) {
-            result[info.name] = info;
-        }
-        return result;
-    }
-
+    // #region [Formatters]
     private overlayedFormat(dataset) { return dataset.then((ds) => ds.all()) }
 
     private stackFormat(dataset) {
@@ -150,11 +137,15 @@ export class EnergyWellsTracker {
             return math.transpose(axes).map((row) => sum(row));
         })
     }
+    // #endregion
 
-    private closest(x, data) {
-        let Δi = (d) => Math.abs(d.i - x)
-        let i = d3.scan(data, (a,b) => {return Δi(a) - Δi(b) })
-        return data[i];
+    // #region [Helper Methods]
+    private toEnergyMap(infos: DataInfo[]) {
+        let result = {}
+        for (let info of infos) {
+            result[info.name] = info;
+        }
+        return result;
     }
 
     private closestPoint(x, data) {
@@ -169,4 +160,6 @@ export class EnergyWellsTracker {
         if (t < d[m].i) return this.binarySearch(d,t,s,m);
     }
     // #endregion
+
+
 }
