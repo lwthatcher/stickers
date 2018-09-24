@@ -51,7 +51,7 @@ ng serve
 ### Starting the _Node-Server_
 Run the following command to start the `Node.JS` REST API server:
 ```
-node server.js
+node src/server.js
 ```
 
 ### Starting the _Flask-Server_
