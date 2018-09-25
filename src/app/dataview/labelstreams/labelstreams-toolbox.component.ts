@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
 import { Sensor } from '../sensors/sensor';
 import { LabelStream } from './labelstream';
 import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
@@ -26,6 +26,7 @@ export class LabelstreamToolboxComponent implements OnInit {
   @Input() labelstreams: LabelStreamMap;
   @ViewChild('dropdown') dropdown: NgbDropdown;
   @ViewChild('popover') popover: NgbPopover;
+  @ViewChildren('editMenu') editMenus: QueryList<NgbPopover>;
   // #endregion
 
   // #region [Outputs]
@@ -42,6 +43,8 @@ export class LabelstreamToolboxComponent implements OnInit {
   get streams(): string[] { return Object.keys(this.labelstreams) }
 
   get current(): LabelStream { return this.labelstreams[this.sensor.labelstream] }
+
+  get menus() { return this.editMenus.toArray() }
 
   get icon(): string {
     if (this.popover.isOpen()) return 'remove'
@@ -73,6 +76,7 @@ export class LabelstreamToolboxComponent implements OnInit {
   }
 
   selectStream(stream: string) {
+    console.log('SELECTING STREAM', stream);
     this.sensor.labelstream = stream;
     this.dropdown.close();
   }
@@ -91,9 +95,25 @@ export class LabelstreamToolboxComponent implements OnInit {
     this.remove.emit(stream);
     this.dropdown.close();
   }
+
+  open_editmenu(stream, event) {
+    event.stopPropagation();
+    let menu = this.getMenu(stream);
+    menu.open({stream});
+    console.log('open that edit menu!', stream, menu, this.menus);
+  }
+
+  rename_stream(stream: string, name: string) {
+    console.log(`You should rename ${stream} to ${name}`)
+  }
   // #endregion
 
   // #region [Helper Methods]
   private getStream(stream: string) { return this.labelstreams[stream] }
+
+  private getMenu(stream) {
+    let idx = this.streams.indexOf(stream);
+    return this.menus[idx];
+  }
   // #endregion
 }

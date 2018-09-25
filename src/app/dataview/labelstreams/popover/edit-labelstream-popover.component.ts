@@ -7,6 +7,7 @@ import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 })
 export class EditLabelstreamPopover implements OnInit {
   // #region [Inputs]
+  @Input() stream: string;
   @Input() streams: string[];
   // #endregion
 
@@ -25,6 +26,7 @@ export class EditLabelstreamPopover implements OnInit {
   }
 
   create(name: string) {
+    console.log('STREAM', this.stream);
     if (!this.validName(name)) { return }
     this.submit.emit(name);
   }

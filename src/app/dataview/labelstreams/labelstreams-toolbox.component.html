@@ -3,6 +3,8 @@
     </app-new-labelstream>
 </ng-template>
 
+
+
 <div class='label-streams tools-box'>
     <div class="btn-group">
         <button type="button" 
@@ -18,7 +20,7 @@
         <div class="btn-group" 
           ngbDropdown 
           role="group"
-          autoClose="outside"
+          autoClose=false
           #dropdown="ngbDropdown"
           aria-label="list of label streams">
             <button class="btn btn-outline-secondary" 
@@ -28,10 +30,19 @@
                 {{sensor.labelstream}}
             </button>
             <div class="dropdown-menu" ngbDropdownMenu>
-                <div *ngFor="let stream of streams" 
+                <div *ngFor="let stream of streams"
+                  #editMenu="ngbPopover"
+                  [ngbPopover]="editPopover"
+                  placement="right"
+                  triggers="manual"
                   (click)="selectStream(stream)" 
                   class="dropdown-item d-flex justify-content-between">
                     {{stream}}
+                    <ng-template #editPopover>
+                        <app-edit-labelstream [stream]="stream" [streams]="streams" (submit)="rename_stream($event)">
+                            {{stream}}
+                        </app-edit-labelstream>
+                    </ng-template>
                     <div class='btn-box'>
                         <button *ngIf="sensor.labelstream == stream"
                         [disabled]="!can_save(stream)"
@@ -44,6 +55,10 @@
                         (click)="merge(stream, $event)"
                         class='btn btn-secondary btn-icon'>
                             <i class="material-icons icon">merge_type</i>
+                        </button>
+                        <button class='btn btn-success btn-icon'
+                        (click)="open_editmenu(stream, $event)">
+                            <i class="material-icons icon">edit</i>
                         </button>
                         <button class='btn btn-danger btn-icon'
                         [disabled]="!can_remove(stream)"
