@@ -76,7 +76,6 @@ export class LabelstreamToolboxComponent implements OnInit {
   }
 
   selectStream(stream: string) {
-    console.log('SELECTING STREAM', stream);
     this.sensor.labelstream = stream;
     this.dropdown.close();
   }
@@ -96,16 +95,21 @@ export class LabelstreamToolboxComponent implements OnInit {
     this.dropdown.close();
   }
 
-  open_editmenu(stream, event) {
+  toggleAddMenu() { this.closeOtherMenus() }
+
+  toggleEditMenu(stream, event) {
     event.stopPropagation();
+    this.closeOtherMenus(stream);
     let menu = this.getMenu(stream);
-    menu.open({stream});
-    console.log('open that edit menu!', stream, menu, this.menus);
+    if (menu.isOpen()) menu.close();
+    else menu.open({stream});
   }
 
   rename_stream(event) {
     let [stream, name] = event;
     console.log(`You should rename ${stream} to ${name}`)
+    let menu = this.getMenu(stream);
+    menu.close();
   }
   // #endregion
 
@@ -115,6 +119,18 @@ export class LabelstreamToolboxComponent implements OnInit {
   private getMenu(stream) {
     let idx = this.streams.indexOf(stream);
     return this.menus[idx];
+  }
+
+  private closeOtherMenus(stream?) {
+    if (!stream) { return this.closeEditMenus() }
+    let idx = this.streams.indexOf(stream);
+    let others = this.menus.filter((d,i) => i !== idx);
+    for (let menu of others) { menu.close(); }
+    this.popover.close();
+  }
+
+  private closeEditMenus() {
+    for (let menu of this.menus) { menu.close(); }
   }
   // #endregion
 }
