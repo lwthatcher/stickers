@@ -22,6 +22,7 @@ import { SensorsToolboxComponent } from './sensors/sensors-toolbox.component';
 import { EnergyWellToolboxComponent } from './energy/energy-well-toolbox.component';
 import { VideoComponent } from './video/video.component';
 import { NewLabelstreamPopover } from './labelstreams/popover/new-labelstream-popover.component';
+import { EditLabelstreamPopover } from './labelstreams/popover/edit-labelstream-popover.component';
 import { EnergySettingsPopover } from './energy/popover/settings-popover.component';
 import { ComputeEnergyPopover } from './energy/popover/compute-popover.component';
 
@@ -50,7 +51,10 @@ import { ComputeEnergyPopover } from './energy/popover/compute-popover.component
     SensorsToolboxComponent,
     EnergyWellToolboxComponent, 
     VideoComponent, 
-    NewLabelstreamPopover, EnergySettingsPopover, ComputeEnergyPopover],
+    NewLabelstreamPopover,
+    EditLabelstreamPopover,
+    EnergySettingsPopover,
+    ComputeEnergyPopover],
   providers: []
 })
 export class DataviewModule { 
