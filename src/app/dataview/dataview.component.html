@@ -39,7 +39,8 @@
                     [sensor]="sensor"
                     [workspace]="workspace"
                     [(labelstreams)]="labelStreams" 
-                    (remove)="removeStream($event)">
+                    (remove)="removeStream($event)"
+                    (rename)="renameStream($event)">
                 </toolbox-labelstreams>
 
                 <toolbox-types 

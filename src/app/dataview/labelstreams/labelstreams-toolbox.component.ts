@@ -31,6 +31,7 @@ export class LabelstreamToolboxComponent implements OnInit {
 
   // #region [Outputs]
   @Output() remove = new EventEmitter<string>();
+  @Output() rename = new EventEmitter<[string,string]>();
   // #endregion
 
   // #region [Constructors]
@@ -107,9 +108,10 @@ export class LabelstreamToolboxComponent implements OnInit {
 
   rename_stream(event) {
     let [stream, name] = event;
-    console.log(`You should rename ${stream} to ${name}`)
     let menu = this.getMenu(stream);
     menu.close();
+    console.log(`Attempting to rename ${stream} to ${name}`, this.labelstreams);
+    this.rename.emit([stream, name]);
   }
   // #endregion
 
