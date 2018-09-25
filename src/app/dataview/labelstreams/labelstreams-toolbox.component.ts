@@ -103,7 +103,8 @@ export class LabelstreamToolboxComponent implements OnInit {
     console.log('open that edit menu!', stream, menu, this.menus);
   }
 
-  rename_stream(stream: string, name: string) {
+  rename_stream(event) {
+    let [stream, name] = event;
     console.log(`You should rename ${stream} to ${name}`)
   }
   // #endregion

@@ -36,6 +36,7 @@
                 <div *ngFor="let stream of streams"
                   #editMenu="ngbPopover"
                   [ngbPopover]="editPopover"
+                  autoClose="outside"
                   placement="right"
                   triggers="manual"
                   (click)="selectStream(stream)" 

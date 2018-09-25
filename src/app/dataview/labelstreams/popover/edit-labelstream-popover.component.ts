@@ -12,7 +12,7 @@ export class EditLabelstreamPopover implements OnInit {
   // #endregion
 
   // #region [Outputs]
-  @Output() submit: EventEmitter<string> = new EventEmitter();
+  @Output() submit: EventEmitter<[string, string]> = new EventEmitter();
   // #endregion
 
   // #region [Constructors]
@@ -21,14 +21,13 @@ export class EditLabelstreamPopover implements OnInit {
   // #endregion
 
   // #region [Public Methods]
-  validName(name: string): boolean { 
+  validName(name: string): boolean {
     return !!name && name.length > 0 && !this.streams.includes(name);
   }
 
   create(name: string) {
-    console.log('STREAM', this.stream);
     if (!this.validName(name)) { return }
-    this.submit.emit(name);
+    this.submit.emit([this.stream, name]);
   }
   // #endregion
 }
