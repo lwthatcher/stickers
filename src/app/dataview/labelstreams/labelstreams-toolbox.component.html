@@ -2,7 +2,10 @@
     <app-new-labelstream [streams]="streams" (submit)="add_stream($event)">
     </app-new-labelstream>
 </ng-template>
-
+<ng-template let-stream="stream" #editPopover>
+    <app-edit-labelstream [stream]="stream" [streams]="streams" (submit)="rename_stream($event)">
+    </app-edit-labelstream>
+</ng-template>
 
 
 <div class='label-streams tools-box'>
@@ -38,11 +41,6 @@
                   (click)="selectStream(stream)" 
                   class="dropdown-item d-flex justify-content-between">
                     {{stream}}
-                    <ng-template #editPopover>
-                        <app-edit-labelstream [stream]="stream" [streams]="streams" (submit)="rename_stream($event)">
-                            {{stream}}
-                        </app-edit-labelstream>
-                    </ng-template>
                     <div class='btn-box'>
                         <button *ngIf="sensor.labelstream == stream"
                         [disabled]="!can_save(stream)"
