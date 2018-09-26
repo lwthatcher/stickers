@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, ViewChildren, QueryList } from '@angular/core';
 import { Sensor } from '../sensors/sensor';
 import { LabelStream } from './labelstream';
 import { NgbDropdown, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
@@ -26,10 +26,12 @@ export class LabelstreamToolboxComponent implements OnInit {
   @Input() labelstreams: LabelStreamMap;
   @ViewChild('dropdown') dropdown: NgbDropdown;
   @ViewChild('popover') popover: NgbPopover;
+  @ViewChildren('editMenu') editMenus: QueryList<NgbPopover>;
   // #endregion
 
   // #region [Outputs]
   @Output() remove = new EventEmitter<string>();
+  @Output() rename = new EventEmitter<[string,string]>();
   // #endregion
 
   // #region [Constructors]
@@ -42,6 +44,8 @@ export class LabelstreamToolboxComponent implements OnInit {
   get streams(): string[] { return Object.keys(this.labelstreams) }
 
   get current(): LabelStream { return this.labelstreams[this.sensor.labelstream] }
+
+  get menus() { return this.editMenus.toArray() }
 
   get icon(): string {
     if (this.popover.isOpen()) return 'remove'
@@ -91,9 +95,48 @@ export class LabelstreamToolboxComponent implements OnInit {
     this.remove.emit(stream);
     this.dropdown.close();
   }
+
+  noop(event) {
+    console.log('NOOP', event);
+  }
+
+  toggleAddMenu() { this.closeOtherMenus() }
+
+  toggleEditMenu(stream, event) {
+    event.stopPropagation();
+    this.closeOtherMenus(stream);
+    let menu = this.getMenu(stream);
+    if (menu.isOpen()) menu.close();
+    else menu.open({stream});
+  }
+
+  rename_stream(event) {
+    let [stream, name] = event;
+    let menu = this.getMenu(stream);
+    menu.close();
+    this.dropdown.close();
+    this.rename.emit([stream, name]);
+  }
   // #endregion
 
   // #region [Helper Methods]
   private getStream(stream: string) { return this.labelstreams[stream] }
+
+  private getMenu(stream) {
+    let idx = this.streams.indexOf(stream);
+    return this.menus[idx];
+  }
+
+  private closeOtherMenus(stream?) {
+    if (!stream) { return this.closeEditMenus() }
+    let idx = this.streams.indexOf(stream);
+    let others = this.menus.filter((d,i) => i !== idx);
+    for (let menu of others) { menu.close(); }
+    this.popover.close();
+  }
+
+  private closeEditMenus() {
+    for (let menu of this.menus) { menu.close(); }
+  }
   // #endregion
 }

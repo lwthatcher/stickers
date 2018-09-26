@@ -2,6 +2,11 @@
     <app-new-labelstream [streams]="streams" (submit)="add_stream($event)">
     </app-new-labelstream>
 </ng-template>
+<ng-template let-stream="stream" #editPopover>
+    <app-edit-labelstream [stream]="stream" [streams]="streams" (submit)="rename_stream($event)">
+    </app-edit-labelstream>
+</ng-template>
+
 
 <div class='label-streams tools-box'>
     <div class="btn-group">
@@ -18,7 +23,7 @@
         <div class="btn-group" 
           ngbDropdown 
           role="group"
-          autoClose="outside"
+          autoClose=false
           #dropdown="ngbDropdown"
           aria-label="list of label streams">
             <button class="btn btn-outline-secondary" 
@@ -28,7 +33,13 @@
                 {{sensor.labelstream}}
             </button>
             <div class="dropdown-menu" ngbDropdownMenu>
-                <div *ngFor="let stream of streams" 
+                <div *ngFor="let stream of streams"
+                  #editMenu="ngbPopover"
+                  [ngbPopover]="editPopover"
+                  popoverTitle='Editing Label Stream "{{stream}}":'
+                  autoClose="outside"
+                  placement="right"
+                  triggers="manual"
                   (click)="selectStream(stream)" 
                   class="dropdown-item d-flex justify-content-between">
                     {{stream}}
@@ -45,6 +56,10 @@
                         class='btn btn-secondary btn-icon'>
                             <i class="material-icons icon">merge_type</i>
                         </button>
+                        <button class='btn btn-success btn-icon'
+                        (click)="toggleEditMenu(stream, $event)">
+                            <i class="material-icons icon">edit</i>
+                        </button>
                         <button class='btn btn-danger btn-icon'
                         [disabled]="!can_remove(stream)"
                         (click)="remove_stream(stream, $event)">
@@ -56,7 +71,9 @@
                     <button type="button" 
                       class="btn btn-outline-secondary add-stream" 
                       title='create new label scheme'
+                      (click)="toggleAddMenu()"
                       [ngbPopover]="addPopover"
+                      popoverTitle="New Label Scheme:"
                       #popover="ngbPopover"
                       placement="right" >
                         <i class="material-icons icon">{{icon}}</i>
