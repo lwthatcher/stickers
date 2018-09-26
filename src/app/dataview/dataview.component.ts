@@ -201,11 +201,13 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
 
   renameStream(event) {
     let [stream, name] = event;
+    let ls = this.labelStreams[stream];
+    ls.name = name;
+    this.labelStreams[name] = ls;
     for (let sensor of this.sensors) {
       if (sensor.labelstream === stream) { sensor.labelstream = name; }
     }
-    let ls = this.labelStreams[stream];
-    delete Object.assign(this.labelStreams, {[name]: stream})[stream];
+    delete this.labelStreams[stream];
     console.log('label-stream map:', this.labelStreams);
   }
 

@@ -96,6 +96,10 @@ export class LabelstreamToolboxComponent implements OnInit {
     this.dropdown.close();
   }
 
+  noop(event) {
+    console.log('NOOP', event);
+  }
+
   toggleAddMenu() { this.closeOtherMenus() }
 
   toggleEditMenu(stream, event) {
@@ -112,6 +116,8 @@ export class LabelstreamToolboxComponent implements OnInit {
     menu.close();
     console.log(`Attempting to rename ${stream} to ${name}`, this.labelstreams);
     this.rename.emit([stream, name]);
+
+    console.log('SENSOR?', this.sensor);
   }
   // #endregion
 
