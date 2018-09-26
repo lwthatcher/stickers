@@ -114,10 +114,8 @@ export class LabelstreamToolboxComponent implements OnInit {
     let [stream, name] = event;
     let menu = this.getMenu(stream);
     menu.close();
-    console.log(`Attempting to rename ${stream} to ${name}`, this.labelstreams);
+    this.dropdown.close();
     this.rename.emit([stream, name]);
-
-    console.log('SENSOR?', this.sensor);
   }
   // #endregion
 

@@ -188,7 +188,7 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
   }
 
   removeStream(stream: string) {
-    console.log('deleting labelstream:', stream);
+    console.info('deleting labelstream:', stream);
     for (let sensor of this.sensors) {
       if (sensor.labelstream === stream) {
         let newstream = this.nextStream(stream);
@@ -201,6 +201,7 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
 
   renameStream(event) {
     let [stream, name] = event;
+    console.debug(`renaming ${stream} to ${name}`);
     let ls = this.labelStreams[stream];
     ls.rename(name);
     this.labelStreams[name] = ls;
@@ -208,7 +209,6 @@ export class DataviewComponent implements OnInit, AfterViewChecked {
       if (sensor.labelstream === stream) { sensor.labelstream = name; }
     }
     delete this.labelStreams[stream];
-    console.log('label-stream map:', this.labelStreams);
   }
 
   newSensor() {
