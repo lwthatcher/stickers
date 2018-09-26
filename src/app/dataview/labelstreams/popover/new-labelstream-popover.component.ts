@@ -24,6 +24,12 @@ export class NewLabelstreamPopover implements OnInit {
     return !!name && name.length > 0 && !this.streams.includes(name);
   }
 
+  interrupt_submit(event) {
+    console.debug("user pressed enter - interrupting auto-submit", event);
+    event.stopPropagation();
+    return false;
+  }
+
   create(name: string) {
     if (!this.validName(name)) { return }
     this.submit.emit(name);
