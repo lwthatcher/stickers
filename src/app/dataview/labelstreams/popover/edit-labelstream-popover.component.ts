@@ -29,5 +29,11 @@ export class EditLabelstreamPopover implements OnInit {
     if (!this.validName(name)) { return }
     this.submit.emit([this.stream, name]);
   }
+
+  interrupt_submit(event) {
+    console.debug("user pressed enter - interrupting auto-submit", event);
+    event.stopPropagation();
+    return false;
+  }
   // #endregion
 }
