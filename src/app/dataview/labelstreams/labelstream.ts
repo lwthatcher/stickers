@@ -124,6 +124,12 @@ export class LabelStream {
         lbls = this.sort(lbls);
         return JSON.stringify(lbls);
     }
+
+    rename(name: string) {
+        this.name = name;
+        this.scheme.name = name;
+        this.changed = true;
+    }
     // #endregion
 
     // #region [Helper Methods]
