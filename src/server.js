@@ -1,7 +1,6 @@
 // #region [Imports]
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 // #endregion
@@ -10,15 +9,17 @@ const cors = require('cors');
 const WORKSPACES_PATH = path.join('/users', 'data', 'workspaces');
 const pjson = require('../package.json');
 const FgCyan = "\x1b[36m%s\x1b[0m";
+const DEFAULT_PORT = 3000;
 // #endregion
 
 // #region [Express Setup]
 const app = express();
-
-var corsOptions = {
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
-}
+// set port
+app.set('port', (process.env.PORT || DEFAULT_PORT));
 // CORS and body-parser
+var corsOptions = {
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+}
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 // setup serving static files
@@ -32,8 +33,8 @@ app.route('/api/version').get((req, res) => {
 // #endregion
 
 // #region [Server]
-app.listen(3000, () => {
+app.listen(app.get('port'), () => {
     console.info(FgCyan, 'version (' + pjson.version + ')');
-    console.log('Node server listening on port: 3000');
+    console.log('Node server listening on port:', app.get('port'));
 });
 // #endregion
