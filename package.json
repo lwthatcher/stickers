@@ -35,7 +35,7 @@
     "fs": "0.0.1-security",
     "hammerjs": "^2.0.8",
     "hoek": "^5.0.4",
-    "mathjs": "^4.4.2",
+    "mathjs": "^7.5.1",
     "rxjs": "^6.3.2",
     "rxjs-compat": "^6.3.2",
     "spin.js": "^4.0.0",
