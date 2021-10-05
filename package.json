@@ -40,7 +40,7 @@
     "rxjs-compat": "^6.3.2",
     "spin.js": "^4.0.0",
     "tfjs-npy": "0.0.3",
-    "url-parse": "^1.4.3",
+    "url-parse": "^1.5.2",
     "videogular2": "^6.3.0",
     "zone.js": "^0.8.19"
   },
